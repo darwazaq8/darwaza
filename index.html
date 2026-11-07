@@ -1,5 +1,61 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="دروازة: منصة ألعاب تعليمية تفاعلية للفلسفة وعلم النفس والاجتماع والدستور ودولة الكويت والصحة النفسية. تصميم معلمة الفلسفة حوراء محمود بخش."><meta name="theme-color" content="#c98a2e"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="دروازة"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>دروازة</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<style id="dzsplash-css">
+#dzsplash{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 40%,#fff6e0,#f4d8a4);overflow:hidden;transition:opacity .7s ease;font-family:"Readex Pro",Tahoma,sans-serif}
+#dzsplash *{box-sizing:border-box}
+#dzsplash.dzs-out{opacity:0;pointer-events:none}
+#dzsplash .dzs-ic{position:absolute;width:74px;height:74px;border-radius:22px;display:grid;place-items:center;font-size:2.3rem;line-height:1;box-shadow:0 7px 0 #0002;transition:left .9s cubic-bezier(.5,1.4,.5,1) .8s,top .9s cubic-bezier(.5,1.4,.5,1) .8s,transform .9s ease .8s,opacity .5s ease 1.3s;animation:dzsFloat 1.4s ease-in-out infinite alternate}
+#dzsplash .dzs-ic.i1{background:#8b7cf6;left:10%;top:12%}#dzsplash .dzs-ic.i2{background:#2fbf9b;left:calc(90% - 74px);top:18%;animation-delay:-.4s}
+#dzsplash .dzs-ic.i3{background:#ff7a6b;left:14%;top:68%;animation-delay:-.8s}#dzsplash .dzs-ic.i4{background:#2f9fe0;left:calc(86% - 74px);top:74%;animation-delay:-1.2s}
+#dzsplash .dzs-ic.i5{background:#e0a100;left:calc(50% - 37px);top:5%;animation-delay:-.6s}
+#dzsplash.dzs-go .dzs-ic{left:calc(50% - 37px);top:calc(40% - 37px);transform:scale(.2) rotate(360deg);opacity:0}
+#dzsplash .dzs-ring{position:absolute;left:50%;top:40%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;border:5px solid #fff;opacity:0;background:none}
+#dzsplash.dzs-go .dzs-ring{animation:dzsRing 1s 1.6s forwards}
+#dzsplash .dzs-gate{position:absolute;left:50%;top:40%;width:160px;height:186px;margin:-100px 0 0 -80px;opacity:0;transform:scale(.3)}
+#dzsplash.dzs-go .dzs-gate{animation:dzsPop .7s 1.65s cubic-bezier(.4,1.6,.5,1) forwards}
+#dzsplash .dzs-leaf{transform-box:fill-box;transition:transform 1.3s cubic-bezier(.5,0,.3,1)}#dzsplash .dzs-leaf.l{transform-origin:left center}#dzsplash .dzs-leaf.r{transform-origin:right center}
+#dzsplash.dzs-open .dzs-leaf{transform:scaleX(.08)}#dzsplash .dzs-light{opacity:.35;transition:opacity 1s}#dzsplash.dzs-open .dzs-light{opacity:1}
+#dzsplash.dzs-open .dzs-gate{animation:none;opacity:1;transform:scale(1);transition:transform 1.2s cubic-bezier(.6,0,.4,1) .6s}#dzsplash.dzs-zoom .dzs-gate{transform:scale(7)}
+#dzsplash .dzs-txt{position:absolute;left:0;right:0;top:calc(40% + 100px);text-align:center;padding:0 16px;background:none}
+#dzsplash .dzs-nm{display:block;font-family:Lalezar,"Reem Kufi",serif;font-weight:400;color:#a8783f;font-size:clamp(3rem,12vw,4.6rem);line-height:1.15;opacity:0;transform:translateY(16px);background:none;margin:0;padding:0}
+#dzsplash .dzs-by{display:block;font-family:"Aref Ruqaa",serif;font-weight:700;color:#6b4a2c;font-size:clamp(1rem,4vw,1.3rem);margin-top:6px;opacity:0}
+#dzsplash .dzs-tag{display:block;color:#8a6a45;font-size:.9rem;margin-top:8px;opacity:0}
+#dzsplash.dzs-go .dzs-nm{animation:dzsUp .6s 2.1s forwards}#dzsplash.dzs-go .dzs-by{animation:dzsFade .6s 2.5s forwards}#dzsplash.dzs-go .dzs-tag{animation:dzsFade .6s 2.8s forwards}
+#dzsplash .dzs-enter{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font:700 1.1rem "Readex Pro",Tahoma,sans-serif;color:#fff;background:linear-gradient(#b5834a,#8a5a34);border:0;border-radius:99px;padding:12px 26px;box-shadow:0 6px 0 #5e3b1f,0 10px 24px #8a5a3455;cursor:pointer;opacity:0;transform:scale(.8)}
+#dzsplash.dzs-go .dzs-enter{animation:dzsPop .5s 3.1s forwards,dzsPulse 1.4s 3.7s ease-in-out infinite}
+#dzsplash .dzs-enter:active{transform:translateY(3px);box-shadow:0 3px 0 #5e3b1f}
+#dzsplash.dzs-open .dzs-txt{transition:opacity .5s;opacity:0}
+#dzsplash .dzs-skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:max(14px,env(safe-area-inset-left,0px));font:600 .85rem "Readex Pro",Tahoma,sans-serif;background:#0000002e;color:#4a3424;border:0;border-radius:99px;padding:6px 14px;cursor:pointer}
+@keyframes dzsFloat{to{translate:0 -8px}}@keyframes dzsRing{0%{opacity:1}100%{opacity:0;transform:scale(16)}}@keyframes dzsPop{to{opacity:1;transform:none}}
+@keyframes dzsUp{to{opacity:1;transform:none}}@keyframes dzsFade{to{opacity:1}}@keyframes dzsPulse{50%{transform:scale(1.06)}}
+@media (prefers-reduced-motion:reduce){#dzsplash *{animation-duration:.01s!important;transition-duration:.01s!important;transition-delay:0s!important;animation-delay:0s!important}}
+</style>
+<div id="dzsplash" role="dialog" aria-label="مرحبًا بك في دروازة" hidden>
+ <button class="dzs-skip" type="button">تخطَّ ⏭</button>
+ <span class="dzs-ic i1">🦉</span><span class="dzs-ic i2">🧠</span><span class="dzs-ic i3">⚖️</span><span class="dzs-ic i4"><svg viewBox="0 0 36 24" width="34" height="23" aria-hidden="true"><path d="M0 0h36v8H0z" fill="#007a3d"/><path d="M0 8h36v8H0z" fill="#fff"/><path d="M0 16h36v8H0z" fill="#ce1126"/><path d="M0 0l10 8v8L0 24z" fill="#000"/></svg></span><span class="dzs-ic i5">💚</span><span class="dzs-ring"></span>
+ <svg class="dzs-gate" viewBox="0 0 120 140" aria-hidden="true"><rect x="6" y="40" width="108" height="100" rx="4" fill="#d9b47a"/><rect x="6" y="28" width="16" height="16" fill="#d9b47a"/><rect x="38" y="28" width="16" height="16" fill="#d9b47a"/><rect x="66" y="28" width="16" height="16" fill="#d9b47a"/><rect x="98" y="28" width="16" height="16" fill="#d9b47a"/>
+ <path class="dzs-light" d="M34 140V88a26 26 0 0 1 52 0v52z" fill="#fff4c4"/><path class="dzs-leaf l" d="M34 140V88a26 26 0 0 1 26-26V140z" fill="#7a4a2a" stroke="#3f2612" stroke-width="1.5"/><path class="dzs-leaf r" d="M60 62a26 26 0 0 1 26 26V140H60z" fill="#6e4224" stroke="#3f2612" stroke-width="1.5"/>
+ <circle class="dzs-leaf l" cx="55" cy="104" r="2.6" fill="#ffd166"/><circle class="dzs-leaf r" cx="65" cy="104" r="2.6" fill="#ffd166"/>
+ <g transform="translate(58 0)"><rect width="3" height="30" fill="#5e3b1f"/><path d="M3 2h28v7H3z" fill="#007a3d"/><path d="M3 9h28v7H3z" fill="#fff"/><path d="M3 16h28v7H3z" fill="#ce1126"/><path d="M3 2l9 7v7l-9 7z" fill="#000"/></g></svg>
+ <div class="dzs-txt"><span class="dzs-nm">دروازة</span><span class="dzs-by">تصميم معلمة الفلسفة حوراء محمود بخش</span><span class="dzs-tag">منصة الألعاب التعليمية التفاعلية</span><button class="dzs-enter" type="button">ادخل البوابة 🚪</button></div>
+</div>
+<script>(function(){var s=document.getElementById("dzsplash");if(!s)return;var seen=false;try{seen=sessionStorage.getItem("dz:splash")==="1";sessionStorage.setItem("dz:splash","1")}catch(e){}
+if(seen){s.remove();return}s.hidden=false;var done=false;
+function creak(){try{var C=window.AudioContext||window.webkitAudioContext;if(!C)return;var a=new C(),t=a.currentTime,D=1.25;
+ var o=a.createOscillator(),f=a.createBiquadFilter(),g=a.createGain(),lfo=a.createOscillator(),lg=a.createGain();
+ o.type="sawtooth";o.frequency.setValueAtTime(95,t);o.frequency.linearRampToValueAtTime(150,t+.5);o.frequency.linearRampToValueAtTime(70,t+D);
+ lfo.type="square";lfo.frequency.setValueAtTime(18,t);lfo.frequency.linearRampToValueAtTime(34,t+D);lg.gain.value=.5;lfo.connect(lg);lg.connect(g.gain);
+ f.type="bandpass";f.frequency.value=900;f.Q.value=3;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.06);g.gain.setValueAtTime(.35,t+D-.25);g.gain.linearRampToValueAtTime(0,t+D);
+ o.connect(f);f.connect(g);g.connect(a.destination);o.start(t);lfo.start(t);o.stop(t+D);lfo.stop(t+D);
+ var n=a.createBufferSource(),b=a.createBuffer(1,a.sampleRate*.35,a.sampleRate),d=b.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,4);
+ n.buffer=b;var nf=a.createBiquadFilter();nf.type="lowpass";nf.frequency.value=220;var ng=a.createGain();ng.gain.value=.9;n.connect(nf);nf.connect(ng);ng.connect(a.destination);n.start(t+D-.05);
+ [523,659,784,1047].forEach(function(fr,k){var x=a.createOscillator(),y=a.createGain(),st=t+D+.15+k*.11;x.type="sine";x.frequency.value=fr;y.gain.setValueAtTime(0,st);y.gain.linearRampToValueAtTime(.06,st+.02);y.gain.exponentialRampToValueAtTime(.0001,st+.6);x.connect(y);y.connect(a.destination);x.start(st);x.stop(st+.65)})}catch(e){}}
+function close(){s.classList.add("dzs-out");setTimeout(function(){s.remove()},750)}
+function enter(){if(done)return;done=true;creak();s.classList.add("dzs-open");setTimeout(function(){s.classList.add("dzs-zoom")},700);setTimeout(close,1800)}
+requestAnimationFrame(function(){requestAnimationFrame(function(){s.classList.add("dzs-go")})});
+s.querySelector(".dzs-enter").addEventListener("click",function(e){e.stopPropagation();enter()});
+s.querySelector(".dzs-skip").addEventListener("click",function(e){e.stopPropagation();done=true;close()});
+s.addEventListener("click",function(e){if(e.target===s)enter()})})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Reem+Kufi:wght@600;700&family=Readex+Pro:wght@400;500;700&family=Aref+Ruqaa:wght@400;700&display=swap">
 <style>
