@@ -33,6 +33,22 @@
 #dzsplash .dzs-enter:active{transform:translateY(3px);box-shadow:0 3px 0 #5e3b1f}
 #dzsplash.dzs-open .dzs-txt{transition:opacity .5s;opacity:0}
 #dzsplash .dzs-skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:max(14px,env(safe-area-inset-left,0px));font:600 .85rem "Readex Pro",Tahoma,sans-serif;background:#0000002e;color:#4a3424;border:0;border-radius:99px;padding:6px 14px;cursor:pointer}
+#dzsplash .dzs-shine{position:absolute;left:50%;top:40%;width:0;height:0;pointer-events:none;z-index:3}
+#dzsplash .dzs-shine .dzs-halo{position:absolute;left:-90px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,#fffbe6 0%,#ffe9a8 35%,#ffd36b55 60%,transparent 72%);opacity:0;transform:scale(.3)}
+#dzsplash .dzs-shine .dzs-rays{position:absolute;left:-160px;top:-110px;width:320px;height:320px;border-radius:50%;opacity:0;background:repeating-conic-gradient(from 0deg,#fff3c480 0deg 7deg,transparent 7deg 22deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 68%);mask:radial-gradient(circle,#000 18%,transparent 68%)}
+#dzsplash .dzs-shine i{position:absolute;left:0;top:30px;width:9px;height:9px;margin:-4.5px;border-radius:50%;background:#fff6c2;box-shadow:0 0 10px 3px #fff3b0;opacity:0}
+#dzsplash .dzs-shine i:nth-of-type(1){--x:-80px;--y:-70px}#dzsplash .dzs-shine i:nth-of-type(2){--x:76px;--y:-80px}#dzsplash .dzs-shine i:nth-of-type(3){--x:-92px;--y:10px}#dzsplash .dzs-shine i:nth-of-type(4){--x:88px;--y:18px}
+#dzsplash .dzs-shine i:nth-of-type(5){--x:-36px;--y:-108px}#dzsplash .dzs-shine i:nth-of-type(6){--x:38px;--y:-100px}#dzsplash .dzs-shine i:nth-of-type(7){--x:-60px;--y:70px}#dzsplash .dzs-shine i:nth-of-type(8){--x:62px;--y:76px}
+#dzsplash.dzs-open .dzs-halo{animation:dzsHalo 1.4s ease-out forwards}
+#dzsplash.dzs-open .dzs-rays{animation:dzsRays 1.6s ease-out forwards}
+#dzsplash.dzs-open .dzs-shine i{animation:dzsSpark .9s ease-out forwards}
+#dzsplash.dzs-open .dzs-shine i:nth-of-type(2n){animation-delay:.12s}#dzsplash.dzs-open .dzs-shine i:nth-of-type(3n){animation-delay:.24s}#dzsplash.dzs-open .dzs-shine i:nth-of-type(4n){animation-delay:.36s}
+#dzsplash .dzs-flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#fffdf3,#fff3cf 60%,#ffe7a8);opacity:0;pointer-events:none;z-index:5}
+#dzsplash.dzs-zoom .dzs-flash{animation:dzsFlash 1.1s ease forwards}
+@keyframes dzsHalo{0%{opacity:0;transform:scale(.3)}40%{opacity:1;transform:scale(1.25)}100%{opacity:.9;transform:scale(2.2)}}
+@keyframes dzsRays{0%{opacity:0;transform:scale(.4) rotate(0)}35%{opacity:1}100%{opacity:.7;transform:scale(1.5) rotate(40deg)}}
+@keyframes dzsSpark{0%{opacity:0;transform:translate(0,0) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.2)}}
+@keyframes dzsFlash{0%{opacity:0}45%{opacity:1}100%{opacity:1}}
 @keyframes dzsFloat{to{translate:0 -8px}}@keyframes dzsRing{0%{opacity:1}100%{opacity:0;transform:scale(16)}}@keyframes dzsPop{to{opacity:1;transform:none}}
 @keyframes dzsUp{to{opacity:1;transform:none}}@keyframes dzsFade{to{opacity:1}}@keyframes dzsPulse{50%{transform:scale(1.06)}}
 @media (prefers-reduced-motion:reduce){#dzsplash *{animation-duration:.01s!important;transition-duration:.01s!important;transition-delay:0s!important;animation-delay:0s!important}}
@@ -44,7 +60,7 @@
  <path class="dzs-light" d="M34 140V88a26 26 0 0 1 52 0v52z" fill="#fff4c4"/><path class="dzs-leaf l" d="M34 140V88a26 26 0 0 1 26-26V140z" fill="#7a4a2a" stroke="#3f2612" stroke-width="1.5"/><path class="dzs-leaf r" d="M60 62a26 26 0 0 1 26 26V140H60z" fill="#6e4224" stroke="#3f2612" stroke-width="1.5"/>
  <circle class="dzs-leaf l" cx="55" cy="104" r="2.6" fill="#ffd166"/><circle class="dzs-leaf r" cx="65" cy="104" r="2.6" fill="#ffd166"/>
  <g transform="translate(58 0)"><rect width="3" height="30" fill="#5e3b1f"/><path d="M3 2h28v7H3z" fill="#007a3d"/><path d="M3 9h28v7H3z" fill="#fff"/><path d="M3 16h28v7H3z" fill="#ce1126"/><path d="M3 2l9 7v7l-9 7z" fill="#000"/></g></svg>
- <div class="dzs-txt"><span class="dzs-nm">دروازة</span><span class="dzs-by">تصميم معلمة الفلسفة حوراء محمود بخش</span><span class="dzs-tag">منصة الألعاب التعليمية التفاعلية</span><button class="dzs-enter" type="button">ادخل البوابة 🚪</button></div>
+ <div class="dzs-shine" aria-hidden="true"><span class="dzs-rays"></span><span class="dzs-halo"></span><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="dzs-flash"></div><div class="dzs-txt"><span class="dzs-nm">دروازة</span><span class="dzs-by">تصميم معلمة الفلسفة حوراء محمود بخش</span><span class="dzs-tag">منصة الألعاب التعليمية التفاعلية</span><button class="dzs-enter" type="button">ادخل البوابة 🚪</button></div>
 </div>
 <script>(function(){var s=document.getElementById("dzsplash");if(!s)return;var seen=false;try{seen=sessionStorage.getItem("dz:splash")==="1";sessionStorage.setItem("dz:splash","1")}catch(e){}
 if(seen){s.remove();return}s.hidden=false;var done=false;
@@ -64,7 +80,7 @@ function whoosh(at){var a=ac();if(!a)return;try{var t=a.currentTime+at,n=a.creat
  n.connect(f);f.connect(g);g.connect(a.destination);n.start(t);n.stop(t+L)}catch(e){}}
 function chime(at){var a=ac();if(!a)return;try{[784,988,1175,1568].forEach(function(fr,k){var o=a.createOscillator(),g=a.createGain(),st=a.currentTime+at+k*.07;o.type="triangle";o.frequency.value=fr;g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(.07,st+.02);g.gain.exponentialRampToValueAtTime(.0001,st+.9);o.connect(g);g.connect(a.destination);o.start(st);o.stop(st+.95)})}catch(e){}}
 function enter(){if(done)return;done=true;ac();s.classList.add("dzs-merge");[0,.12,.24,.36,.48].forEach(function(x){whoosh(x)});chime(1.0);
- setTimeout(function(){creak();s.classList.add("dzs-open")},1900);setTimeout(function(){s.classList.add("dzs-zoom")},2600);setTimeout(close,3700)}
+ setTimeout(function(){creak();s.classList.add("dzs-open");chime(.55)},1900);setTimeout(function(){s.classList.add("dzs-zoom")},2600);setTimeout(close,3700)}
 function fill(){try{s.querySelectorAll(".dzs-ic").forEach(function(el){var w=el.querySelector(".dzs-win");if(typeof scene==="function")w.innerHTML=scene(el.dataset.k).replace('class="scene"','')})}catch(e){}}
 function go(){fill();requestAnimationFrame(function(){requestAnimationFrame(function(){s.classList.add("dzs-go")})})}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
