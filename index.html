@@ -679,6 +679,35 @@ footer b{color:var(--ink)}
 @keyframes dcShadow{0%{transform:translateX(var(--dx)) scale(.3);opacity:0}45%{transform:translateX(calc(var(--dx)*.35)) scale(.5);opacity:.4}65%,100%{transform:none;opacity:1}}
 @media (max-width:560px){.dcfelt{flex-direction:column;padding:14px}.dccup{width:70px;height:84px}.dcwords{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (prefers-reduced-motion:reduce){.dcslot.roll .dcbox,.dcslot.roll .dcsh,.dccup.tip{animation:none}}
+.dctabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;background:var(--card);border:2px solid var(--line);border-radius:99px;padding:5px;width:max-content;max-width:100%;margin-inline:auto}
+.dctab{font:inherit;font-weight:800;font-size:14px;border:0;background:none;color:var(--ink);padding:8px 16px;border-radius:99px;cursor:pointer}.dctab.on{background:#c98a2e;color:#fff}
+.dcempty{text-align:center;padding:30px 10px}.dcempty b{font-size:60px}.dcempty p{max-width:480px;margin:6px auto 14px;opacity:.8}
+.dcboardwrap{display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.dcqgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:min(560px,100%)}
+.dcq{font:inherit;aspect-ratio:1.2;border-radius:18px;border:0;cursor:pointer;background:linear-gradient(#ffd166,#f5a623);color:#5e3b1f;box-shadow:0 6px 0 #c47f10;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .15s}
+.dcq b{font-family:Lalezar,var(--display),serif;font-weight:400;font-size:clamp(30px,5vw,46px);line-height:1}.dcq span{font-size:13px;font-weight:800}
+.dcq:hover:not(.done){transform:translateY(-4px)}.dcq.done{background:#e8e2d6;color:#9a8f7d;box-shadow:0 4px 0 #cfc6b4;cursor:default}
+.dcq.flash{filter:brightness(1.3);transform:scale(1.06)}.dcq.hit{animation:dcHit .6s;outline:5px solid #16a34a}.dcq.pick{animation:dcPulse 1s infinite}
+.dcmini{border-radius:22px;padding:18px 24px;background:radial-gradient(circle at 50% 40%,#2e9b62,#1d6e44 75%);box-shadow:inset 0 0 30px #0005,0 0 0 8px #8a5a34}
+.dcmini .dcrow{min-height:130px;gap:20px}.dcmini .dcslot{--s:84px}
+.dcmodal{position:fixed;inset:0;z-index:60;background:#0007;display:grid;place-items:center;padding:16px}
+.dcmbox{background:var(--card);color:var(--ink);border-radius:24px;padding:24px;width:min(560px,100%);box-shadow:0 20px 50px #0005;text-align:center;animation:cnPop .4s cubic-bezier(.3,1.6,.5,1)}
+.dcmbox textarea{width:100%;box-sizing:border-box;font:inherit;padding:10px;border-radius:12px;border:2px solid var(--line);background:var(--bg,#fff);color:var(--ink)}
+.dcmbox.qcard h3{font-size:clamp(22px,3.4vw,30px);line-height:1.6;margin:8px 0 12px}
+.dcqn{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:18px;background:linear-gradient(#ffd166,#f5a623);font-family:Lalezar,serif;font-size:36px;color:#5e3b1f;box-shadow:0 5px 0 #c47f10}
+.dcans{background:#ecfdf5;border:2px solid #16a34a;border-radius:14px;padding:10px;font-weight:700}.dcwho{opacity:.8}
+.dcraceWrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.dcrace{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(5,clamp(48px,8.4vw,82px)) auto;gap:6px;width:min(560px,100%);padding:12px;border-radius:22px;background:linear-gradient(#fff3d6,#f6dfb0);box-shadow:inset 0 0 0 4px #e8c48f}
+.dccell{position:relative;height:100%;min-height:0;border-radius:12px;background:#fff;display:grid;place-items:center;font-size:clamp(16px,3vw,24px);line-height:1;box-shadow:0 3px 0 #0001}
+.dccell em{position:absolute;top:3px;right:6px;line-height:1.2;font-style:normal;font-size:11px;font-weight:800;opacity:.55}
+.dccell:nth-child(odd){background:#fff8e8}.dccell.star{background:#fff3b0}.dccell.q{background:#dbeafe}.dccell.dcbk{background:#fee2e2}.dccell.fin{background:linear-gradient(#ffd166,#f5a623)}
+.dcstart{grid-row:6;grid-column:1/-1;text-align:center;font-weight:800;font-size:13px;opacity:.7;padding-top:34px}
+.dctok{grid-row:6;align-self:center;justify-self:center;z-index:2;width:clamp(24px,4.4vw,34px);height:clamp(24px,4.4vw,34px);border-radius:50% 50% 50% 0;transform:rotate(-45deg) translate(var(--o),calc(var(--o)*-1));background:var(--tc);color:#fff;font-weight:900;font-size:13px;display:grid;place-items:center;box-shadow:0 4px 6px #0004;border:3px solid #fff}
+.dctok.hop{animation:dcHop .23s}
+.dcside{display:flex;flex-direction:column;gap:12px;align-items:center}
+.dclegend{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 12px}
+.dcturn{font-weight:800;background:var(--tc);color:#fff;border-radius:99px;padding:6px 16px}
+@keyframes dcHit{50%{transform:scale(1.15)}}@keyframes dcPulse{50%{box-shadow:0 6px 0 #c47f10,0 0 0 6px #16a34a66}}@keyframes dcHop{50%{translate:0 -10px}}
 /* 🪙 lucky coin v2 */
 .cnset{display:flex;flex-direction:column;align-items:center;gap:10px}
 .cnmet{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.cnm{display:flex;align-items:center;gap:6px;font:inherit;font-weight:700;font-size:13px;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:99px;padding:4px 12px 4px 6px;cursor:pointer}
@@ -2443,6 +2472,7 @@ function playMemory(items){
 /* 5) dice */
 function playDice(){
   const AR=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+  const view=store.get("diceview","free");if(view==="board")return diceBoard();if(view==="race")return diceRace();
   const o=store.get("dice2",null)||{};let count=[1,2,3].includes(o.n)?o.n:(store.get("dicen",1)===2?2:1),col=o.col||"ivory",mode=o.mode||"pips",words=Array.isArray(o.words)&&o.words.length===6?o.words:["عرّف","مثال","قارن","علّل","لخّص","اسأل"];
   const save=()=>store.set("dice2",{n:count,col,mode,words});
   let rolling=false,hist=[],total=0,last=[];const body=$("#ovbody");
@@ -2453,7 +2483,7 @@ function playDice(){
   const cube=()=>`<div class="dcslot"><div class="dcbox"><div class="dccube">${FACES.map(([n,tr])=>`<div class="dcface f${n} ${mode}" style="transform:${tr}">${faceIn(n)}</div>`).join("")}</div></div><span class="dcsh"></span></div>`;
   const label=v=>mode==="words"?(words[v-1]||"؟"):AR(v);
   const [cn,cf,cp,ce]=COL[col];
-  body.innerHTML=`<div class="stage dcstage" style="--dcf:${cf};--dcp:${cp};--dce:${ce}">
+  body.innerHTML=`<div class="stage dcstage" style="--dcf:${cf};--dcp:${cp};--dce:${ce}">${dcTabs("free")}
     <div class="dcset">
       <div class="dcgrp"><span>عدد النرد</span>${[1,2,3].map(n=>`<button type="button" class="dcopt${count===n?" on":""}" data-dn="${n}">${["نرد واحد","نردان","ثلاثة"][n-1]}</button>`).join("")}</div>
       <div class="dcgrp"><span>اللون</span>${Object.entries(COL).map(([k,c])=>`<button type="button" class="dcsw${col===k?" on":""}" data-dc="${k}" style="--a:${c[1]};--b:${c[3]}" aria-label="${c[0]}" title="${c[0]}"></button>`).join("")}</div>
@@ -2466,6 +2496,7 @@ function playDice(){
     <div class="dchist" id="dhist"></div>
     <p class="counter">${mode==="words"?"أفكار: نرد المهام، كل فريق يرمي ويؤدي المهمة التي تظهر له.":"أفكار للاستخدام: رقم السؤال، عدد النقاط، أو ترتيب الفرق في اللعب."}</p></div>`;
   const re=()=>{save();WSFX.sparkle();playDice()};
+  dcBindTabs();
   body.querySelectorAll("[data-dn]").forEach(b=>b.onclick=()=>{count=+b.dataset.dn;store.set("dicen",count);re()});
   body.querySelectorAll("[data-dc]").forEach(b=>b.onclick=()=>{col=b.dataset.dc;re()});
   body.querySelectorAll("[data-dm]").forEach(b=>b.onclick=()=>{mode=b.dataset.dm;re()});
@@ -2490,6 +2521,86 @@ function playDice(){
       if(lucky){WSFX.fanfare();celebrate("ضربة حظ! 🍀",true)}else WSFX.sparkle()},reduce?150:1900)};
   $("#dadd").onclick=e=>{award(wsTeam,total);e.currentTarget.hidden=true;WSFX.fanfare();celebrate(`+${AR(total)} نقاط 🎉`)};
 }
+
+
+/* 🎲 dice modes: shared helpers, question board, team race */
+function dcTabs(v){return `<div class="dctabs" role="tablist">${[["free","🎲 رمي حر"],["board","🎯 لوحة الأسئلة"],["race","🏁 سباق الفرق"]].map(([k,n])=>`<button type="button" role="tab" class="dctab${v===k?" on":""}" data-dv="${k}" aria-selected="${v===k}">${n}</button>`).join("")}</div>`}
+function dcBindTabs(){$("#ovbody").querySelectorAll("[data-dv]").forEach(b=>b.onclick=()=>{store.set("diceview",b.dataset.dv);WSFX.whoosh();playDice()})}
+const DC_FACES=[[1,"translateZ(calc(var(--s)/2))"],[6,"rotateY(180deg) translateZ(calc(var(--s)/2))"],[3,"rotateY(90deg) translateZ(calc(var(--s)/2))"],[4,"rotateY(-90deg) translateZ(calc(var(--s)/2))"],[2,"rotateX(90deg) translateZ(calc(var(--s)/2))"],[5,"rotateX(-90deg) translateZ(calc(var(--s)/2))"]];
+const DC_ROT={1:[0,0],2:[-90,0],3:[0,-90],4:[0,90],5:[90,0],6:[0,180]};
+const dcDie=()=>`<div class="dcslot"><div class="dcbox"><div class="dccube">${DC_FACES.map(([n,tr])=>`<div class="dcface f${n} pips" style="transform:${tr}">${"<i></i>".repeat(9)}</div>`).join("")}</div></div><span class="dcsh"></span></div>`;
+function dcRollDice(root,cb){const slots=[...root.querySelectorAll(".dcslot")],vals=slots.map(()=>1+Math.floor(Math.random()*6)),red=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  slots.forEach((s,i)=>{const c=s.querySelector(".dccube"),sp=(c._sp=c._sp||[0,0]);s.style.setProperty("--dx","0px");s.style.setProperty("--dl",(i*.08)+"s");s.classList.remove("roll");void s.offsetWidth;s.classList.add("roll");
+    const [x,y]=DC_ROT[vals[i]];sp[0]+=720+360*(i%2);sp[1]+=1080;c.style.transition=red?"none":"transform 1.25s cubic-bezier(.15,.7,.25,1) "+(i*.08)+"s";c.style.transform=`rotateX(${sp[0]+x}deg) rotateY(${sp[1]+y}deg)`});
+  for(let i=0;i<8;i++)tone(300+Math.random()*500,.035,.06,"square",.15+i*.1);tone(180,.08,.08,"square",1.2);
+  setTimeout(()=>cb(vals),red?120:1500)}
+function dcQs(){return (store.get("diceq","")||"").split("\n").map(l=>l.split("|").map(s=>s.trim())).filter(x=>x[0]).map(x=>({q:x[0],a:x[1]||""}))}
+function dcQEditor(onSave){const body=$("#ovbody");const ov=document.createElement("div");ov.className="dcmodal";
+  ov.innerHTML=`<div class="dcmbox"><h3>✏️ أسئلة اللعبة</h3><p>اكتب في كل سطر سؤالًا، ويمكنك إضافة إجابته بعد العلامة | مثل:<br><b>ما الشخصية الانبساطية؟ | تتجه بأفكارها إلى الأحداث الخارجية</b></p><textarea id="dcqt" rows="10" dir="rtl">${escapeHtml(store.get("diceq","")||"")}</textarea><div class="acts"><button class="bigbtn" type="button" id="dcqs">✔ احفظ</button><button class="mini" type="button" id="dcqc">إلغاء</button></div></div>`;
+  body.appendChild(ov);$("#dcqt").focus();$("#dcqc").onclick=()=>ov.remove();$("#dcqs").onclick=()=>{store.set("diceq",$("#dcqt").value.trim());ov.remove();chord();onSave()}}
+/* 🎯 question board */
+function diceBoard(){const AR=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);const body=$("#ovbody");
+  const Q=dcQs().slice(0,11),two=Q.length>6,nums=two?Q.map((_,i)=>i+2):Q.map((_,i)=>i+1);let done=store.get("diceqdone",[]);if(!Array.isArray(done))done=[];
+  const key=JSON.stringify(Q);if(store.get("diceqkey","")!==key){done=[];store.set("diceqkey",key);store.set("diceqdone",done)}
+  let busy=false,open=-1;
+  function render(){const left=nums.filter(n=>!done.includes(n));
+    body.innerHTML=`<div class="stage dcstage" style="--dcf:#fffaf0;--dcp:#173b45;--dce:#e6b100">${dcTabs("board")}
+      ${!Q.length?`<div class="dcempty"><b>🎯</b><h3>أضف أسئلتك لتبدأ</h3><p>اكتب حتى ١١ سؤالًا، والنرد يختار رقم السؤال الذي يجيب عنه الفريق. ٦ أسئلة أو أقل: نرد واحد، وأكثر: نردان.</p><button class="bigbtn" type="button" id="dcqe">✏️ اكتب الأسئلة</button></div>`:`
+      <div class="dcboardwrap"><div class="dcqgrid">${nums.map((n,i)=>`<button type="button" class="dcq${done.includes(n)?" done":""}" data-i="${i}" data-n="${n}"><b>${AR(n)}</b><span>${done.includes(n)?"✔ أُجيب":"؟"}</span></button>`).join("")}</div>
+      <div class="dcmini"><div class="dcrow" id="dbr">${dcDie().repeat(two?2:1)}</div></div></div>
+      <div class="msg" id="msg">${left.length?`ارموا النرد لتعرفوا رقم سؤال ${escapeHtml(teams[wsTeam]?.name||"الفريق")}`:"أُجيب عن كل الأسئلة! 🏆"}</div>
+      <div class="acts"><button class="bigbtn coral" id="dbroll" type="button"${left.length?"":" disabled"}>🎲 ارمِ النرد</button><button class="mini" id="dqe" type="button">✏️ تعديل الأسئلة</button><button class="mini" id="dqr" type="button">↺ من جديد</button></div>`}
+    </div>`;dcBindTabs();
+    const ed=$("#dcqe")||$("#dqe");if(ed)ed.onclick=()=>dcQEditor(diceBoard);if(!Q.length)return;
+    $("#dqr").onclick=()=>{done=[];store.set("diceqdone",done);WSFX.whoosh();render()};
+    body.querySelectorAll(".dcq:not(.done)").forEach(b=>b.onclick=()=>{if(!busy)ask(+b.dataset.i)});
+    $("#dbroll").onclick=()=>{if(busy)return;busy=true;$("#msg").className="msg";$("#msg").textContent="النرد يتدحرج…";
+      body.querySelectorAll(".dcq:not(.done)").forEach((c,k)=>setTimeout(()=>{c.classList.add("flash");setTimeout(()=>c.classList.remove("flash"),140)},k*90));
+      dcRollDice($("#dbr"),vals=>{busy=false;const n=vals.reduce((a,b)=>a+b,0),i=nums.indexOf(n);
+        if(i<0||done.includes(n)){$("#msg").className="msg good";$("#msg").textContent=`ظهر ${AR(n)}: ${i<0?"ليس على اللوحة":"هذا السؤال أُجيب"}، ضربة حظ! اختاروا أي سؤال متبقٍ ⭐`;WSFX.sparkle();body.querySelectorAll(".dcq:not(.done)").forEach(c=>c.classList.add("pick"));return}
+        const c=body.querySelector(`.dcq[data-n="${n}"]`);c.classList.add("hit");WSFX.sparkle();setTimeout(()=>ask(i),600)})}}
+  function ask(i){const n=nums[i],q=Q[i];const ov=document.createElement("div");ov.className="dcmodal";
+    ov.innerHTML=`<div class="dcmbox qcard"><span class="dcqn">${AR(n)}</span><h3>${escapeHtml(q.q)}</h3>${q.a?`<button class="mini" type="button" id="dcsa">👁 أظهر الإجابة</button><p class="dcans" id="dcan" hidden>${escapeHtml(q.a)}</p>`:""}
+      <p class="dcwho">يجيب: <b>${escapeHtml(teams[wsTeam]?.name||"الفريق")}</b></p><div class="acts"><button class="bigbtn" type="button" id="dcok">✔ إجابة صحيحة (+١)</button><button class="bigbtn coral" type="button" id="dcno">✘ إجابة خاطئة</button></div></div>`;
+    body.appendChild(ov);WSFX.pop(3);if(q.a)$("#dcsa").onclick=e=>{$("#dcan").hidden=false;e.currentTarget.remove()};
+    const fin=ok=>{ov.remove();done.push(n);store.set("diceqdone",done);if(ok){award(wsTeam);WSFX.fanfare();celebrate("إجابة صحيحة! 🎉")}else WSFX.undo();nextTeam();render()};
+    $("#dcok").onclick=()=>fin(true);$("#dcno").onclick=()=>fin(false)}
+  render()}
+/* 🏁 team race */
+function diceRace(){const AR=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);const body=$("#ovbody");const N=30,COLS=6;
+  const SP={4:"star",9:"q",12:"dcbk",15:"star",18:"q",21:"dcbk",24:"q",27:"star"};
+  let pos=store.get("dicerace",null);if(!Array.isArray(pos)||pos.length!==teams.length)pos=teams.map(()=>0);let busy=false,won=pos.findIndex(p=>p>=N);
+  const save=()=>store.set("dicerace",pos);
+  const cellOf=k=>{const r=Math.floor((k-1)/COLS),c=(k-1)%COLS;return {row:5-r,col:r%2?COLS-c:c+1}};
+  function render(msg){
+    body.innerHTML=`<div class="stage dcstage" style="--dcf:#fffaf0;--dcp:#173b45;--dce:#e6b100">${dcTabs("race")}
+      <div class="dcraceWrap"><div class="dcrace">${Array.from({length:N},(_,i)=>{const k=i+1,p=cellOf(k),s=SP[k];return `<div class="dccell${s?" "+s:""}${k===N?" fin":""}" style="grid-row:${p.row};grid-column:${p.col}"><em>${AR(k)}</em>${k===N?"🏆":s==="star"?"⭐":s==="q"?"❓":s==="dcbk"?"↩":""}</div>`}).join("")}
+        <div class="dcstart">🚩 البداية</div>${pos.map((p,i)=>tokenHTML(i,p)).join("")}</div>
+      <div class="dcside"><div class="dcmini"><div class="dcrow" id="drr">${dcDie()}</div></div>
+        <div class="dclegend"><span>⭐ تقدّم خطوتين</span><span>❓ سؤال: الصحيح يتقدم خطوتين</span><span>↩ ارجع خطوتين</span></div>
+        <div class="dcturn" style="--tc:${TCOL[wsTeam%8]}">الدور: <b>${escapeHtml(teams[wsTeam]?.name||"الفريق")}</b></div></div></div>
+      <div class="msg" id="msg">${msg||(won>=0?`🏆 فاز ${escapeHtml(teams[won].name)}!`:"ارموا النرد وتقدّموا على المسار")}</div>
+      <div class="acts"><button class="bigbtn coral" id="drroll" type="button"${won>=0?" disabled":""}>🎲 ارمِ النرد</button><button class="mini" id="drq" type="button">✏️ أسئلة المربعات ❓</button><button class="mini" id="drn" type="button">↺ سباق جديد</button></div></div>`;
+    dcBindTabs();$("#drq").onclick=()=>dcQEditor(()=>render());$("#drn").onclick=()=>{pos=teams.map(()=>0);won=-1;save();WSFX.whoosh();render()};
+    $("#drroll").onclick=roll}
+  function tokenHTML(i,p){const same=pos.filter((x,j)=>x===p&&j<i).length;if(p===0)return `<span class="dctok" style="--tc:${TCOL[i%8]};grid-row:6;grid-column:${i+1};--o:0px" title="${escapeHtml(teams[i].name)}">${AR(i+1)}</span>`;
+    const c=cellOf(Math.min(p,N));return `<span class="dctok" style="--tc:${TCOL[i%8]};grid-row:${c.row};grid-column:${c.col};--o:${same*10}px" title="${escapeHtml(teams[i].name)}">${AR(i+1)}</span>`}
+  function step(i,to,cb){const dir=to>pos[i]?1:-1;const iv=setInterval(()=>{pos[i]+=dir;const tk=body.querySelectorAll(".dctok")[i],c=cellOf(Math.max(1,pos[i]));if(pos[i]>0){tk.style.gridRow=c.row;tk.style.gridColumn=c.col}tk.classList.remove("hop");void tk.offsetWidth;tk.classList.add("hop");tone(dir>0?600+pos[i]*12:300,.05,.07,"triangle");if(pos[i]===to){clearInterval(iv);setTimeout(cb,250)}},230)}
+  function roll(){if(busy||won>=0)return;busy=true;const i=wsTeam;$("#msg").className="msg";$("#msg").textContent="النرد يتدحرج…";
+    dcRollDice($("#drr"),([v])=>{$("#msg").textContent=`${teams[i].name}: ${AR(v)} ${v>2?"خطوات":v===2?"خطوتان":"خطوة"}`;const to=Math.min(N,pos[i]+v);step(i,to,()=>land(i))})}
+  function land(i){const p=pos[i];save();
+    if(p>=N){won=i;busy=false;award(i,3);WSFX.fanfare();celebrate(`🏆 ${teams[i].name} يصل أولًا!`,true);render(`🏆 فاز ${escapeHtml(teams[i].name)} بالسباق! +٣ نقاط`);return}
+    const s=SP[p];
+    if(s==="star"){WSFX.sparkle();$("#msg").textContent="⭐ نجمة! تقدّموا خطوتين";return setTimeout(()=>step(i,Math.min(N,p+2),()=>land(i)),500)}
+    if(s==="dcbk"){WSFX.boing();$("#msg").textContent="↩ ارجعوا خطوتين";return setTimeout(()=>step(i,Math.max(1,p-2),()=>end()),500)}
+    if(s==="q"){const Q=dcQs();if(!Q.length){WSFX.sparkle();$("#msg").textContent="❓ لا توجد أسئلة، فهذه نجمة! تقدّموا خطوتين";return setTimeout(()=>step(i,Math.min(N,p+2),()=>land(i)),500)}
+      const q=Q[Math.random()*Q.length|0],ov=document.createElement("div");ov.className="dcmodal";
+      ov.innerHTML=`<div class="dcmbox qcard"><span class="dcqn">❓</span><h3>${escapeHtml(q.q)}</h3>${q.a?`<button class="mini" type="button" id="dcsa">👁 أظهر الإجابة</button><p class="dcans" id="dcan" hidden>${escapeHtml(q.a)}</p>`:""}<p class="dcwho">يجيب: <b>${escapeHtml(teams[i].name)}</b></p><div class="acts"><button class="bigbtn" type="button" id="dcok">✔ صحيحة: تقدّم خطوتين</button><button class="bigbtn coral" type="button" id="dcno">✘ خاطئة: ابقَ مكانك</button></div></div>`;
+      body.appendChild(ov);WSFX.pop(3);if(q.a)$("#dcsa").onclick=e=>{$("#dcan").hidden=false;e.currentTarget.remove()};
+      $("#dcok").onclick=()=>{ov.remove();award(i);WSFX.fanfare();step(i,Math.min(N,p+2),()=>land(i))};$("#dcno").onclick=()=>{ov.remove();WSFX.undo();end()};return}
+    end()}
+  function end(){save();busy=false;nextTeam();render()}
+  render()}
 
 /* 6) coin */
 function playCoin(){
