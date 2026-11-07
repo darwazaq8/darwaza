@@ -644,6 +644,72 @@ footer b{color:var(--ink)}
 .mpcard input{width:100%;font:inherit;font-size:13px;border:2px solid var(--line);border-radius:10px;padding:5px 8px;background:var(--bg,#fff);color:inherit;min-width:0}
 .mpcard .del{position:absolute;top:12px;left:12px;border:0;border-radius:999px;background:rgba(255,255,255,.9);cursor:pointer;width:30px;height:30px}
 .mpcard small{color:var(--ink-soft);font-size:12px}
+/* 🎱 draw machine */
+.bgic{font-size:22px;line-height:1}.bgrange{display:flex;gap:16px;flex-wrap:wrap}.bgrange input{font:inherit;width:90px;padding:6px 8px;border-radius:10px;border:2px solid #0002;margin-inline-start:6px}
+.bgset textarea{font:inherit;padding:8px;border-radius:12px;border:2px solid #0002;width:100%;box-sizing:border-box}
+.bgarea{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:24px 40px;margin:10px 0 16px;min-height:300px}
+.bgm{position:relative;width:240px;height:300px;flex:none}
+.bgdome{position:absolute;left:20px;top:0;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffffffee,#dff3ffaa 45%,#9fd3f099);border:6px solid #c9d7e2;overflow:hidden;box-shadow:inset 0 -10px 30px #0001}
+.bgmix i{position:absolute;left:var(--x);top:var(--y);width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 12%,var(--bc) 14%);box-shadow:0 2px 3px #0003;animation:bgBob 1.6s ease-in-out var(--d) infinite alternate}
+.bgshine{position:absolute;top:18px;left:34px;width:50px;height:26px;border-radius:50%;background:#fff9;transform:rotate(-30deg)}
+.bgneck{position:absolute;left:100px;top:190px;width:40px;height:30px;background:#c9d7e2}
+.bgbase{position:absolute;left:30px;top:214px;width:180px;height:80px;border-radius:18px 18px 10px 10px;background:linear-gradient(#ff7a6b,#d94f42);box-shadow:0 6px 0 #a83a30}
+.bgcrank{position:absolute;right:-26px;top:20px;width:30px;height:12px;border-radius:6px;background:#8a8f99;transform-origin:left center}
+.bgcrank::after{content:"";position:absolute;right:-6px;top:-10px;width:16px;height:16px;border-radius:50%;background:#ffc23d}
+.bgchute{position:absolute;left:96px;top:270px;width:48px;height:22px;border-radius:0 0 14px 14px;background:#333}
+.bgm.balls.spin .bgmix i{animation:bgMix .25s linear infinite}.bgm.balls.spin .bgcrank{animation:bgCrank .5s linear infinite}.bgm.spin .bgdome{animation:bgShake .2s infinite}
+.bgcup{position:absolute;left:30px;bottom:0;width:180px;height:280px}
+.bgsticks{position:absolute;left:0;right:0;bottom:120px;height:140px}
+.bgsticks i{position:absolute;bottom:0;left:var(--l,46%);width:18px;height:var(--h);border-radius:9px 9px 3px 3px;background:linear-gradient(90deg,#e8c48f,#d9a866);transform:rotate(var(--r));transform-origin:bottom center;box-shadow:inset 0 6px 0 var(--bc)}
+.bgsticks i.pc{width:16px;border-radius:2px;background:linear-gradient(90deg,var(--bc) 0 30%,color-mix(in srgb,var(--bc) 70%,#000) 30% 70%,var(--bc) 70%);box-shadow:none}
+.bgsticks i.pc::before{content:"";position:absolute;top:-16px;left:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:16px solid #f1d2a4}
+.bgsticks i.pc::after{content:"";position:absolute;top:-16px;left:5px;border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:6px solid #333}
+.bgcupb{position:absolute;left:10px;right:10px;bottom:0;height:140px;border-radius:12px 12px 30px 30px;background:linear-gradient(#ff9ec4,#f06aa6);box-shadow:0 6px 0 #c2185b;display:grid;place-items:center}.bgcupb b{font-size:46px}
+.bgcupb.pen{background:repeating-linear-gradient(90deg,#2f9fe0 0 20px,#5cb6ee 20px 40px);box-shadow:0 6px 0 #1d6fa8}
+.bgm.spin .bgcup{animation:bgShake .15s infinite}.bgm.spin .bgsticks i{animation:bgJig .2s infinite alternate}
+.bgout{min-width:260px;min-height:200px;display:grid;place-items:center}.bgwait{opacity:.6;font-weight:700}
+.bgprize.pop{animation:bgPop .6s cubic-bezier(.3,1.6,.5,1)}
+.bgprize.ball{width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 10%,var(--bc) 12%,color-mix(in srgb,var(--bc) 75%,#000));display:grid;place-items:center;box-shadow:0 12px 24px #0003}
+.bgprize.ball span{background:#fff;border-radius:50%;min-width:110px;min-height:110px;padding:6px;box-sizing:border-box;display:grid;place-items:center;font-family:Lalezar,serif;font-size:clamp(26px,5vw,54px);color:#222;text-align:center;line-height:1.1;word-break:break-word}
+.bgprize.stick{display:flex;align-items:center;filter:drop-shadow(0 10px 16px #0003)}
+.bgice{width:90px;height:110px;border-radius:50px 14px 14px 50px;background:var(--bc);margin-left:-8px;order:2}
+.bgwood{order:1;background:linear-gradient(#efd3a6,#d9a866);border-radius:40px 0 0 40px;padding:18px 26px 18px 40px;font-family:Lalezar,serif;font-size:clamp(26px,5vw,48px);color:#5e3b1f;min-width:120px;text-align:center}
+.bgprize.pencil{display:flex;align-items:center;filter:drop-shadow(0 10px 16px #0003)}
+.bgtip{width:0;height:0;border-top:36px solid transparent;border-bottom:36px solid transparent;border-left:0;border-right:54px solid #f1d2a4;position:relative}
+.bgtip::after{content:"";position:absolute;left:-2px;top:-10px;border-top:10px solid transparent;border-bottom:10px solid transparent;border-right:16px solid #333;right:auto;margin-left:38px}
+.bgbody{height:72px;display:grid;place-items:center;padding:0 30px;min-width:150px;background:linear-gradient(var(--bc) 0 33%,color-mix(in srgb,var(--bc) 78%,#000) 33% 66%,var(--bc) 66%);font-family:Lalezar,serif;font-size:clamp(24px,4.6vw,44px);color:#fff;text-shadow:0 2px 0 #0004}
+.bgerase{width:40px;height:72px;background:linear-gradient(90deg,#c0c0c0 0 40%,#ff9ec4 40%);border-radius:0 12px 12px 0}
+.bghist{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}.bgh{background:var(--bc);color:#fff;font-weight:800;border-radius:99px;padding:3px 12px;font-size:15px}.bgh.new{outline:3px solid #ffc23d}
+@keyframes bgBob{to{transform:translateY(-6px)}}@keyframes bgMix{0%{transform:translate(0,0)}25%{transform:translate(30px,-40px)}50%{transform:translate(-20px,-10px)}75%{transform:translate(20px,30px)}100%{transform:translate(0,0)}}
+@keyframes bgCrank{to{transform:rotate(360deg)}}@keyframes bgShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}75%{transform:translate(3px,-2px)}}
+@keyframes bgJig{to{translate:0 -14px}}@keyframes bgPop{from{transform:scale(.2) translateY(60px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.bgmix i,.bgm *{animation:none!important}}
+/* ☁️ word cloud */
+.wcicon i{font-size:11px!important;font-weight:800;padding:2px 6px;border-radius:8px;background:#fff;color:var(--c)}
+.wcq{margin:4px 0 10px;text-align:center;font-size:clamp(18px,3vw,26px)}.wcq b{color:#2f9fe0}
+.wcset{margin:0 auto 12px;max-width:760px;background:#fff8;border:2px solid #0001;border-radius:16px;padding:6px 12px}.wcset summary{cursor:pointer;font-weight:800;padding:4px}
+.wcsetb{display:flex;flex-direction:column;gap:12px;padding:8px 2px}.wcrow{display:flex;flex-direction:column;gap:6px;font-weight:700}.wcrow small{font-weight:400;opacity:.7}.wcrow input[type=range]{width:100%}
+.wcopts{display:flex;flex-wrap:wrap;gap:8px}.wcopt{display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;font-size:12px;background:#fff;border:2px solid #0001;border-radius:12px;padding:6px 8px;cursor:pointer;min-width:64px;color:#333}
+.wcopt.on{border-color:#2f9fe0;box-shadow:0 0 0 3px #2f9fe033}.wcopt i{display:inline-block;width:12px;height:12px;border-radius:50%;margin:0 1px}.wcopt em{font-style:normal}
+.wcopt svg{width:48px;height:32px;fill:#2f9fe0}.wcopt .wcsw{width:44px;height:26px;border-radius:8px}.wcopt input[type=color]{width:40px;height:26px;border:0;padding:0;background:none}
+.wcsel{font:inherit;font-weight:700;padding:8px 10px;border-radius:12px;border:2px solid #0002;background:#fff;color:#333;max-width:280px}
+.wcchk{display:flex;gap:8px;align-items:center;font-weight:700}
+.wcsky{position:relative;border-radius:22px;overflow:hidden;padding:26px 18px;min-height:300px;display:flex;align-items:center;justify-content:center}
+.wcshape{position:absolute;inset:4% 3%;width:94%;height:92%;filter:drop-shadow(0 8px 14px #0002)}
+.wcsun{position:absolute;top:12px;left:16px;width:56px;height:56px;border-radius:50%;background:radial-gradient(#fff6b0,#ffc23d);box-shadow:0 0 30px #ffd76a}
+.wcst{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff;animation:wcTw 2s infinite alternate}.wcst.s1{top:14%;left:10%}.wcst.s2{top:22%;right:14%;animation-delay:.7s}.wcst.s3{bottom:16%;left:22%;animation-delay:1.3s}
+.wcwords{position:relative;z-index:2;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 14px;max-width:78%;padding:30px 0}
+.wcw{font:inherit;font-weight:800;font-size:calc(19px*var(--fs));color:var(--wc);background:#fff;border:3px solid var(--wc);border-radius:14px;padding:6px 14px;cursor:pointer;transform:rotate(var(--r));box-shadow:0 4px 0 #0002;animation:wcFloat 3s ease-in-out var(--d) infinite alternate;transition:opacity .25s,transform .2s}
+.wcw:hover{transform:rotate(0) scale(1.08)}.wcw.used{opacity:.15;pointer-events:none;animation:none}
+.wcsky.dark .wcw{background:#ffffff14;color:#fff;border-color:var(--wc)}
+.wcline{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:62px;margin:14px auto 6px;max-width:900px;padding:10px;border:3px dashed #0002;border-radius:16px;background:#fff8}
+.wcline.bad{animation:shake .4s}.wcph{opacity:.35;letter-spacing:4px}
+.wcpiece{font:inherit;font-weight:800;font-size:19px;color:#fff;background:var(--wc,#16a34a);border:0;border-radius:12px;padding:6px 14px;cursor:pointer;animation:wcIn .3s}
+.wcpiece.ok{background:#16a34a}.wcpiece.wrong{outline:3px solid #dc2626;outline-offset:2px}
+.wcstage.ok .wcsky{box-shadow:0 0 0 5px #16a34a55}
+@keyframes wcFloat{to{translate:0 -7px}}@keyframes wcIn{from{transform:scale(.5);opacity:0}}@keyframes wcTw{to{opacity:.3}}
+@media (max-width:560px){.wcwords{max-width:92%;gap:8px}.wcw{font-size:calc(16px*var(--fs))}.wcsky{min-height:260px;padding:16px 6px}}
+@media (prefers-reduced-motion:reduce){.wcw,.wcst{animation:none}}
 /* gate scenes */
 .inside .scene{position:absolute;inset:0;width:100%;height:100%}
 .inside small{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:2;background:rgba(0,0,0,.32);white-space:nowrap}
@@ -1001,6 +1067,18 @@ footer b{color:var(--ink)}
       <b>تركيب الصورة</b>
       <span>حمّل صورة فتتبعثر قطعها، والطلاب يعيدون ترتيبها</span>
       <em id="wsn-puzzle"></em>
+    </button>
+    <button class="wscard" type="button" data-g="cloud" style="--c:var(--sea)">
+      <span class="wsicon wcicon" aria-hidden="true"><i>المفهوم</i><i>هو</i><i>حالة</i><i>من</i></span>
+      <b>سحابة الكلمات</b>
+      <span>كلمات التعريف مبعثرة في سحابة، رتّبوها لتكوّنوا المفهوم أو التعريف · تختار أنت عدد القطع والألوان وشكل السحابة وخلفيتها</span>
+      <em id="wsn-cloud"></em>
+    </button>
+    <button class="wscard" type="button" data-g="bingo" style="--c:var(--coral)">
+      <span class="wsicon" aria-hidden="true"><i>٧</i><i>١٢</i><i>٣</i></span>
+      <b>آلة القرعة</b>
+      <span>أدر الآلة لتخرج كرة أو عود مثلجات أو قلم ملوّن عليه رقم أو اسم متعلم عشوائي · أرقام من اختيارك أو أسماء تضيفها بنفسك</span>
+      <em>🎱 جاهزة للعب</em>
     </button>
     <button class="wscard" type="button" data-g="dice" style="--c:var(--sun)">
       <span class="wsicon" aria-hidden="true"><i>⚀</i><i>⚂</i><i>⚄</i></span>
@@ -1594,9 +1672,12 @@ const WS={
   help:"اكتب الكلمة، ثم اكتب تلميحًا عنها. اختر شكل اللعبة من الأعلى: البالونات أو رجل الثلج أو الجسر أو الصاروخ. لإضافة كلمة أخرى اضغط «أضف كلمة أخرى»."},
  memory:{title:"البطاقات المتشابهة",
   help:"اكتب في كل سطر المصطلح ومعناه بينهما العلامة | مثل: الهو | مستودع الغرائز. إذا كتبت كلمة واحدة فقط تظهر على بطاقتين متشابهتين. من ٢ إلى ١٢ سطرًا."},
+ cloud:{title:"سحابة الكلمات",
+  help:"اكتب في كل سطر المفهوم ثم العلامة | ثم تعريفه، مثل: التوافق | عملية دينامية مستمرة تتناول السلوك والبيئة بالتغيير والتعديل. ستتبعثر كلمات التعريف في سحابة، والطلاب يرتبونها. يمكنك كتابة جملة فقط بدون مفهوم. ومن داخل اللعبة اضغط «⚙️ شكل السحابة» لتختار عدد القطع والألوان والشكل والخلفية."},
  puzzle:{title:"تركيب الصورة"},
  picture:{title:"الصورة الغامضة"},
  dice:{title:"حجر النرد"},
+ bingo:{title:"آلة القرعة"},
  coin:{title:"عملة الحظ"}
 };
 function wsText(g){return store.get("ws:"+g,null)??""}
@@ -1607,7 +1688,7 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random(
 function updateWsCounts(){Object.keys(WS).forEach(g=>{const el=$("#wsn-"+g);if(!el)return;
   if(g==="puzzle"){el.textContent=pzImage()?"🖼️ الصورة جاهزة":"✏️ حمّل صورة لتبدأ";return}
   if(g==="picture"){if(!MP_READY){el.textContent="";return}const c=mpChosen().length,m=mpMine().length;el.textContent=!c?"✏️ اختر الصور لتبدأ":`🖼️ ${c} ${c===1?"صورة مختارة":c===2?"صورتان مختارتان":"صور مختارة"} للعب${m?` · منها من صورك ${mpMine().filter(p=>mpIsOn(p.id)).length}`:""}`;return}
-  const k=wsItems(g).length;el.textContent=g==="memory"?(k>=2?`🖼️ صور جاهزة + ${Math.min(k,12)} أزواج من كلماتك`:"🖼️ ١٢ صورة جاهزة · ويمكن إضافة كلماتك"):!k?"✏️ أضف كلمتك لتبدأ":k===1?"كلمة واحدة جاهزة":`${k} كلمات جاهزة`})}
+  const k=wsItems(g).length;el.textContent=g==="cloud"?(!k?"✏️ أضف المفاهيم وتعريفاتها لتبدأ":`☁️ ${k} ${k===1?"تعريف جاهز":k===2?"تعريفان جاهزان":"تعريفات جاهزة"}`):g==="memory"?(k>=2?`🖼️ صور جاهزة + ${Math.min(k,12)} أزواج من كلماتك`:"🖼️ ١٢ صورة جاهزة · ويمكن إضافة كلماتك"):!k?"✏️ أضف كلمتك لتبدأ":k===1?"كلمة واحدة جاهزة":`${k} كلمات جاهزة`})}
 updateWsCounts();
 
 let wsGame=null,wsTeam=0,wsCleanup=null;
@@ -1627,13 +1708,15 @@ function openWs(g){
 }
 function startWs(){if(wsCleanup){wsCleanup();wsCleanup=null}
   $("#ovedit").textContent=wsGame==="puzzle"?"🖼️ تغيير الصورة":wsGame==="picture"?"🖼️ إدارة الصور":"✏️ تعديل الكلمات";
-  $("#ovedit").hidden=wsGame==="dice"||wsGame==="coin";
+  $("#ovedit").hidden=wsGame==="dice"||wsGame==="coin"||wsGame==="bingo";
   if(wsGame==="puzzle"){playPuzzle();return}
   if(wsGame==="picture"){playPicture();return}
   if(wsGame==="dice"){playDice();return}
+  if(wsGame==="bingo"){playBingo();return}
   if(wsGame==="coin"){playCoin();return}
   const items=wsItems(wsGame);
   if(wsGame==="memory"){playMemory(items);return}
+  if(wsGame==="cloud"){if(!items.length){openEditor();return}playCloud(items);return}
   if(WS[wsGame].rows&&!items.length){openEditor();return}
   if(!WS[wsGame].rows&&items.length<2){$("#ovbody").innerHTML=`<div class="stage"><div class="emptyws">✏️</div><h3 class="emptyh">لا توجد كلمات بعد</h3><p class="counter">اضغط الزر واكتب كلمات اللعبة بنفسك، ثم ابدأ اللعب مع الفرق.</p><button class="bigbtn" type="button" id="addw">أضف الكلمات</button></div>`;$("#addw").onclick=()=>$("#ovedit").click();return}
   ({scramble:playScramble,secret:playSecret,rescue:playRescue,mystery:playMystery,memory:playMemory})[wsGame](items)}
@@ -1665,11 +1748,123 @@ $("#edsave").onclick=()=>{const rows=!!WS[wsGame].rows,err=$("#ederr");
   const txt=rows?[...document.querySelectorAll("#edrows .edrow")].map(r=>{const [w,h]=r.querySelectorAll("input");const a=w.value.replace(/\|/g,"/").trim(),b=h.value.replace(/\|/g,"/").trim();return a?(b?a+" | "+b:a):""}).filter(Boolean).join("\n"):$("#edtext").value;
   const items=wsItems(wsGame,txt);
   if(rows&&!items.length){err.textContent=wsGame==="mystery"?"اكتب ما بداخل الصندوق أولًا.":(wsGame==="secret"||wsGame==="rescue")?"اكتب كلمة السر أولًا.":"اكتب الكلمة أولًا.";err.hidden=false;return}
-  if(!rows&&items.length<2){err.textContent="اكتب سطرين على الأقل حتى تبدأ اللعبة.";err.hidden=false;return}
+  if(!rows&&items.length<(wsGame==="cloud"?1:2)){err.textContent=wsGame==="cloud"?"اكتب سطرًا واحدًا على الأقل: المفهوم | التعريف.":"اكتب سطرين على الأقل حتى تبدأ اللعبة.";err.hidden=false;return}
+  if(wsGame==="cloud"){const sh=items.find(it=>(it.b||it.a).trim().split(/\s+/).length<2);if(sh){err.textContent=`«${sh.b||sh.a}» قصيرة جدًا، اكتب جملة أو تعريفًا من كلمتين على الأقل.`;err.hidden=false;return}}
   if(wsGame==="memory"&&items.length>12){err.textContent="البطاقات تتسع لـ ١٢ زوجًا كحد أقصى. احذف بعض الأسطر.";err.hidden=false;return}
   if(wsGame==="scramble"){const many=items.find(it=>it.a.trim().split(/\s+/).length>3);if(many){err.textContent=`«${many.a}» فيها أكثر من ثلاث كلمات. اكتب كلمة أو عبارة من كلمتين أو ثلاث فقط.`;err.hidden=false;return}}
   if(wsGame==="scramble"){const short=items.find(it=>stripMarks(it.a).replace(/\s/g,"").length<2);if(short){err.textContent=`الكلمة «${short.a}» قصيرة جدًا للترتيب.`;err.hidden=false;return}}
   store.set("ws:"+wsGame,txt);updateWsCounts();$("#editor").hidden=true;$("#ovbody").hidden=false;chord();startWs()};
+
+
+
+/* 🎱 draw machine — random numbers or names; themes: bingo balls, ice-cream sticks, coloured pencils */
+const BG_COL=["#ff6b6b","#ffb020","#2fbf9b","#8b7cf6","#2f9fe0","#f06aa6","#16a3a3","#e0892f"];
+const BG_TH={balls:{n:"كرات بينغو",btn:"أدر الآلة 🎱"},sticks:{n:"أعواد المثلجات",btn:"اسحب عودًا 🍦"},pencils:{n:"أقلام ملونة",btn:"اسحب قلمًا ✏️"}};
+function bgOpts(){const o=store.get("wsbingo",null)||{};return {mode:o.mode||"num",from:o.from??1,to:o.to??30,names:o.names||"",theme:o.theme||"balls",drawn:o.drawn||[],key:o.key||""}}
+function playBingo(){
+  const AR=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+  let O=bgOpts(),busy=false;const body=$("#ovbody");const save=()=>store.set("wsbingo",O);
+  const pool=()=>{if(O.mode==="names")return O.names.split(/\n|،|,/).map(s=>s.trim()).filter(Boolean);const a=Math.min(+O.from||1,+O.to||1),b=Math.max(+O.from||1,+O.to||1);return Array.from({length:Math.min(b-a+1,500)},(_,i)=>String(a+i))};
+  const key=()=>O.mode+"|"+(O.mode==="names"?O.names:O.from+"-"+O.to);
+  if(O.key!==key()){O.drawn=[];O.key=key();save()}
+  const colOf=v=>BG_COL[[...v].reduce((s,c)=>s+c.charCodeAt(0),0)%BG_COL.length];
+  const fmt=v=>O.mode==="num"?AR(v):escapeHtml(v);
+  function rattle(d){try{if(!sound)return;const c=ctx();if(!c)return;const n=Math.round(d*14);for(let i=0;i<n;i++){const t0=c.currentTime+i/14+Math.random()*.03,o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=900+Math.random()*900;g.gain.setValueAtTime(.035,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.05);o.connect(g).connect(c.destination);o.start(t0);o.stop(t0+.06)}}catch(e){}}
+  function machine(){const P=pool(),left=P.filter(v=>!O.drawn.includes(v)),sample=(left.length?left:P).slice(0,24);
+    if(O.theme==="balls")return `<div class="bgm balls"><div class="bgdome"><div class="bgmix">${sample.slice(0,16).map((v,i)=>`<i style="--bc:${colOf(v)};--x:${(i*37)%80+6}%;--y:${(i*53)%60+18}%;--d:${(i*.13).toFixed(2)}s"></i>`).join("")}</div><span class="bgshine"></span></div><div class="bgneck"></div><div class="bgbase"><span class="bgcrank"></span></div><div class="bgchute"></div></div>`;
+    if(O.theme==="sticks")return `<div class="bgm sticks"><div class="bgcup"><div class="bgsticks">${sample.slice(0,12).map((v,i)=>`<i style="--bc:${colOf(v)};--r:${(i-5.5)*4}deg;--h:${90+(i*29)%50}px;--l:${14+i*6.4}%"></i>`).join("")}</div><div class="bgcupb"><b>🍦</b></div></div></div>`;
+    return `<div class="bgm pencils"><div class="bgcup pen"><div class="bgsticks">${sample.slice(0,12).map((v,i)=>`<i class="pc" style="--bc:${colOf(v)};--r:${(i-5.5)*3.5}deg;--h:${100+(i*31)%50}px;--l:${14+i*6.4}%"></i>`).join("")}</div><div class="bgcupb pen"></div></div></div>`}
+  function prize(v){const c=colOf(v);
+    if(O.theme==="balls")return `<div class="bgprize ball" style="--bc:${c}"><span>${fmt(v)}</span></div>`;
+    if(O.theme==="sticks")return `<div class="bgprize stick" style="--bc:${c}"><span class="bgice"></span><span class="bgwood">${fmt(v)}</span></div>`;
+    return `<div class="bgprize pencil" style="--bc:${c}"><span class="bgtip"></span><span class="bgbody">${fmt(v)}</span><span class="bgerase"></span></div>`}
+  function render(last){const P=pool(),left=P.filter(v=>!O.drawn.includes(v));
+    body.innerHTML=`<div class="stage bgstage">
+      <details class="wcset bgset"${P.length?"":" open"}><summary>⚙️ إعدادات القرعة</summary><div class="wcsetb">
+        <div class="wcrow"><span>ماذا تسحب الآلة؟</span><div class="wcopts"><button type="button" class="wcopt${O.mode==="num"?" on":""}" data-mode="num"><b class="bgic">١٢٣</b><em>أرقام</em></button><button type="button" class="wcopt${O.mode==="names"?" on":""}" data-mode="names"><b class="bgic">أ ب</b><em>أسماء المتعلمين</em></button></div></div>
+        ${O.mode==="num"?`<div class="wcrow"><span>نطاق الأرقام</span><div class="bgrange"><label>من <input type="number" id="bgfrom" min="0" max="999" value="${O.from}"></label><label>إلى <input type="number" id="bgto" min="0" max="999" value="${O.to}"></label></div></div>`
+        :`<label class="wcrow"><span>أسماء المتعلمين (اسم في كل سطر)</span><textarea id="bgnames" rows="6" dir="rtl" placeholder="أحمد&#10;سارة&#10;يوسف">${escapeHtml(O.names)}</textarea><small>يمكنك أيضًا الفصل بالفاصلة «،»</small></label><button type="button" class="mini" id="bgsave">✔ احفظ الأسماء</button>`}
+        <div class="wcrow"><span>شكل الآلة</span><div class="wcopts">${Object.entries(BG_TH).map(([k,th])=>`<button type="button" class="wcopt${O.theme===k?" on":""}" data-th="${k}"><b class="bgic">${k==="balls"?"🎱":k==="sticks"?"🍦":"✏️"}</b><em>${th.n}</em></button>`).join("")}</div></div>
+      </div></details>
+      <div class="bgarea">${machine()}<div class="bgout" id="bgout">${last?prize(last):`<p class="bgwait">${P.length?"اضغط الزر لتبدأ القرعة":"أضف الأسماء من الإعدادات أولًا"}</p>`}</div></div>
+      <div class="acts"><button class="bigbtn" id="bggo" type="button"${!left.length?" disabled":""}>${left.length?BG_TH[O.theme].btn:"انتهت القرعة"}</button><button class="mini" id="bgreset" type="button">↺ قرعة جديدة</button></div>
+      <div class="counter">${O.mode==="num"?"أرقام":"أسماء"} مسحوبة: ${AR(O.drawn.length)} من ${AR(P.length)}</div>
+      <div class="bghist">${O.drawn.slice().reverse().map((v,i)=>`<span class="bgh${i===0?" new":""}" style="--bc:${colOf(v)}">${fmt(v)}</span>`).join("")}</div></div>`;
+    body.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{O.mode=b.dataset.mode;O.drawn=[];O.key=key();save();render()});
+    body.querySelectorAll("[data-th]").forEach(b=>b.onclick=()=>{O.theme=b.dataset.th;save();tone(660,.06);render(O.drawn[O.drawn.length-1]);$(".bgset").open=true});
+    const nb=()=>{O.from=+$("#bgfrom").value;O.to=+$("#bgto").value;O.drawn=[];O.key=key();save();render();$(".bgset").open=true};
+    if($("#bgfrom")){$("#bgfrom").onchange=nb;$("#bgto").onchange=nb}
+    if($("#bgsave"))$("#bgsave").onclick=()=>{O.names=$("#bgnames").value;O.drawn=[];O.key=key();save();chord();render()};
+    $("#bgreset").onclick=()=>{O.drawn=[];save();tone(400,.08);render()};
+    $("#bggo").onclick=()=>{if(busy)return;const L=pool().filter(v=>!O.drawn.includes(v));if(!L.length)return;busy=true;
+      const v=L[Math.random()*L.length|0],m=body.querySelector(".bgm");m.classList.add("spin");$("#bgout").innerHTML="";rattle(1.6);
+      setTimeout(()=>{m.classList.remove("spin");m.classList.add("drop");O.drawn.push(v);save();
+        setTimeout(()=>{busy=false;render(v);const pr=$("#bgout .bgprize");pr.classList.add("pop");[784,988,1319].forEach((f,i)=>tone(f,.18,.07,"triangle",i*.08));burstAt(pr,26)},450)},1700)};
+  }
+  render(O.drawn[O.drawn.length-1]);
+}
+
+/* ☁️ word cloud — scattered words of a definition; teams rebuild it in order */
+const WC_PAL={rainbow:{n:"قوس قزح",c:["#ff7a6b","#f0a500","#2fbf9b","#8b7cf6","#2f9fe0","#f06aa6"]},calm:{n:"ألوان هادئة",c:["#7fb7be","#b8a1d9","#e6a57e","#8fbf8f","#d98ca9","#86a8d9"]},gold:{n:"رملي ذهبي",c:["#a8783f","#c98a2e","#8a5a34","#d9a441","#6e4224","#b5834a"]},bold:{n:"ألوان قوية",c:["#d62839","#1d4ed8","#0f766e","#7c3aed","#ea580c","#be185d"]}};
+const WC_SHAPE={cloud:{n:"سحابة",p:"M70 220c-38 0-60-26-60-56 0-28 22-50 50-54 2-42 36-76 80-76 30 0 56 16 70 40 10-6 22-10 36-10 40 0 72 30 74 68 32 4 56 30 56 62 0 36-28 58-64 58H70z"},bubble:{n:"فقاعة",p:"M200 18c104 0 186 46 186 108s-82 108-186 108c-26 0-50-3-72-8l-70 32 22-50C40 188 14 158 14 126 14 64 96 18 200 18z"},heart:{n:"قلب",p:"M200 246C110 186 18 132 18 70 18 36 46 12 82 12c48 0 82 34 118 70 36-36 70-70 118-70 36 0 64 24 64 58 0 62-92 116-182 176z"},book:{n:"كتاب",p:"M200 48c-40-26-104-34-180-24v196c76-10 140-2 180 24 40-26 104-34 180-24V24c-76-10-140-2-180 24z"},star:{n:"نجمة",p:"M200 8l46 82 92-12-60 72 40 86-118-38-118 38 40-86-60-72 92 12z"}};
+const WC_BG={sky:{n:"سماء",b:"linear-gradient(#8fd3ff,#e6f6ff)",f:"#ffffff",s:"#ffffffee"},sunset:{n:"غروب",b:"linear-gradient(#ff9a76,#ffd59e 70%)",f:"#fff7ec",s:"#fff7ecee"},night:{n:"ليل",b:"radial-gradient(circle at 70% 20%,#3b3f8f,#14163a 70%)",f:"#26295e",s:"#2d3170ee"},board:{n:"سبورة",b:"linear-gradient(#2f5d4b,#24493b)",f:"#356b56",s:"#3b7560ee"},sand:{n:"رمال",b:"linear-gradient(#ffe7b3,#f2cf8c)",f:"#fff8e6",s:"#fff8e6ee"}};
+function wcOpts(){const o=store.get("wscloud",null)||{};return {n:o.n||0,pal:o.pal||"rainbow",shape:o.shape||"cloud",bg:o.bg||"sky",custom:o.custom||"",hide:!!o.hide}}
+function playCloud(items){
+  const order=shuffle(items);let idx=0,solved=0;const body=$("#ovbody");let O=wcOpts();
+  const saveO=()=>store.set("wscloud",O);
+  function chunks(words,n){if(!n||n>=words.length)return words.slice();const out=[],per=words.length/n;for(let i=0;i<n;i++)out.push(words.slice(Math.round(i*per),Math.round((i+1)*per)).join(" "));return out.filter(Boolean)}
+  function round(){
+    const it=order[idx],sent=stripMarks(it.b||it.a).trim().replace(/\s+/g," "),concept=it.b?it.a:"",words=sent.split(" ");
+    const maxN=Math.min(words.length,14),N=O.n?Math.max(2,Math.min(O.n,maxN)):Math.min(words.length,10);
+    const parts=chunks(words,N),cols=O.custom?[O.custom]:WC_PAL[O.pal].c;
+    const deck=shuffle(parts.map((w,i)=>({w,i,col:cols[(i*7+3)%cols.length],rot:(Math.random()*16-8).toFixed(1),fs:(1+Math.random()*.35).toFixed(2),d:(Math.random()*2).toFixed(2)})));
+    let line=[],done=false;const bg=WC_BG[O.bg],dark=O.bg==="night"||O.bg==="board";
+    body.innerHTML=`<div class="stage wcstage" id="stg">
+      <div class="counter">${order.length>1?`التعريف ${idx+1} من ${order.length} · حللتم ${solved}`:"رتّبوا الكلمات بالترتيب الصحيح"}</div>
+      <h3 class="wcq">${concept?(O.hide?`رتّبوا الكلمات لتكتشفوا المفهوم وتعريفه`:`رتّبوا تعريف: <b>${escapeHtml(concept)}</b>`):"رتّبوا الكلمات لتكوّنوا الجملة"}</h3>
+      <details class="wcset"><summary>⚙️ شكل السحابة</summary><div class="wcsetb">
+        <label class="wcrow"><span>عدد القطع (الكلمات المبعثرة)</span><select id="wcn" class="wcsel" aria-label="عدد قطع الكلمات"><option value="0"${O.n?"":" selected"}>تلقائي (${Math.min(words.length,10)})</option>${Array.from({length:maxN-1},(_,i)=>i+2).map(v=>`<option value="${v}"${O.n===v?" selected":""}>${v} ${v<=10?"قطع":"قطعة"}${v===words.length?" · كل كلمة وحدها":""}</option>`).join("")}</select><small>كلما قلّ العدد صارت القطع أطول والترتيب أسهل</small></label>
+        <div class="wcrow"><span>ألوان الكلمات</span><div class="wcopts">${Object.entries(WC_PAL).map(([k,p])=>`<button type="button" class="wcopt${!O.custom&&O.pal===k?" on":""}" data-pal="${k}">${p.c.slice(0,4).map(c=>`<i style="background:${c}"></i>`).join("")}<em>${p.n}</em></button>`).join("")}<label class="wcopt${O.custom?" on":""}"><input type="color" id="wccol" value="${O.custom||"#2f9fe0"}" aria-label="لون من اختيارك"><em>لون من اختيارك</em></label></div></div>
+        <div class="wcrow"><span>شكل السحابة</span><div class="wcopts">${Object.entries(WC_SHAPE).map(([k,s])=>`<button type="button" class="wcopt${O.shape===k?" on":""}" data-shape="${k}"><svg viewBox="0 0 400 260" aria-hidden="true"><path d="${s.p}"/></svg><em>${s.n}</em></button>`).join("")}</div></div>
+        <div class="wcrow"><span>الخلفية</span><div class="wcopts">${Object.entries(WC_BG).map(([k,b])=>`<button type="button" class="wcopt${O.bg===k?" on":""}" data-bg="${k}"><i class="wcsw" style="background:${b.b}"></i><em>${b.n}</em></button>`).join("")}</div></div>
+        ${concept?`<label class="wcchk"><input type="checkbox" id="wchide"${O.hide?" checked":""}> إخفاء اسم المفهوم حتى يُحل التعريف</label>`:""}
+      </div></details>
+      <div class="wcsky${dark?" dark":""}" style="background:${bg.b}">${O.bg==="night"?'<i class="wcst s1"></i><i class="wcst s2"></i><i class="wcst s3"></i>':O.bg==="sky"||O.bg==="sand"?'<i class="wcsun"></i>':""}
+        <svg class="wcshape" viewBox="0 0 400 260" preserveAspectRatio="none" aria-hidden="true"><path d="${WC_SHAPE[O.shape].p}" fill="${bg.f}" stroke="${dark?"#ffffff55":"#00000014"}" stroke-width="3"/></svg>
+        <div class="wcwords" id="wcw"></div></div>
+      <div class="wcline" id="wcl" aria-live="polite"></div>
+      <div class="msg" id="msg" aria-live="polite">اضغطوا على الكلمات بالترتيب لتكوين ${concept?"التعريف":"الجملة"}، واضغطوا على أي كلمة في السطر لإرجاعها</div>
+      <div class="acts"><button class="mini" id="wcclr" type="button">↺ مسح</button><button class="mini" id="wchint" type="button">💡 أول كلمة</button><button class="mini" id="wcshow" type="button">👁 كشف الإجابة</button><button class="bigbtn" id="wcnext" type="button">${idx+1<order.length?"التعريف التالي ←":"من جديد ↻"}</button></div></div>`;
+    const W=$("#wcw"),L=$("#wcl");
+    function draw(){
+      W.innerHTML=deck.map((c,k)=>`<button type="button" class="wcw${line.includes(k)?" used":""}" data-k="${k}" style="--wc:${c.col};--r:${c.rot}deg;--fs:${c.fs};--d:${c.d}s">${escapeHtml(c.w)}</button>`).join("");
+      L.innerHTML=line.length||done?(done&&!line.length?parts.map(p=>`<span class="wcpiece ok">${escapeHtml(p)}</span>`).join(""):line.map((k,p)=>`<button type="button" class="wcpiece${done?" ok":""}" data-p="${p}" style="--wc:${deck[k].col}">${escapeHtml(deck[k].w)}</button>`).join("")):`<span class="wcph">${"⬚ ".repeat(parts.length).trim()}</span>`;
+      W.querySelectorAll(".wcw").forEach(b=>b.onclick=()=>{const k=+b.dataset.k;if(done||line.includes(k))return;line.push(k);tone(500+line.length*35,.06,.06,"triangle");b.classList.add("fly");draw();if(line.length===deck.length)check()});
+      L.querySelectorAll("button.wcpiece").forEach(b=>b.onclick=()=>{if(done)return;line.splice(+b.dataset.p,1);tone(330,.05);draw()})}
+    function check(){const got=line.map(k=>deck[k].w).join(" ");
+      if(got===parts.join(" ")){done=true;solved++;draw();$("#stg").classList.add("ok");$("#msg").className="msg good";
+        $("#msg").innerHTML=`أحسنتم! نقطة لـ ${escapeHtml(teams[wsTeam]?.name||"الفريق")} 🎉${concept?` · <b>${escapeHtml(concept)}</b>`:""}`;
+        if(concept&&O.hide)$(".wcq").innerHTML=`المفهوم: <b>${escapeHtml(concept)}</b>`;
+        burstAt(L,40);award(wsTeam);celebrate(idx+1>=order.length&&order.length>1?"أنهيتم كل التعريفات! 🏆":"ترتيب صحيح! 🎉",idx+1>=order.length&&order.length>1)}
+      else{let p=0;while(p<line.length&&deck[line[p]].w===parts[p])p++;
+        L.classList.remove("bad");void L.offsetWidth;L.classList.add("bad");tone(200,.25,.08,"sawtooth");
+        $("#msg").className="msg bad";$("#msg").textContent=p?`أول ${p===1?"قطعة صحيحة":p===2?"قطعتين صحيحتان":p+" قطع صحيحة"}، والخطأ بعدها. اضغطوا على القطع الخاطئة لإرجاعها`:"الترتيب ليس صحيحًا من البداية، اضغطوا على القطع لإرجاعها وحاولوا مرة ثانية";
+        L.querySelectorAll("button.wcpiece").forEach((b,i)=>{if(i>=p)b.classList.add("wrong")})}}
+    $("#wcclr").onclick=()=>{if(done)return;line=[];$("#msg").className="msg";$("#msg").textContent="";tone(400,.06);draw()};
+    $("#wchint").onclick=()=>{if(done)return;const first=deck.findIndex(c=>c.i===0);line=[first];tone(740,.08);draw();$("#msg").className="msg";$("#msg").textContent="هذه أول قطعة، أكملوا الباقي"};
+    $("#wcshow").onclick=()=>{if(done)return;done=true;line=parts.map((_,i)=>deck.findIndex(c=>c.i===i));draw();$("#msg").className="msg";$("#msg").innerHTML=`هذا هو الترتيب الصحيح${concept?` · <b>${escapeHtml(concept)}</b>`:""}`;if(concept&&O.hide)$(".wcq").innerHTML=`المفهوم: <b>${escapeHtml(concept)}</b>`;tone(400,.15)};
+    $("#wcnext").onclick=()=>{idx++;if(idx>=order.length){idx=0;solved=0}tone(660,.06);round()};
+    const re=()=>{saveO();const open=$(".wcset").open;round();$(".wcset").open=open};
+    $("#wcn").onchange=e=>{O.n=+e.target.value;re()};
+    document.querySelectorAll("[data-pal]").forEach(b=>b.onclick=()=>{O.pal=b.dataset.pal;O.custom="";re()});
+    $("#wccol").onchange=e=>{O.custom=e.target.value;re()};
+    document.querySelectorAll("[data-shape]").forEach(b=>b.onclick=()=>{O.shape=b.dataset.shape;re()});
+    document.querySelectorAll("[data-bg]").forEach(b=>b.onclick=()=>{O.bg=b.dataset.bg;re()});
+    const hc=$("#wchide");if(hc)hc.onchange=e=>{O.hide=e.target.checked;re()};
+    draw();
+  }
+  round();
+}
 
 /* 1) scramble — one word or a phrase of up to three words; each word keeps its own letters */
 function playScramble(items){
