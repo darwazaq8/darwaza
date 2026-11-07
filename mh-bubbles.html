@@ -1,0 +1,738 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>فقاعات التوافق</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: a bright arcade. Pastel candy sky with drifting background bubbles, five quick levels (pop, baskets, scramble, memory, summary) with hearts and combo, and a smiling bubble mascot who talks in a speech bubble. */
+:root {
+  --bg1: #FFD3E6;
+  --bg2: #FFEBB8;
+  --bg3: #C8F1FF;
+  --card: #FFFFFF;
+  --ink: #1B1744;
+  --ink-soft: #5A5683;
+  --line: #E3E0F3;
+  --brand: #7B4DFF;
+  --brand-d: #4F28CC;
+  --good: #0E9F6E;
+  --bad: #E0384B;
+  --c1: #2D9CFF;
+  --c2: #FF4F8B;
+  --c3: #FF9F1C;
+  --c4: #12C2B0;
+  --c5: #8B5CF6;
+  --sun: #FFD23F;
+  --f-display: "Lalezar", "Tajawal", "Segoe UI", Tahoma, sans-serif;
+  --f-body: "Tajawal", "Segoe UI", Tahoma, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  background: var(--bg2) linear-gradient(165deg, var(--bg1) 0%, var(--bg2) 48%, var(--bg3) 100%) fixed;
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.6;
+  padding-block: 12px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+#app { max-width: 640px; margin-inline: auto; position: relative; z-index: 1; }
+button { font-family: inherit; color: inherit; }
+button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+.ic { flex: none; }
+
+/* drifting background bubbles */
+.bgb { position: fixed; bottom: -120px; border-radius: 50%; border: 3px solid rgba(255,255,255,.8); background: radial-gradient(circle at 30% 28%, rgba(255,255,255,.9) 0 14%, rgba(255,255,255,.25) 40%, rgba(255,255,255,.1) 100%); z-index: 0; pointer-events: none; animation: drift linear infinite; }
+@keyframes drift { from { transform: translateY(0) translateX(0); } 50% { transform: translateY(-60vh) translateX(18px); } to { transform: translateY(-125vh) translateX(-12px); } }
+
+/* top bar */
+.top { display: flex; align-items: center; gap: 10px; justify-content: space-between; margin-bottom: 12px; }
+.logo { font-family: var(--f-display); font-size: 1.5rem; background: none; border: 0; cursor: pointer; color: var(--brand-d); padding: 0; }
+.back { display: inline-flex; align-items: center; gap: 8px; background: var(--card); color: var(--brand-d); border: 2px solid var(--line); border-bottom-width: 5px; border-radius: 999px; min-height: 46px; padding: 2px 16px; font-weight: 800; font-size: 1.05rem; cursor: pointer; transition: transform .08s; }
+.back:active { transform: translateY(3px); border-bottom-width: 2px; }
+.pills { display: flex; gap: 8px; align-items: center; margin-inline-start: auto; }
+.pill { background: var(--card); border: 2px solid var(--line); border-radius: 999px; padding: 2px 14px; font-weight: 800; font-variant-numeric: tabular-nums; min-height: 40px; display: inline-flex; align-items: center; gap: 6px; }
+.pill b { color: var(--brand); }
+.mute { cursor: pointer; font-weight: 700; font-size: .9rem; }
+.mute[aria-pressed="true"] { color: var(--ink-soft); text-decoration: line-through; }
+
+/* level HUD */
+.hud { background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 10px 14px 8px; margin-bottom: 12px; }
+.hudrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dots { display: flex; gap: 8px; }
+.dot { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 4px solid var(--line); }
+.dot.on { background: var(--c); border-color: var(--c); }
+.dot.now { border-color: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 30%, transparent); animation: pingStep 1.6s ease-in-out infinite; }
+.hearts { display: flex; gap: 4px; min-height: 28px; }
+.heart { width: 28px; height: 28px; fill: #FF3B6B; }
+.heart.lost { fill: #D8D6E6; animation: crack .5s ease; }
+.steplab { margin-top: 4px; text-align: center; font-weight: 800; font-size: .95rem; color: var(--ink-soft); }
+.combo { display: inline-block; background: var(--sun); color: var(--ink); border-radius: 999px; padding: 0 10px; margin-inline-start: 6px; animation: pop .25s ease both; }
+
+/* mascot guide */
+.guide { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 12px; }
+.guide .mas { flex: none; animation: bob 3s ease-in-out infinite; }
+.bubble { position: relative; flex: 1; min-width: 0; background: #FFF6CC; border: 2px solid var(--sun); border-radius: 18px; padding: 8px 14px; font-weight: 700; font-size: 1.02rem; line-height: 1.55; margin-bottom: 12px; }
+.bubble::after { content: ""; position: absolute; right: -9px; bottom: 14px; width: 14px; height: 14px; background: #FFF6CC; border-right: 2px solid var(--sun); border-top: 2px solid var(--sun); transform: rotate(45deg); }
+.bubble.ok { background: #DDF7EC; border-color: var(--good); color: #075E41; }
+.bubble.ok::after { background: #DDF7EC; border-color: var(--good); }
+.bubble.no { background: #FFE6E9; border-color: var(--bad); color: #8E1526; }
+.bubble.no::after { background: #FFE6E9; border-color: var(--bad); }
+
+/* home */
+.hero { text-align: center; padding-top: 4px; }
+.hero .mas { animation: bob 3s ease-in-out infinite; }
+.tag { display: inline-block; background: var(--card); border: 2px solid var(--line); border-radius: 999px; padding: 0 14px; font-weight: 800; font-size: .9rem; color: var(--ink-soft); }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.8rem, 12vw, 4rem); line-height: 1.1; margin: 4px 0; text-wrap: balance; color: var(--brand-d); text-shadow: 0 3px 0 #fff; }
+.lead { color: var(--ink-soft); font-size: 1.08rem; margin: 0 auto 14px; max-width: 30ch; text-wrap: balance; font-weight: 500; }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0 6px; padding: 0; list-style: none; text-align: right; }
+.tile { display: flex; align-items: center; gap: 10px; width: 100%; background: var(--card); border: 2px solid var(--line); border-bottom: 6px solid var(--c); border-radius: 20px; padding: 10px 12px; cursor: pointer; text-align: right; transition: transform .08s; }
+.tile:active:not(:disabled) { transform: translateY(3px); border-bottom-width: 3px; }
+.tile .ico { width: 46px; height: 46px; border-radius: 50%; background: color-mix(in srgb, var(--c) 18%, white); color: var(--c); display: grid; place-items: center; flex: none; }
+.tile strong { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.12rem; line-height: 1.25; }
+.tile small { display: block; font-weight: 700; color: var(--ink-soft); font-size: .84rem; }
+.tile .mini { display: flex; gap: 2px; direction: ltr; justify-content: flex-end; }
+.tile .mini svg { width: 15px; height: 15px; }
+.tile .mini .on path { fill: var(--c3); stroke: #C27F00; stroke-width: 1.5; }
+.tile .mini .off path { fill: var(--line); }
+.tile:disabled { cursor: default; opacity: .6; }
+.tile:last-child { grid-column: 1 / -1; }
+.listwrap { text-align: right; }
+
+.btn { font-family: var(--f-display); font-size: 1.4rem; background: var(--brand); color: #fff; border: 0; border-bottom: 6px solid var(--brand-d); border-radius: 18px; padding: 10px 30px; cursor: pointer; min-height: 56px; transition: transform .08s; }
+.btn:active { transform: translateY(4px); border-bottom-width: 2px; }
+.btn.alt { background: var(--card); color: var(--brand-d); border: 2px solid var(--line); border-bottom: 6px solid var(--line); font-size: 1.1rem; }
+.btn.small { font-size: 1rem; padding: 4px 18px; min-height: 44px; border-bottom-width: 4px; }
+.btn.xl { font-size: 1.7rem; padding: 12px 44px; min-height: 64px; animation: pulse 1.8s ease-in-out infinite; }
+.row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* game card */
+.card { background: var(--card); border: 2px solid var(--line); border-radius: 26px; padding: 16px 14px 18px; animation: pop .35s cubic-bezier(.2,1.4,.4,1) both; }
+.badge { display: inline-block; font-weight: 800; font-size: .95rem; padding: 2px 14px; border-radius: 999px; color: var(--ink); background: color-mix(in srgb, var(--c) 22%, white); border: 2px solid var(--c); }
+.card h2 { font-family: var(--f-display); font-weight: 400; font-size: 1.5rem; margin: 8px 0 10px; line-height: 1.3; text-wrap: balance; }
+
+/* level 1: arena */
+.arena { position: relative; height: 440px; border-radius: 22px; overflow: hidden; border: 3px solid #9ADBF7; background: linear-gradient(180deg, #E9F9FF 0%, #BFEAFF 100%); touch-action: manipulation; }
+.arena.shake { animation: shake .4s both; }
+.left { position: absolute; top: 8px; inset-inline-start: 8px; z-index: 3; background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 0 12px; font-weight: 800; font-size: .92rem; }
+.bub { position: absolute; left: 0; top: 0; border-radius: 50%; border: 4px solid var(--c); background: radial-gradient(circle at 30% 26%, #fff 0 12%, color-mix(in srgb, var(--c) 18%, white) 45%, color-mix(in srgb, var(--c) 42%, white) 100%); color: var(--ink); font-weight: 800; font-size: .88rem; line-height: 1.2; padding: 6px; cursor: pointer; display: grid; place-items: center; text-align: center; will-change: transform; }
+.bub.static { position: relative; }
+.bub > span { pointer-events: none; }
+.bub.pop { animation: burst .28s ease-out forwards; pointer-events: none; }
+.floatx { position: fixed; z-index: 60; font-family: var(--f-display); font-size: 1.5rem; pointer-events: none; animation: floatUp .9s ease-out forwards; text-shadow: 0 2px 0 #fff, 0 0 6px #fff; }
+
+/* level 2: baskets */
+.stack { position: relative; min-height: 130px; margin-bottom: 12px; }
+.sit { background: #FFF9E0; border: 3px solid var(--sun); border-radius: 20px; padding: 16px 14px; font-size: 1.25rem; font-weight: 800; line-height: 1.55; text-align: center; text-wrap: balance; animation: pop .3s ease both; }
+.sit.fly { animation: fly .5s ease-in forwards; }
+.baskets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.bk { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; background: color-mix(in srgb, var(--c) 14%, white); border: 3px solid var(--c); border-bottom-width: 8px; border-radius: 6px 6px 22px 22px; padding: 10px 4px 8px; font-weight: 800; font-size: 1rem; line-height: 1.25; cursor: pointer; min-height: 96px; transition: transform .08s; }
+.bk .ic { color: var(--c); }
+.bk:active { transform: translateY(3px); }
+.bk.bounce { animation: bounce .4s ease; }
+.bk.bad { animation: shake .45s both; background: #FFE3E6; border-color: var(--bad); }
+.bk em { position: absolute; top: -12px; inset-inline-end: -4px; min-width: 26px; height: 26px; border-radius: 999px; background: var(--c); color: #fff; font-style: normal; font-weight: 800; font-size: .9rem; display: grid; place-items: center; padding: 0 6px; }
+
+/* level 3: scramble */
+.answer { min-height: 76px; display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; border-radius: 18px; background: color-mix(in srgb, var(--c) 10%, white); border: 2px dashed var(--c); margin-bottom: 14px; align-content: flex-start; }
+.pool { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 14px; min-height: 60px; }
+.slot { width: 52px; height: 44px; border-radius: 12px; background: color-mix(in srgb, var(--c) 18%, white); }
+.chip { font-weight: 800; font-size: 1.1rem; padding: 6px 16px; min-height: 46px; background: #fff; border: 2px solid var(--line); border-bottom: 5px solid var(--c); border-radius: 14px; cursor: pointer; transition: transform .08s; animation: pop .25s ease both; }
+.chip:active { transform: translateY(3px); border-bottom-width: 2px; }
+.chip.bad { background: #FFE3E6; border-color: var(--bad); border-bottom-color: var(--bad); animation: shake .5s both; }
+.chip.win { background: color-mix(in srgb, var(--c) 18%, white); border-color: var(--c); }
+.chip:disabled { cursor: default; }
+
+/* level 4: memory */
+.mem { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 10px; }
+.mc { position: relative; height: 96px; perspective: 600px; background: none; border: 0; padding: 0; cursor: pointer; }
+.mc .in { position: absolute; inset: 0; transition: transform .45s; transform-style: preserve-3d; }
+.mc.up .in, .mc.ok .in { transform: rotateY(180deg); }
+.mc .f, .mc .b { position: absolute; inset: 0; border-radius: 18px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 6px 8px; text-align: center; }
+.mc .b { background: radial-gradient(circle at 30% 26%, #fff 0 10%, #D9C9FF 45%, #A585FF 100%); border: 3px solid var(--brand); color: #fff; font-family: var(--f-display); font-size: 2rem; }
+.mc .f { transform: rotateY(180deg); background: color-mix(in srgb, var(--c) 16%, white); border: 3px solid var(--c); font-weight: 800; font-size: .96rem; line-height: 1.3; }
+.mc .f .ic { color: var(--c); }
+.mc.ok .f { background: color-mix(in srgb, var(--c) 34%, white); }
+.mc.ok { animation: bounce .45s ease; }
+
+/* level 5: summary builder */
+.stm { display: grid; gap: 8px; margin-bottom: 14px; }
+.sb { display: flex; align-items: center; gap: 10px; text-align: right; background: #fff; border: 2px solid var(--line); border-bottom: 5px solid var(--c); border-radius: 16px; padding: 10px 14px; font-weight: 700; font-size: 1.02rem; line-height: 1.5; cursor: pointer; transition: transform .08s; }
+.sb:active:not(:disabled) { transform: translateY(3px); border-bottom-width: 2px; }
+.sb.bad { background: #FFE6E9; border-color: var(--bad); border-bottom-color: var(--bad); animation: shake .45s both; opacity: .6; }
+.sb.got { background: #DDF7EC; border-color: var(--good); border-bottom-color: var(--good); animation: pop .3s ease both; }
+.sb:disabled { cursor: default; }
+.sb .num { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--good); color: #fff; font-family: var(--f-display); display: grid; place-items: center; }
+.board { background: color-mix(in srgb, var(--c) 10%, white); border: 2px dashed var(--c); border-radius: 18px; padding: 10px 14px; }
+.board h3 { margin: 0 0 4px; font-family: var(--f-display); font-weight: 400; font-size: 1.15rem; }
+.board ol { margin: 0; padding-inline-start: 22px; }
+.board li { line-height: 1.5; margin-bottom: 2px; }
+.board .empty { color: var(--ink-soft); font-weight: 700; }
+
+/* results */
+.result { text-align: center; }
+.stars { display: flex; justify-content: center; gap: 8px; margin: 4px 0; direction: ltr; }
+.stars svg { width: 58px; height: 58px; }
+.stars .off path { fill: var(--line); }
+.stars .on path { fill: var(--c3); stroke: #C27F00; stroke-width: 1.5; }
+.stars .on { animation: star .6s cubic-bezier(.2,1.6,.4,1) both; }
+.stars .on:nth-child(2) { animation-delay: .25s; }
+.stars .on:nth-child(3) { animation-delay: .5s; }
+.big { font-family: var(--f-display); font-size: 3.2rem; line-height: 1.1; color: var(--brand); font-variant-numeric: tabular-nums; }
+.stats { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 10px 0 16px; }
+.stat { background: #EEF2FA; border-radius: 14px; padding: 6px 14px; font-weight: 700; }
+.sumh { text-align: right; margin-bottom: 8px; }
+.final-sum { text-align: right; margin: 0 0 14px; }
+.five { list-style: none; margin: 0 0 16px; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; text-align: right; }
+.five li { display: flex; align-items: center; gap: 10px; background: color-mix(in srgb, var(--c) 12%, white); border-radius: 16px; border-right: 8px solid var(--c); padding: 8px 12px; }
+.five .ic { color: var(--c); }
+.five strong { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.12rem; line-height: 1.3; }
+.five span { font-size: .95rem; line-height: 1.45; display: block; }
+.lv { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.lv span { display: inline-flex; align-items: center; gap: 4px; background: #EEF2FA; border-radius: 999px; padding: 2px 10px; font-weight: 800; font-size: .88rem; }
+.lv .stars-m { direction: ltr; display: inline-flex; }
+.lv svg { width: 14px; height: 14px; }
+.lv .on path { fill: var(--c3); }
+.lv .off path { fill: var(--line); }
+
+.rights { margin-top: 26px; padding-top: 14px; border-top: 2px dashed rgba(123,77,255,.35); text-align: center; color: var(--ink-soft); font-weight: 700; font-size: .95rem; line-height: 1.6; text-wrap: balance; }
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+@keyframes pop { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+@keyframes star { from { transform: scale(0) rotate(-40deg); } to { transform: scale(1) rotate(0); } }
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes pingStep { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+@keyframes burst { to { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; } }
+@keyframes floatUp { from { transform: translateY(0) scale(.7); opacity: 1; } to { transform: translateY(-60px) scale(1.2); opacity: 0; } }
+@keyframes fly { to { transform: translate(var(--dx), 150px) scale(.2); opacity: 0; } }
+@keyframes bounce { 0%,100% { transform: translateY(0) scale(1); } 40% { transform: translateY(-8px) scale(1.06); } }
+@keyframes crack { 0% { transform: scale(1.4); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (min-width: 520px) { .mem { grid-template-columns: repeat(5, minmax(0, 1fr)); } .five { grid-template-columns: repeat(2, minmax(0, 1fr)); } .five li:last-child { grid-column: 1 / -1; } }
+</style>
+
+<div class="bgb" style="left:6%;width:70px;height:70px;animation-duration:19s"></div>
+<div class="bgb" style="left:22%;width:34px;height:34px;animation-duration:14s;animation-delay:-5s"></div>
+<div class="bgb" style="left:41%;width:96px;height:96px;animation-duration:24s;animation-delay:-11s"></div>
+<div class="bgb" style="left:63%;width:44px;height:44px;animation-duration:16s;animation-delay:-3s"></div>
+<div class="bgb" style="left:78%;width:80px;height:80px;animation-duration:21s;animation-delay:-8s"></div>
+<div class="bgb" style="left:92%;width:38px;height:38px;animation-duration:15s;animation-delay:-12s"></div>
+
+<div id="app" dir="rtl" lang="ar">
+  <div class="top">
+    <button class="back" id="back" data-act="home" type="button" hidden aria-label="العودة إلى المستويات"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>المستويات</span></button>
+    <div class="pills">
+      <span class="pill" aria-live="polite">النقاط <b id="score">0</b></span>
+      <button class="pill mute" id="mute" data-act="mute" type="button" aria-pressed="false">الصوت</button>
+    </div>
+  </div>
+  <div id="prog" class="hud" hidden></div>
+  <main id="stage"></main>
+  <footer class="rights">© ٢٠٢٦ الحقوق محفوظة، تصميم معلمة الفلسفة حوراء محمود بخش</footer>
+</div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  var COL = ['#2D9CFF', '#FF4F8B', '#FF9F1C', '#12C2B0', '#8B5CF6', '#FFD23F'];
+  var CV = ['var(--c1)', 'var(--c2)', 'var(--c3)', 'var(--c4)', 'var(--c5)'];
+  var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var ICON = {
+    target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M12 12l7-7"/>',
+    shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+    talk: '<path d="M4 5h16v10H10l-4 4v-4H4z"/>',
+    out: '<path d="M4 12h15M13 6l6 6-6 6"/>',
+    cloud: '<path d="M7 18a4 4 0 010-8 5 5 0 019.5-1A4 4 0 0117 18z"/>',
+    lungs: '<path d="M12 3v8M12 11c-2-1.5-6-.5-6 5 0 3 1 4 3 4s3-1 3-3M12 11c2-1.5 6-.5 6 5 0 3-1 4-3 4s-3-1-3-3"/>',
+    lotus: '<path d="M12 20c-5 0-8-3-9-8 4 0 7 1 9 4 2-3 5-4 9-4-1 5-4 8-9 8zM12 16c-1.5-3-1.5-7 0-11 1.5 4 1.5 8 0 11z"/>',
+    dumbbell: '<path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/>',
+    apple: '<path d="M12 8c-2-2-7-1-7 5 0 5 3 8 7 8s7-3 7-8c0-6-5-7-7-5zM12 8c0-2 1-3 3-4"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    bubbles: '<circle cx="9" cy="14" r="5.5"/><circle cx="17" cy="7" r="3.5"/>',
+    basket: '<path d="M4 10h16l-2 10H6zM8 10l3-6M16 10l-3-6"/>',
+    pencil: '<path d="M4 20l1-4L16 5l3 3L8 19z"/>',
+    cards: '<rect x="3" y="5" width="12" height="15" rx="2"/><path d="M17 7l4 1-3 12-3-1"/>',
+    list: '<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>'
+  };
+  function ic(n, s) { return '<svg class="ic" viewBox="0 0 24 24" width="' + (s || 28) + '" height="' + (s || 28) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
+
+  function mas(mood, w) {
+    var mouth = mood === 'no' ? '<ellipse cx="50" cy="69" rx="5" ry="6" fill="#1B1744"/>' :
+      mood === 'ok' ? '<path d="M38 62q12 18 24 0z" fill="#1B1744"/><path d="M44 69q6 5 12 0" fill="#FF6B8B"/>' :
+      '<path d="M40 64q10 10 20 0" stroke="#1B1744" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
+    return '<svg class="mas" viewBox="0 0 100 100" width="' + w + '" aria-hidden="true"><defs><radialGradient id="mgA" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".38" stop-color="#C5F1FF"/><stop offset="1" stop-color="#5CC8FF"/></radialGradient></defs>' +
+      '<path d="M50 1.5l2 4.2 4.6.6-3.4 3.2.9 4.6L50 11.6l-4.1 2.5.9-4.6-3.4-3.2 4.6-.6z" fill="#FFD23F"/>' +
+      '<circle cx="50" cy="54" r="40" fill="url(#mgA)" stroke="#2D9CFF" stroke-width="3.5"/>' +
+      '<ellipse cx="33" cy="34" rx="10" ry="5.5" fill="#fff" opacity=".85" transform="rotate(-32 33 34)"/>' +
+      '<ellipse cx="38" cy="52" rx="6" ry="8" fill="#1B1744"/><ellipse cx="62" cy="52" rx="6" ry="8" fill="#1B1744"/>' +
+      '<circle cx="40" cy="49" r="2.4" fill="#fff"/><circle cx="64" cy="49" r="2.4" fill="#fff"/>' +
+      '<circle cx="27" cy="64" r="5.5" fill="#FF8FB8" opacity=".75"/><circle cx="73" cy="64" r="5.5" fill="#FF8FB8" opacity=".75"/>' + mouth + '</svg>';
+  }
+  function guide(text, mood) {
+    return '<div class="guide">' + mas(mood, 64) + '<div class="bubble ' + (mood || '') + '" id="gtxt">' + text + '</div></div>';
+  }
+  function setGuide(text, mood) {
+    var g = $('#gtxt'); if (!g) return;
+    g.className = 'bubble ' + (mood || ''); g.textContent = text;
+  }
+
+  /* ---------- lesson content ---------- */
+  var LEVELS = [
+    { name: 'فرقع الأساليب المباشرة', short: 'الفقاعات', sub: 'فقاعات تطفو', color: 'var(--c1)', icon: 'bubbles', hearts: true },
+    { name: 'سلال الحيل الدفاعية', short: 'السلال', sub: 'اقذف في السلة', color: 'var(--c2)', icon: 'basket', hearts: true },
+    { name: 'رتّب الجملة', short: 'الترتيب', sub: 'كلمات مبعثرة', color: 'var(--c3)', icon: 'pencil', hearts: false },
+    { name: 'اقلب وطابق', short: 'الذاكرة', sub: 'بطاقات الطرق الخمس', color: 'var(--c4)', icon: 'cards', hearts: false },
+    { name: 'ابنِ ملخصك', short: 'الملخص', sub: 'اختر أهم الأفكار', color: 'var(--c5)', icon: 'list', hearts: true }
+  ];
+
+  var BUBS = [
+    ['مواجهة المشكلة', 1], ['تحليل المشكلة', 1], ['طرح بدائل مناسبة', 1], ['التنفس العميق', 1], ['ممارسة الرياضة', 1],
+    ['التبرير', 0], ['الإسقاط', 0], ['أحلام اليقظة', 0], ['الحيل اللاشعورية', 0]
+  ];
+  var BKT = [
+    { k: 'just', label: 'التبرير', icon: 'talk' },
+    { k: 'proj', label: 'الإسقاط', icon: 'out' },
+    { k: 'dream', label: 'أحلام اليقظة', icon: 'cloud' }
+  ];
+  var CARDS = [
+    ['رسب سعد في الاختبار فقال: لم أذاكر لأن الأسئلة كانت خارج المنهج.', 'just', 'عذر مقبول لتبرير الفشل: هذا تبرير.'],
+    ['اتهمت منى زميلتها بالتقصير مع أنها هي المقصّرة.', 'proj', 'نسبت منى عيبها إلى غيرها: هذا إسقاط.'],
+    ['يجلس الطالب في الحصة يتخيل أنه بطل مشهور ويتجاهل الدرس.', 'dream', 'هروب إلى الخيال بدل مواجهة الواقع: أحلام يقظة.'],
+    ['لم تُقبل سارة في الفريق فقالت: لم أكن أريد الانضمام أصلاً.', 'just', 'عذر يخفف ألم الرفض: هذا تبرير.'],
+    ['يشعر ماجد بضعفه في المادة فيقول إن كل زملائه ضعفاء.', 'proj', 'حمّل ماجد غيره ما يشعر به: هذا إسقاط.'],
+    ['تتخيل ليلى نفسها طبيبة مشهورة بدل أن تواجه صعوبة المذاكرة.', 'dream', 'الخيال بديل عن المواجهة: أحلام يقظة.']
+  ].map(function (c) { return { t: c[0], a: c[1], why: c[2] }; });
+  var SENTS = [
+    'يحاول الفرد بأساليب مختلفة إزالة حالة التوتر التي يصاب بها',
+    'الحيل الدفاعية أساليب غير مباشرة تخفف حدة التوتر والألم النفسي',
+    'التنفس العميق استنشاق بطيء وعميق للهواء عن طريق الأنف'
+  ].map(function (t) { return { text: t, words: t.split(' ') }; });
+  var PAIRS = [
+    ['التنفس العميق', 'شهيق بطيء من الأنف وزفير من الفم', 'lungs', 'var(--c1)'],
+    ['الاسترخاء', 'إرخاء العضلات في مكان هادئ', 'lotus', 'var(--c5)'],
+    ['ممارسة الرياضة', 'ترفع المعنويات وتقلل الغضب', 'dumbbell', 'var(--c2)'],
+    ['التغذية', 'إفطار وخضروات وفواكه', 'apple', 'var(--c4)'],
+    ['إدارة الوقت', 'خطة مدونة وترتيب الأولويات', 'clock', 'var(--c3)']
+  ];
+  var STMS = [
+    ['أساليب التوافق طرق يزيل بها الفرد التوتر الناتج عن العائق.', 1],
+    ['الأساليب المباشرة تواجه المشكلة وتحللها وتبحث عن بدائل.', 1],
+    ['الحيل الدفاعية أساليب غير مباشرة لا شعورية، مثل التبرير والإسقاط وأحلام اليقظة.', 1],
+    ['استمرار الحيل الدفاعية فترة طويلة قد يدفع إلى سلوك مرضي.', 1],
+    ['من طرق مواجهة التوتر: التنفس والاسترخاء والرياضة والتغذية وإدارة الوقت.', 1],
+    ['الحيل الدفاعية تحل المشكلة نهائياً، فيُنصح باستمرارها.', 0],
+    ['ترك وجبة الإفطار يحسّن التركيز في المدرسة.', 0],
+    ['الخطة الناجحة لا تقبل التعديل أبداً.', 0]
+  ];
+
+  var $ = function (s) { return document.querySelector(s); };
+  var stage = $('#stage'), scoreEl = $('#score'), progEl = $('#prog');
+  var P, LV = -1, H = 3, COMBO = 0, ST = null, RAF = 0, TOK = 0;
+  var PRAISE = ['ممتاز!', 'رائع!', 'أحسنت!', 'بطل!', 'مذهل!'];
+
+  function shuffle(a) { var b = a.slice(); for (var i = b.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = b[i]; b[i] = b[j]; b[j] = t; } return b; }
+  function resetAll() { P = { done: [false, false, false, false, false], pts: [0, 0, 0, 0, 0], sum: [] }; showScore(); }
+  function total() { var s = 0; for (var i = 0; i < 5; i++) s += P.pts[i]; return s; }
+  function showScore() { scoreEl.textContent = total(); }
+  function stopLoop() { if (RAF) { cancelAnimationFrame(RAF); RAF = 0; } TOK++; }
+  function pts100(m, each) { return Math.max(40, 100 - m * each); }
+
+  /* ---------- sound ---------- */
+  var ctx = null, muted = false;
+  function ac() { if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } } if (ctx && ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} } return ctx; }
+  function tone(f, t0, d, type, vol, f2) {
+    var c = ac(); if (!c || muted) return;
+    var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + t0;
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+    if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.15, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + d + 0.05);
+  }
+  var sfx = {
+    tap: function () { tone(620, 0, .07, 'triangle', .12); },
+    undo: function () { tone(380, 0, .08, 'triangle', .1); },
+    pop: function (n) { var f = 420 + Math.min(n, 8) * 70; tone(f, 0, .09, 'sine', .2, f * 2); tone(f * 1.5, .05, .1, 'triangle', .1); },
+    flip: function () { tone(500, 0, .08, 'triangle', .1, 750); },
+    match: function () { [659, 880, 1175].forEach(function (f, i) { tone(f, i * .08, .18, 'sine', .15); }); },
+    ok: function () { [523, 659, 784, 1047].forEach(function (f, i) { tone(f, i * .09, .22, 'sine', .16); }); },
+    bad: function () { tone(220, 0, .2, 'sawtooth', .1, 120); tone(140, .1, .25, 'sawtooth', .1); },
+    hint: function () { tone(880, 0, .1, 'sine', .1); tone(1175, .09, .14, 'sine', .1); },
+    win: function () { [523, 659, 784, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, i * .12, .3, 'triangle', .17); }); }
+  };
+
+  /* ---------- visual effects ---------- */
+  var cv = $('#fx'), cx = cv.getContext('2d'), parts = [], raf2 = 0;
+  function sizeCv() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
+  addEventListener('resize', sizeCv); sizeCv();
+  function burst(x, y, color, n, power) {
+    if (REDUCED) return;
+    var d = devicePixelRatio, cols = color ? [color, '#fff', color] : COL;
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2, v = (2 + Math.random() * (power || 7)) * d;
+      parts.push({ x: x * d, y: y * d, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2 * d, s: (4 + Math.random() * 6) * d, c: cols[i % cols.length], r: Math.random() * 6, vr: (Math.random() - .5) * .4, life: 1 });
+    }
+    if (!raf2) raf2 = requestAnimationFrame(tick);
+  }
+  function rain(n, y0) { burst(innerWidth / 2, (y0 || .35) * innerHeight, null, n, 14); }
+  function tick() {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    parts = parts.filter(function (p) { return p.life > 0 && p.y < cv.height + 40; });
+    parts.forEach(function (p) {
+      p.vy += .35 * devicePixelRatio; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life -= .014;
+      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.globalAlpha = Math.max(p.life, 0); cx.fillStyle = p.c; cx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .6); cx.restore();
+    });
+    raf2 = parts.length ? requestAnimationFrame(tick) : 0;
+    if (!raf2) cx.clearRect(0, 0, cv.width, cv.height);
+  }
+  function floatText(txt, x, y, color) {
+    var s = document.createElement('span'); s.className = 'floatx'; s.textContent = txt;
+    s.style.left = Math.max(10, x - 30) + 'px'; s.style.top = y + 'px'; s.style.color = color || '#7B4DFF';
+    document.body.appendChild(s); setTimeout(function () { s.remove(); }, 950);
+  }
+  function centerOf(el) { var r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
+
+  /* ---------- shared UI ---------- */
+  var HEART = '<svg class="heart %c" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 018-3 4.6 4.6 0 018 3c0 5.8-8 11-8 11z"/></svg>';
+  function hud(label) {
+    var d = '', h = '', i;
+    for (i = 0; i < 5; i++) d += '<i class="dot ' + (P.done[i] ? 'on' : i === LV ? 'now' : '') + '" style="--c:' + CV[i] + '"></i>';
+    if (LEVELS[LV].hearts) for (i = 0; i < 3; i++) h += HEART.replace('%c', i < H ? '' : 'lost');
+    progEl.hidden = false;
+    progEl.innerHTML = '<div class="hudrow"><div class="dots" aria-hidden="true">' + d + '</div><div class="hearts" aria-label="القلوب المتبقية ' + H + '">' + h + '</div></div>' +
+      '<div class="steplab">المستوى ' + (LV + 1) + ' من 5 · ' + LEVELS[LV].name + (label ? ' · ' + label : '') + (COMBO > 1 ? '<span class="combo">كومبو ×' + COMBO + '</span>' : '') + '</div>';
+  }
+  function setBack(on) { $('#back').hidden = !on; }
+  var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>';
+  function starsHTML(n) { var s = ''; for (var i = 0; i < 3; i++) s += '<span class="' + (i < n ? 'on' : 'off') + '">' + STAR + '</span>'; return '<div class="stars" aria-label="' + n + ' من 3 نجوم">' + s + '</div>'; }
+  function starsFor(p) { return p >= 85 ? 3 : p >= 60 ? 2 : 1; }
+  function miniStars(p) { var n = p ? starsFor(p) : 0, s = ''; for (var i = 0; i < 3; i++) s += '<span class="' + (i < n ? 'on' : 'off') + '">' + STAR + '</span>'; return '<span class="mini">' + s + '</span>'; }
+  function heartsLeft() { return H; }
+  function loseHeart() { H--; return H <= 0; }
+
+  /* ---------- home ---------- */
+  function unlocked(i) { return i === 0 || P.done[i - 1]; }
+  function home() {
+    stopLoop(); LV = -1; ST = null; COMBO = 0; H = 3; progEl.hidden = true; setBack(false); showScore();
+    var next = P.done.indexOf(false), tiles = LEVELS.map(function (L, i) {
+      return '<li style="display:contents"><button class="tile" style="--c:' + CV[i] + '" type="button" data-act="level" data-i="' + i + '"' + (unlocked(i) ? '' : ' disabled') + '><span class="ico">' + ic(L.icon, 26) + '</span><span><strong>' + L.name + '</strong><small>' + L.sub + '</small>' + miniStars(P.pts[i]) + '</span></button></li>';
+    }).join('');
+    var started = P.done.some(Boolean);
+    stage.innerHTML =
+      '<section class="hero">' + mas('ok', 130) + '<div><span class="tag">الصحة النفسية · أساليب التوافق</span></div><h1>فقاعات التوافق</h1>' +
+      '<p class="lead">خمسة مستويات سريعة تلخص الدرس. فرقع وصنّف ورتّب واستخلص.</p>' +
+      '<button class="btn xl" data-act="play" type="button">' + (started ? (next === -1 ? 'العب من جديد' : 'أكمل اللعب') : 'ابدأ اللعب') + '</button></section>' +
+      '<ul class="tiles">' + tiles + '</ul>' +
+      (started ? '<div class="row"><button class="btn alt small" data-act="restart" type="button">ابدأ من الصفر</button></div>' : '');
+  }
+
+  /* ---------- level router ---------- */
+  function startLevel(i) {
+    stopLoop(); LV = i; H = 3; COMBO = 0; ST = null; setBack(true);
+    if (i === 0) return startPop();
+    if (i === 1) return startBaskets();
+    if (i === 2) return startScramble();
+    if (i === 3) return startMemory();
+    return startBuild();
+  }
+  function finishLevel(pts, statsHTML) {
+    stopLoop();
+    P.done[LV] = true; P.pts[LV] = Math.max(P.pts[LV], pts); showScore();
+    var n = starsFor(pts), i = LV;
+    var msg = n === 3 ? 'مذهل! أتقنت هذا المستوى.' : n === 2 ? 'عمل جميل! حاول مرة أخرى لتجمع النجمة الأخيرة.' : 'أحسنت على الإكمال! جرّب مرة ثانية لتحسّن نتيجتك.';
+    COMBO = 0; hud('اكتمل');
+    var nextBtn = i < 4 ? '<button class="btn" data-act="level" data-i="' + (i + 1) + '" type="button">المستوى التالي</button>' : '<button class="btn" data-act="final" type="button">النتيجة النهائية</button>';
+    stage.innerHTML = guide(msg, n === 3 ? 'ok' : '') +
+      '<section class="card result" style="--c:' + CV[i] + '">' + starsHTML(n) +
+      '<div class="big">' + pts + '</div><p style="margin:0;color:var(--ink-soft);font-weight:700">نقطة من 100</p>' +
+      '<div class="stats">' + statsHTML + '</div>' +
+      '<div class="row">' + nextBtn + '<button class="btn alt" data-act="level" data-i="' + i + '" type="button">أعد المستوى</button></div></section>';
+    sfx.win(); rain(110, .3);
+  }
+  function fail() {
+    stopLoop(); COMBO = 0; hud('انتهت القلوب');
+    stage.innerHTML = guide('لا بأس! القلوب انتهت، وكل محاولة تقرّبك من الإتقان.', 'no') +
+      '<section class="card result" style="--c:' + CV[LV] + '"><h2>حاول مرة أخرى</h2><p style="margin:0 0 14px;color:var(--ink-soft);font-weight:700">ستحصل على ثلاثة قلوب جديدة.</p>' +
+      '<div class="row"><button class="btn" data-act="level" data-i="' + LV + '" type="button">أعد المحاولة</button><button class="btn alt" data-act="home" type="button">المستويات</button></div></section>';
+    sfx.bad();
+  }
+  function wrongFeedback(msg) {
+    COMBO = 0; sfx.bad();
+    if (loseHeart()) { hud(); return true; }
+    hud(); setGuide(msg, 'no'); return false;
+  }
+
+  /* ---------- level 1: popping bubbles ---------- */
+  function startPop() {
+    var items = shuffle(BUBS), need = BUBS.filter(function (b) { return b[1]; }).length;
+    ST = { items: items, need: need, popped: 0, wrong: 0, b: [] };
+    stage.innerHTML = guide('اضغط على فقاعات الأساليب المباشرة فقط، وتجنّب الحيل الدفاعية!', '') +
+      '<section class="card" style="--c:var(--c1)"><span class="badge">أسلوب مباشر = مواجهة المشكلة</span>' +
+      '<h2>فرقع ' + need + ' فقاعات</h2><div class="arena" id="arena"><span class="left" id="left">المتبقي ' + need + '</span></div></section>';
+    hud();
+    var ar = $('#arena'), W = ar.clientWidth, Hh = ar.clientHeight, D = W < 360 ? 88 : 98;
+    var slots = shuffle(items.map(function (_, i) { return i; }));
+    items.forEach(function (it, i) {
+      var el = document.createElement('button');
+      el.className = 'bub'; el.type = 'button'; el.setAttribute('data-b', i);
+      el.style.cssText = '--c:' + COL[i % 5] + ';width:' + D + 'px;height:' + D + 'px';
+      el.innerHTML = '<span>' + it[0] + '</span>';
+      ar.appendChild(el);
+      var cols = Math.max(2, Math.floor(W / (D + 6))), slot = slots[i];
+      var b = { el: el, x: (slot % cols) * ((W - D) / Math.max(1, cols - 1)), y: Hh - 20 - Math.floor(slot / cols) * (D + 14), base: 0, vy: 22 + Math.random() * 20, a: 10 + Math.random() * 14, f: .8 + Math.random() * .8, p: Math.random() * 6, t: 0, gone: false };
+      if (!REDUCED) { b.x = Math.random() * (W - D - 28) + 14; b.y = Math.random() * (Hh - D) + D * .2; }
+      b.base = b.x; ST.b.push(b);
+      el.style.transform = 'translate(' + b.x.toFixed(1) + 'px,' + b.y.toFixed(1) + 'px)';
+    });
+    if (REDUCED) return;
+    var last = 0, tok = TOK;
+    function loop(ts) {
+      if (tok !== TOK) return;
+      var dt = last ? Math.min(.05, (ts - last) / 1000) : .016; last = ts;
+      ST.b.forEach(function (b) {
+        if (b.gone) return;
+        b.y -= b.vy * dt; b.t += dt;
+        if (b.y < -D) { b.y = Hh + 10 + Math.random() * 40; b.base = Math.random() * (W - D - 28) + 14; }
+        b.el.style.transform = 'translate(' + (b.base + Math.sin(b.t * b.f + b.p) * b.a).toFixed(1) + 'px,' + b.y.toFixed(1) + 'px)';
+      });
+      RAF = requestAnimationFrame(loop);
+    }
+    RAF = requestAnimationFrame(loop);
+  }
+  function popBubble(i) {
+    var b = ST.b[i]; if (!b || b.gone) return;
+    var it = ST.items[i], c = centerOf(b.el), color = COL[i % 5];
+    b.gone = true; b.el.classList.add('pop');
+    b.el.style.setProperty('--tx', '0px'); b.el.style.setProperty('--ty', '-10px');
+    setTimeout(function () { b.el.remove(); }, 300);
+    if (it[1]) {
+      ST.popped++; COMBO++; sfx.pop(COMBO); burst(c.x, c.y, color, 22, 8);
+      floatText(COMBO > 2 ? 'كومبو ×' + COMBO : PRAISE[ST.popped % PRAISE.length], c.x, c.y - 20, color);
+      var left = ST.need - ST.popped; $('#left').textContent = left ? 'المتبقي ' + left : 'أحسنت!'; hud();
+      setGuide(it[0] + ': أسلوب مباشر يواجه المشكلة.', 'ok');
+      if (!left) {
+        var wr = ST.wrong;
+        setTimeout(function () { finishLevel(pts100(wr, 20), '<span class="stat">أخطاء ' + wr + '</span>'); }, 450);
+      }
+    } else {
+      ST.wrong++; burst(c.x, c.y, '#E0384B', 14, 6);
+      var ar = $('#arena'); ar.classList.remove('shake'); void ar.offsetWidth; ar.classList.add('shake');
+      if (wrongFeedback(it[0] + ' حيلة دفاعية، وليست أسلوباً مباشراً.')) return fail();
+    }
+  }
+
+  /* ---------- level 2: baskets ---------- */
+  function startBaskets() {
+    ST = { items: shuffle(CARDS), i: 0, wrong: 0, lock: false, counts: { just: 0, proj: 0, dream: 0 } };
+    drawBaskets('اقرأ الموقف ثم اضغط السلة المناسبة. التبرير: أعذار، الإسقاط: لوم الآخرين، أحلام اليقظة: خيال.', '');
+  }
+  function drawBaskets(msg, mood) {
+    var it = ST.items[ST.i];
+    hud('الموقف ' + (ST.i + 1) + ' من ' + ST.items.length);
+    var bks = BKT.map(function (b) {
+      return '<button class="bk" id="bk-' + b.k + '" style="--c:var(--c2)" data-k="' + b.k + '" type="button">' + ic(b.icon, 30) + '<span>' + b.label + '</span><em>' + ST.counts[b.k] + '</em></button>';
+    }).join('');
+    stage.innerHTML = guide(msg, mood) +
+      '<section class="card" style="--c:var(--c2)"><span class="badge">الموقف ' + (ST.i + 1) + ' من ' + ST.items.length + '</span><h2>أي حيلة دفاعية هذه؟</h2>' +
+      '<div class="stack"><div class="sit" id="sit">' + it.t + '</div></div><div class="baskets">' + bks + '</div></section>';
+  }
+  function basketPick(k) {
+    if (ST.lock) return;
+    var it = ST.items[ST.i], btn = $('#bk-' + k);
+    if (k === it.a) {
+      ST.lock = true; COMBO++; ST.counts[k]++; sfx.pop(COMBO);
+      var c = centerOf(btn); burst(c.x, c.y, COL[1], 24, 8); floatText(COMBO > 2 ? 'كومبو ×' + COMBO : PRAISE[ST.i % PRAISE.length], c.x, c.y - 30, COL[1]);
+      var idx = BKT.map(function (b) { return b.k; }).indexOf(k), sit = $('#sit');
+      sit.style.setProperty('--dx', ((1 - idx) * 33) + '%'); sit.classList.add('fly');
+      btn.classList.add('bounce'); btn.querySelector('em').textContent = ST.counts[k]; hud('الموقف ' + (ST.i + 1) + ' من ' + ST.items.length);
+      setGuide(it.why, 'ok');
+      var tok = TOK;
+      setTimeout(function () {
+        if (tok !== TOK) return;
+        ST.i++; ST.lock = false;
+        if (ST.i >= ST.items.length) return finishLevel(pts100(ST.wrong, 15), '<span class="stat">أخطاء ' + ST.wrong + '</span>');
+        drawBaskets(it.why, 'ok');
+      }, 650);
+    } else {
+      ST.wrong++; btn.classList.add('bad'); setTimeout(function () { btn.classList.remove('bad'); }, 500);
+      if (wrongFeedback('ليست هذه السلة. فكّر: هل هو عذر، أم لوم للآخرين، أم خيال؟')) return fail();
+    }
+  }
+
+  /* ---------- level 3: scramble ---------- */
+  function startScramble() { ST = { n: 0, slips: 0, hints: 0 }; hud('الجملة 1 من ' + SENTS.length); sentence(0); }
+  function sentence(i) {
+    var L = SENTS[i], ids = L.words.map(function (_, k) { return k; }), pool;
+    do { pool = shuffle(ids); } while (pool.map(function (k) { return L.words[k]; }).join(' ') === L.text);
+    ST.n = i; ST.pool = pool; ST.placed = []; ST.bad = null; ST.done = false; ST.lock = false;
+    hud('الجملة ' + (i + 1) + ' من ' + SENTS.length); drawScramble();
+  }
+  function drawScramble() {
+    var L = SENTS[ST.n], g, tail;
+    var placed = ST.placed.map(function (id, k) {
+      var cls = ST.bad && ST.bad[k] ? ' bad' : ST.done ? ' win' : '';
+      return '<button class="chip' + cls + '" data-un="' + k + '" type="button"' + (ST.done ? ' disabled' : '') + '>' + L.words[id] + '</button>';
+    }).join('');
+    var empties = ''; for (var e = ST.placed.length; e < L.words.length; e++) empties += '<span class="slot"></span>';
+    var pool = ST.pool.map(function (id) { return '<button class="chip" data-add="' + id + '" type="button">' + L.words[id] + '</button>'; }).join('');
+    if (ST.done) {
+      g = guide('أحسنت! الجملة صحيحة.', 'ok');
+      tail = '<div class="row"><button class="btn" data-act="snext" type="button">' + (ST.n < SENTS.length - 1 ? 'الجملة التالية' : 'النتيجة') + '</button></div>';
+    } else {
+      g = guide(ST.bad ? 'قريب! تبقى الكلمات الصحيحة، وأعد الباقي.' : 'اضغط الكلمات بالترتيب حتى تكتمل الجملة.', ST.bad ? 'no' : '');
+      tail = '<div class="row"><button class="btn alt small" data-act="hint" type="button">تلميح</button><button class="btn alt small" data-act="reset" type="button">إعادة</button></div>';
+    }
+    stage.innerHTML = g + '<section class="card" style="--c:var(--c3)"><span class="badge">الجملة ' + (ST.n + 1) + ' من ' + SENTS.length + '</span><h2>رتّب الكلمات لتكوّن الجملة</h2>' +
+      '<div class="answer" aria-label="إجابتك">' + placed + empties + '</div>' + (ST.done ? '' : '<div class="pool">' + pool + '</div>') + tail + '</section>';
+  }
+  function checkScramble() {
+    var L = SENTS[ST.n], first = -1;
+    for (var k = 0; k < L.words.length; k++) { if (L.words[ST.placed[k]] !== L.words[k]) { first = k; break; } }
+    if (first === -1) { ST.done = true; sfx.ok(); drawScramble(); rain(50, .35); }
+    else {
+      ST.slips++; ST.lock = true; ST.bad = {};
+      for (var j = first; j < ST.placed.length; j++) ST.bad[j] = true;
+      sfx.bad(); drawScramble();
+      var tok = TOK;
+      setTimeout(function () { if (tok !== TOK) return; ST.pool = ST.pool.concat(ST.placed.splice(first)); ST.bad = null; ST.lock = false; drawScramble(); }, 800);
+    }
+  }
+  function scrambleAdd(id) { if (ST.lock || ST.done) return; ST.pool.splice(ST.pool.indexOf(id), 1); ST.placed.push(id); sfx.tap(); if (ST.placed.length === SENTS[ST.n].words.length) checkScramble(); else drawScramble(); }
+  function scrambleUndo(k) { if (ST.lock || ST.done) return; ST.pool = ST.pool.concat(ST.placed.splice(k)); sfx.undo(); drawScramble(); }
+  function scrambleHint() {
+    if (ST.lock || ST.done) return;
+    var L = SENTS[ST.n], k;
+    for (k = 0; k < ST.placed.length; k++) { if (L.words[ST.placed[k]] !== L.words[k]) break; }
+    if (k < ST.placed.length) ST.pool = ST.pool.concat(ST.placed.splice(k));
+    var want = L.words[ST.placed.length], pick = -1;
+    for (var p = 0; p < ST.pool.length; p++) { if (L.words[ST.pool[p]] === want) { pick = ST.pool[p]; break; } }
+    if (pick < 0) return;
+    ST.hints++; ST.pool.splice(ST.pool.indexOf(pick), 1); ST.placed.push(pick); sfx.hint();
+    if (ST.placed.length === L.words.length) checkScramble(); else drawScramble();
+  }
+
+  /* ---------- level 4: memory ---------- */
+  function startMemory() {
+    var cards = [];
+    PAIRS.forEach(function (p, i) {
+      cards.push({ pair: i, name: true, text: p[0], icon: p[2], c: p[3] });
+      cards.push({ pair: i, name: false, text: p[1], icon: null, c: p[3] });
+    });
+    ST = { cards: shuffle(cards), up: [], found: 0, moves: 0, lock: false, matched: {} };
+    drawMemory('اقلب بطاقتين: اسم الطريقة ووصفها. ابحث عن كل زوج!', '');
+  }
+  function drawMemory(msg, mood) {
+    hud('الأزواج ' + ST.found + ' من ' + PAIRS.length + ' · الحركات ' + ST.moves);
+    var cs = ST.cards.map(function (c, i) {
+      var cls = ST.matched[i] ? 'ok' : ST.up.indexOf(i) > -1 ? 'up' : '';
+      return '<button class="mc ' + cls + '" id="mc' + i + '" style="--c:' + c.c + '" data-m="' + i + '" type="button" aria-label="بطاقة ' + (i + 1) + '"><span class="in"><span class="b">؟</span><span class="f">' + (c.icon ? ic(c.icon, 28) : '') + '<span>' + c.text + '</span></span></span></button>';
+    }).join('');
+    stage.innerHTML = guide(msg, mood) + '<section class="card" style="--c:var(--c4)"><span class="badge">اقلب وطابق</span><h2>طابق الطريقة مع وصفها</h2><div class="mem" id="mem">' + cs + '</div></section>';
+  }
+  function memFlip(i) {
+    if (ST.lock || ST.matched[i] || ST.up.indexOf(i) > -1) return;
+    ST.up.push(i); sfx.flip(); $('#mc' + i).classList.add('up');
+    if (ST.up.length < 2) return;
+    ST.moves++; ST.lock = true;
+    var a = ST.up[0], b = ST.up[1], tok = TOK;
+    if (ST.cards[a].pair === ST.cards[b].pair) {
+      ST.matched[a] = ST.matched[b] = true; ST.found++; COMBO++;
+      setTimeout(function () {
+        if (tok !== TOK) return;
+        sfx.match(); var c = centerOf($('#mc' + b)); burst(c.x, c.y, null, 26, 8); floatText(PRAISE[ST.found % PRAISE.length], c.x, c.y - 20, '#12C2B0');
+        $('#mc' + a).classList.add('ok'); $('#mc' + b).classList.add('ok');
+        ST.up = []; ST.lock = false; hud('الأزواج ' + ST.found + ' من ' + PAIRS.length + ' · الحركات ' + ST.moves);
+        setGuide(PAIRS[ST.cards[a].pair][0] + ': ' + PAIRS[ST.cards[a].pair][1] + '.', 'ok');
+        if (ST.found === PAIRS.length) { var m = ST.moves; setTimeout(function () { if (tok === TOK) finishLevel(pts100(Math.max(0, m - 7), 8), '<span class="stat">الحركات ' + m + '</span>'); }, 700); }
+      }, 450);
+    } else {
+      COMBO = 0; setTimeout(function () {
+        if (tok !== TOK) return;
+        sfx.bad(); var ea = $('#mc' + a), eb = $('#mc' + b); ea.classList.remove('up'); eb.classList.remove('up');
+        ST.up = []; ST.lock = false; hud('الأزواج ' + ST.found + ' من ' + PAIRS.length + ' · الحركات ' + ST.moves);
+      }, 950);
+    }
+  }
+
+  /* ---------- level 5: build the summary ---------- */
+  function startBuild() { ST = { items: shuffle(STMS), got: [], wrong: 0, bad: {} }; drawBuild('اختر الجمل الخمس الصحيحة لتبني ملخص الدرس. انتبه، بينها جمل خاطئة!', ''); }
+  function drawBuild(msg, mood) {
+    hud('اخترت ' + ST.got.length + ' من 5');
+    var list = ST.items.map(function (s, i) {
+      var gi = ST.got.indexOf(i), cls = gi > -1 ? ' got' : ST.bad[i] ? ' bad' : '';
+      return '<button class="sb' + cls + '" style="--c:var(--c5)" data-s="' + i + '" type="button"' + (gi > -1 || ST.bad[i] ? ' disabled' : '') + '>' + (gi > -1 ? '<span class="num">' + (gi + 1) + '</span>' : '') + '<span>' + s[0] + '</span></button>';
+    }).join('');
+    var bd = ST.got.length ? '<ol>' + ST.got.map(function (i) { return '<li>' + ST.items[i][0] + '</li>'; }).join('') + '</ol>' : '<p class="empty" style="margin:0">ستظهر هنا الجمل التي تختارها.</p>';
+    stage.innerHTML = guide(msg, mood) + '<section class="card" style="--c:var(--c5)"><span class="badge">ابنِ ملخصك</span><h2>أي الجمل تلخص الدرس؟</h2><div class="stm">' + list + '</div><div class="board" style="--c:var(--c5)"><h3>ملخصي</h3>' + bd + '</div></section>';
+  }
+  function buildPick(i) {
+    var s = ST.items[i], el = document.querySelector('[data-s="' + i + '"]'), c = centerOf(el);
+    if (s[1]) {
+      ST.got.push(i); COMBO++; sfx.pop(COMBO); burst(c.x, c.y, COL[4], 24, 8); floatText(PRAISE[ST.got.length % PRAISE.length], c.x, c.y - 20, COL[4]);
+      if (ST.got.length === 5) {
+        var w = ST.wrong; P.sum = ST.got.map(function (k) { return ST.items[k][0]; });
+        drawBuild('رائع! بنيت ملخصاً كاملاً للدرس.', 'ok');
+        var tok = TOK; return setTimeout(function () { if (tok === TOK) finishLevel(pts100(w, 20), '<span class="stat">أخطاء ' + w + '</span>'); }, 900);
+      }
+      drawBuild('جملة صحيحة! تبقّى ' + (5 - ST.got.length) + '.', 'ok');
+    } else {
+      ST.wrong++; ST.bad[i] = true; burst(c.x, c.y, '#E0384B', 14, 6);
+      if (wrongFeedback('هذه الجملة خاطئة. الدرس يقول عكس ذلك.')) return fail();
+      drawBuild('هذه الجملة خاطئة. الدرس يقول عكس ذلك.', 'no');
+    }
+  }
+
+  /* ---------- final ---------- */
+  var FIVE = PAIRS;
+  function final() {
+    stopLoop(); LV = -1; progEl.hidden = true; setBack(true);
+    var t = total(), n = t >= 425 ? 3 : t >= 300 ? 2 : 1;
+    var lv = LEVELS.map(function (L, i) { return '<span style="--c:' + CV[i] + '">' + L.short + ' ' + miniStars(P.pts[i]) + '</span>'; }).join('');
+    var sum = P.sum.length ? '<h2 class="sumh">ملخصك</h2><ol class="final-sum">' + P.sum.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>' : '';
+    var five = FIVE.map(function (f) { return '<li style="--c:' + f[3] + '">' + ic(f[2], 32) + '<div><strong>' + f[0] + '</strong><span>' + f[1] + '</span></div></li>'; }).join('');
+    stage.innerHTML = guide('أنت بطل التوافق! هذا ملخص الدرس كاملاً.', 'ok') +
+      '<section class="card result" style="--c:var(--brand)">' + starsHTML(n) + '<div class="big">' + t + '</div><p style="margin:0 0 10px;color:var(--ink-soft);font-weight:700">نقطة من 500</p>' +
+      '<div class="lv">' + lv + '</div>' + sum + '<h2 class="sumh">خمس طرق لمواجهة التوتر</h2><ul class="five">' + five + '</ul>' +
+      '<div class="row"><button class="btn" data-act="home" type="button">المستويات</button><button class="btn alt" data-act="restart" type="button">العب من جديد</button></div></section>';
+    sfx.win(); rain(150, .3); setTimeout(function () { rain(80, .35); }, 500);
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest('[data-act],[data-add],[data-un],[data-k],[data-b],[data-m],[data-s]');
+    if (!t || t.disabled) return;
+    ac();
+    if (t.hasAttribute('data-b')) return popBubble(+t.getAttribute('data-b'));
+    if (t.hasAttribute('data-k')) return basketPick(t.getAttribute('data-k'));
+    if (t.hasAttribute('data-m')) return memFlip(+t.getAttribute('data-m'));
+    if (t.hasAttribute('data-s')) return buildPick(+t.getAttribute('data-s'));
+    if (t.hasAttribute('data-add')) return scrambleAdd(+t.getAttribute('data-add'));
+    if (t.hasAttribute('data-un')) return scrambleUndo(+t.getAttribute('data-un'));
+    var a = t.getAttribute('data-act');
+    if (a === 'mute') { muted = !muted; t.setAttribute('aria-pressed', muted); t.textContent = muted ? 'الصوت متوقف' : 'الصوت'; if (!muted) sfx.tap(); return; }
+    if (a === 'home') { sfx.tap(); return home(); }
+    if (a === 'restart') { sfx.tap(); resetAll(); return home(); }
+    if (a === 'play') { sfx.ok(); var nx = P.done.indexOf(false); return startLevel(nx === -1 ? 0 : nx); }
+    if (a === 'level') { sfx.tap(); return startLevel(+t.getAttribute('data-i')); }
+    if (a === 'final') { return final(); }
+    if (a === 'hint') return scrambleHint();
+    if (a === 'reset') { if (ST.lock || ST.done) return; ST.pool = ST.pool.concat(ST.placed); ST.placed = []; sfx.undo(); return drawScramble(); }
+    if (a === 'snext') {
+      sfx.tap();
+      if (ST.n < SENTS.length - 1) return sentence(ST.n + 1);
+      return finishLevel(pts100(ST.slips * 8 + ST.hints * 10, 1), '<span class="stat">محاولات خاطئة ' + ST.slips + '</span><span class="stat">تلميحات ' + ST.hints + '</span>');
+    }
+  });
+
+  resetAll();
+  home();
+})();
+</script>
+
+<a href="./#mental-health" id="dzback" onclick="if(history.length>1){event.preventDefault();history.back()}" style="position:fixed;z-index:9999;top:calc(10px + env(safe-area-inset-top,0px));left:max(10px,env(safe-area-inset-left,0px));background:#ffffffee;color:#271f3d;border:2px solid #d9d2ea;border-radius:999px;padding:6px 14px;font:700 14px Tahoma,sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.18)" dir="rtl">→ دروازة</a><script id="dzback">(function(){var h;try{h=JSON.parse(localStorage.getItem("darwaza:hub")||"null")}catch(e){}
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="./#"],a[href="./"]');if(!a||!h)return;e.preventDefault();var x=a.getAttribute("href").slice(2);location.href=h+(x||"#")},true)})();</script></body></html>

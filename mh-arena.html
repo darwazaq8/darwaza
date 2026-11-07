@@ -1,0 +1,718 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>حلبة الشخصية</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600&display=swap">
+<style>
+/* Layout: one-column night arena. A boxing ring (الهو vs الأنا الأعلى, الأنا as referee) frames every level; a sticky HUD carries level, score and sound. Single dark look by choice. */
+:root{
+  color-scheme:dark;
+  --ink:#0c1322; --panel:#141e36; --raise:#1d2a4a; --line:#2d3d68;
+  --text:#eef2ff; --muted:#a9b5d9;
+  --id:#4a7bff; --id-d:#2f5be0; --id-t:#a5bcff;
+  --ego:#f2c75c; --ego-d:#d9a92f; --ego-ink:#1b1405;
+  --sup:#ff6a4d; --sup-d:#c73b22; --sup-t:#ff9f8c;
+  --good:#3ed6a0; --bad:#ff5d73;
+  --font-display:'Lalezar','Readex Pro',Tahoma,system-ui,sans-serif;
+  --font-body:'Readex Pro',Tahoma,system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{background:var(--ink)}
+body{
+  margin:0;color:var(--text);font:400 16px/1.8 var(--font-body);
+  padding-block:0 36px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-tap-highlight-color:transparent;
+}
+#root{max-width:560px;margin-inline:auto}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--ego);outline-offset:3px;border-radius:10px}
+h1,h2,h3,p,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+
+/* HUD */
+.hud{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  display:flex;align-items:center;gap:12px;padding:10px 0 12px;
+  background:linear-gradient(var(--ink) 78%,rgba(12,19,34,0));
+}
+.lvl{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.lvl span{font:500 .82rem/1.2 var(--font-body);color:var(--muted)}
+.dots{display:flex;gap:5px}
+.dots i{flex:1;max-width:44px;height:7px;border-radius:4px;background:var(--raise)}
+.dots i.done{background:var(--ego)}
+.dots i.cur{background:transparent;box-shadow:inset 0 0 0 2px var(--ego)}
+.score{display:flex;align-items:baseline;gap:5px;font-variant-numeric:tabular-nums}
+.score b{font:400 1.7rem/1 var(--font-display);color:var(--ego)}
+.score small{font-size:.75rem;color:var(--muted)}
+.score.bump b{animation:bump .4s ease-out}
+.combo{display:inline-flex;align-items:center;gap:3px;margin-inline-end:6px;padding:2px 9px 2px 7px;border-radius:999px;background:var(--sup-d);color:#fff;font:400 1rem/1.5 var(--font-display);animation:pulse 1s ease-in-out infinite}
+.combo svg{width:15px;height:15px}
+.icon-btn{width:44px;height:44px;border-radius:14px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;color:var(--text)}
+.icon-btn svg{width:22px;height:22px}
+
+/* screens */
+.screen{display:flex;flex-direction:column;gap:16px;animation:rise .35s ease-out both}
+.eyebrow{font:500 .85rem/1.4 var(--font-body);color:var(--ego)}
+h1{font:400 clamp(2.9rem,15vw,4.2rem)/1.1 var(--font-display);color:var(--ego);text-shadow:0 3px 0 #7a5a12,0 0 28px rgba(242,199,92,.25)}
+h2{font:400 2rem/1.2 var(--font-display);text-wrap:balance}
+h3{font:400 1.45rem/1.3 var(--font-display)}
+.sub,.rule{color:var(--muted);font-size:1.02rem;max-width:34em}
+.tiny{font-size:.82rem;color:var(--muted);text-align:center}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+
+/* buttons */
+.btn{min-height:54px;padding:8px 22px;border-radius:16px;font:400 1.3rem/1.3 var(--font-display);display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 5px 0 rgba(0,0,0,.4);transition:transform .08s,box-shadow .08s,filter .2s}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.btn.primary{background:var(--ego);color:var(--ego-ink)}
+.btn.big{min-height:62px;font-size:1.55rem;width:100%}
+.btn:disabled{filter:grayscale(1) brightness(.6);cursor:not-allowed}
+.btn svg{width:22px;height:22px}
+
+/* ring */
+.ring{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);padding-top:14px;
+  background:radial-gradient(110% 70% at 50% -8%,rgba(242,199,92,.30),rgba(242,199,92,0) 62%),linear-gradient(#18244a,#0e1730)}
+.ring::before{content:"";position:absolute;inset:-20% 10% auto;height:70%;background:conic-gradient(from 160deg at 50% 0,rgba(255,255,255,0),rgba(255,255,255,.10) 8%,rgba(255,255,255,0) 16%);transform-origin:50% 0;animation:sweep 7s ease-in-out infinite alternate;pointer-events:none}
+.ropes{position:absolute;inset:0;pointer-events:none}
+.rope{position:absolute;inset-inline:0;height:5px;border-radius:3px;opacity:.9}
+.r1{top:46%;background:var(--sup)}
+.r2{top:60%;background:#e9eeff}
+.r3{top:74%;background:var(--id)}
+.floor{height:26px;background:linear-gradient(#2c3e70,#1b2850);border-top:3px solid #3d5189;position:relative}
+.cast{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding-inline:6px;align-items:end}
+.slot{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:10px;min-width:0}
+.char{display:flex;flex-direction:column;align-items:center;width:100%;position:relative}
+.char svg{width:min(100%,128px);height:auto;display:block;overflow:visible;animation:breathe 3.2s ease-in-out infinite;transform-origin:50% 100%}
+.char .nm{margin-top:-4px;margin-bottom:10px;padding:1px 12px 3px;border-radius:999px;background:rgba(7,12,24,.65);font:400 1.1rem/1.4 var(--font-display);white-space:nowrap}
+.char.id .nm{color:var(--id-t)} .char.ego .nm{color:var(--ego)} .char.sup .nm{color:var(--sup-t)}
+button.char{transition:transform .15s,filter .2s}
+button.char:active{transform:scale(.96)}
+button.char.on svg{filter:drop-shadow(0 0 12px var(--glow))}
+button.char.id{--glow:var(--id)} button.char.ego{--glow:var(--ego)} button.char.sup{--glow:var(--sup)}
+button.char.on .nm{background:var(--glow);color:#fff}
+button.char.ego.on .nm{color:var(--ego-ink)}
+.char.cheer svg{animation:cheer .7s ease-out}
+.char.hurt svg{animation:shake .45s ease-out}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick .9s ease-in-out infinite alternate}
+.scale{transform-box:fill-box;transform-origin:50% 0;animation:sway 2.6s ease-in-out infinite alternate}
+.halo{animation:glow 2s ease-in-out infinite alternate}
+.sbub{position:relative;padding:6px 10px;border-radius:12px;font:500 .84rem/1.5 var(--font-body);text-align:center;color:#fff;max-width:100%}
+.sbub::after{content:"";position:absolute;bottom:-7px;left:50%;margin-left:-7px;border:7px solid transparent;border-bottom:0}
+.sbub.id{background:var(--id-d)} .sbub.id::after{border-top-color:var(--id-d)}
+.sbub.sup{background:var(--sup-d)} .sbub.sup::after{border-top-color:var(--sup-d)}
+.sbub.ego{background:var(--ego);color:var(--ego-ink)} .sbub.ego::after{border-top-color:var(--ego)}
+.ring.mini .char svg{width:min(100%,84px)}
+.ring.mini .nm{font-size:.95rem}
+
+/* learn */
+.info{border-top:4px solid var(--c,var(--line));min-height:210px;display:flex;flex-direction:column;gap:10px}
+.info-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--c);color:#fff}
+.info[style*="--ego"] .badge{color:var(--ego-ink)}
+.badge svg{width:24px;height:24px}
+.chip{padding:0 12px;border-radius:999px;font-size:.8rem;font-weight:500;border:1px solid var(--c);color:var(--text)}
+.says{font:400 1.25rem/1.5 var(--font-display);color:var(--c)}
+.facts{display:flex;flex-direction:column;gap:6px}
+.facts li{position:relative;padding-inline-start:20px;font-size:.98rem}
+.facts li::before{content:"";position:absolute;inset-inline-start:2px;top:.75em;width:8px;height:8px;border-radius:2px;background:var(--c);transform:rotate(45deg)}
+.learn-foot{display:flex;align-items:center;gap:14px}
+.learn-foot .btn{flex:1}
+.seen{display:flex;gap:6px}
+.seen i{width:14px;height:14px;border-radius:50%;background:var(--raise);border:2px solid var(--line)}
+.seen i.on{background:var(--ego);border-color:var(--ego)}
+
+/* quiz shared */
+.prog{display:flex;align-items:center;gap:12px;font-size:.85rem;color:var(--muted)}
+.prog span{white-space:nowrap}
+.bar{flex:1;height:8px;border-radius:5px;background:var(--raise);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ego-d),var(--ego));border-radius:5px;transition:width .4s}
+.who-stage{display:flex;align-items:flex-end;gap:14px}
+.speaker{width:88px;flex:none}
+.speaker svg{width:100%;height:auto;display:block;overflow:visible}
+.bubble{position:relative;flex:1;min-width:0;background:var(--raise);border:1px solid var(--line);border-radius:18px;padding:14px 16px;font:500 1.12rem/1.8 var(--font-body);text-wrap:pretty}
+.bubble::after{content:"";position:absolute;right:-9px;bottom:22px;border-left:9px solid var(--raise);border-top:9px solid transparent;border-bottom:9px solid transparent}
+.answers{display:flex;flex-direction:column;gap:10px}
+.ans{display:flex;align-items:center;gap:12px;min-height:60px;padding:6px 14px;border-radius:16px;text-align:start;box-shadow:0 5px 0 rgba(0,0,0,.4);color:#fff;transition:transform .08s,box-shadow .08s,opacity .2s}
+.ans:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.ans.id{background:var(--id-d)} .ans.ego{background:var(--ego);color:var(--ego-ink)} .ans.sup{background:var(--sup-d)}
+.ans .ico{width:38px;height:38px;border-radius:11px;background:rgba(0,0,0,.22);display:grid;place-items:center;flex:none}
+.ans .ico svg{width:22px;height:22px}
+.ans .nm{font:400 1.35rem/1.2 var(--font-display);flex:1}
+.ans .sub{font-size:.8rem;opacity:.85}
+.ans:disabled{cursor:default}
+.ans.dim{opacity:.35}
+.ans.right{outline:4px solid var(--good);outline-offset:2px;animation:pulse .8s ease-in-out 2}
+.ans.wrong{outline:4px solid var(--bad);outline-offset:2px}
+.fb{border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;border:2px solid var(--good);background:rgba(62,214,160,.10);animation:rise .3s ease-out both}
+.fb.no{border-color:var(--bad);background:rgba(255,93,115,.10)}
+.fb b{font:400 1.35rem/1.3 var(--font-display);display:flex;align-items:center;gap:8px}
+.fb.ok b{color:var(--good)} .fb.no b{color:var(--bad)}
+.fb b svg{width:24px;height:24px}
+.fb p{font-size:.98rem}
+
+/* referee */
+.scene{padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.scene .lab{font:500 .8rem/1.3 var(--font-body);color:var(--ego)}
+.scene p{font:500 1.1rem/1.8 var(--font-body)}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.opt{min-height:72px;padding:8px 6px;border-radius:16px;background:var(--raise);border:2px solid var(--line);box-shadow:0 5px 0 rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:transform .08s,box-shadow .08s,opacity .2s}
+.opt:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.opt b{font:400 1.35rem/1.3 var(--font-display);color:var(--ego)}
+.opt small{font-size:.76rem;color:var(--muted)}
+.opt.right{border-color:var(--good);background:rgba(62,214,160,.16)}
+.opt.wrong{border-color:var(--bad);background:rgba(255,93,115,.16)}
+.opt.dim{opacity:.4}
+.opt:disabled{cursor:default}
+
+/* sequence */
+.meter{display:flex;flex-direction:column;gap:8px}
+.meter-top{display:flex;justify-content:space-between;font:400 1.05rem/1.2 var(--font-display)}
+.meter-top span:first-child{color:var(--sup-t)} .meter-top span:last-child{color:var(--good)}
+.track{position:relative;height:18px;border-radius:10px;background:var(--raise);overflow:hidden}
+.track i{position:absolute;inset:0;border-radius:10px;background:linear-gradient(270deg,var(--sup),var(--ego) 55%,var(--good));transform:scaleX(.06);transform-origin:100% 50%;transition:transform .6s cubic-bezier(.2,.9,.3,1)}
+.slots{display:flex;flex-direction:column;gap:8px}
+.sl{display:flex;align-items:center;gap:12px;min-height:58px;padding:8px 12px;border-radius:14px;border:2px dashed var(--line);color:var(--muted);font-size:.95rem;transition:background .3s,border-color .3s}
+.sl .n{width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;font:400 1.1rem/1 var(--font-display);background:var(--raise);font-variant-numeric:tabular-nums}
+.sl .txt{min-width:0}
+.sl.filled{border-style:solid;border-color:var(--good);background:rgba(62,214,160,.10);color:var(--text);animation:pop .4s ease-out}
+.sl.filled .n{background:var(--good);color:#06281d}
+.chips{display:flex;flex-direction:column;gap:8px}
+.chip-b{padding:10px 14px;min-height:54px;border-radius:14px;background:var(--raise);border:1px solid var(--line);box-shadow:0 4px 0 rgba(0,0,0,.4);text-align:start;font-size:.98rem;line-height:1.6;transition:transform .08s,box-shadow .08s}
+.chip-b:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.chip-b.used{display:none}
+
+/* true / false */
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tf .btn{min-height:68px;font-size:1.5rem}
+.tf .t{background:var(--good);color:#06281d}
+.tf .f{background:var(--bad);color:#2b0710}
+.tf .btn.dim{opacity:.35}
+.tf .btn.right{outline:4px solid #fff;outline-offset:2px}
+.statement{padding:22px 18px;border-radius:20px;background:var(--raise);border:1px solid var(--line);font:500 1.2rem/1.9 var(--font-body);text-wrap:pretty;min-height:150px;display:flex;align-items:center}
+
+/* result */
+.stars{display:flex;justify-content:center;gap:10px}
+.stars svg{width:62px;height:62px;color:var(--raise);fill:var(--raise);stroke:var(--line);stroke-width:1}
+.stars svg.on{color:var(--ego);fill:var(--ego);stroke:#a67b12;animation:starpop .6s cubic-bezier(.2,1.6,.4,1) both}
+.rank{text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center}
+.rank h2{color:var(--ego)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{padding:12px 6px;text-align:center;border-radius:16px;background:var(--panel);border:1px solid var(--line)}
+.stat b{display:block;font:400 1.8rem/1.2 var(--font-display);color:var(--ego);font-variant-numeric:tabular-nums}
+.stat span{font-size:.78rem;color:var(--muted)}
+.sum{display:flex;flex-direction:column;gap:10px}
+.sum h3{color:var(--ego)}
+.sumrow{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:14px;background:var(--raise);border-inline-start:5px solid var(--c)}
+.sumrow .badge{width:34px;height:34px;flex:none;border-radius:10px}
+.sumrow .badge svg{width:20px;height:20px}
+.sumrow h4{margin:0;font:400 1.2rem/1.4 var(--font-display);color:var(--c)}
+.sumrow p{font-size:.93rem;line-height:1.75}
+.key{padding:14px 16px;border-radius:16px;background:rgba(242,199,92,.12);border:1px solid var(--ego);font-weight:500}
+.think li{position:relative;padding-inline-start:20px;font-size:.95rem}
+.think li::before{content:"";position:absolute;inset-inline-start:2px;top:.8em;width:8px;height:8px;border-radius:50%;background:var(--ego)}
+
+/* fx */
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+.pop{position:fixed;z-index:70;transform:translate(-50%,0);font:400 1.7rem/1 var(--font-display);pointer-events:none;text-shadow:0 2px 0 rgba(0,0,0,.6);animation:floatup .95s ease-out forwards}
+.shake{animation:shake .4s ease-out}
+.flash{animation:flash .5s ease-out}
+
+@keyframes rise{from{transform:translateY(12px)}to{transform:none}}
+@keyframes bump{40%{transform:scale(1.35)}}
+@keyframes pulse{50%{transform:scale(1.07)}}
+@keyframes pop{0%{transform:scale(.94)}60%{transform:scale(1.04)}100%{transform:none}}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+@keyframes cheer{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-16px) scale(1.06)}70%{transform:translateY(0) scale(.98)}100%{transform:none}}
+@keyframes breathe{50%{transform:scaleY(1.025)}}
+@keyframes flick{from{transform:scale(1,.9) rotate(-3deg)}to{transform:scale(1.08,1.12) rotate(3deg)}}
+@keyframes sway{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+@keyframes glow{from{opacity:.45}to{opacity:1}}
+@keyframes sweep{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+@keyframes floatup{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-70px)}}
+@keyframes starpop{0%{transform:scale(0) rotate(-40deg)}100%{transform:none}}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(242,199,92,.7)}100%{box-shadow:0 0 0 22px rgba(242,199,92,0)}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+
+<div id="root" dir="rtl" lang="ar">
+  <header class="hud" id="hud"></header>
+  <main id="app"></main>
+</div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+(function(){
+'use strict';
+document.documentElement.dir='rtl';
+document.documentElement.lang='ar';
+
+/* ---------- helpers ---------- */
+var $=function(s,r){return (r||document).querySelector(s)};
+var app=$('#app');
+var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function loadBest(){try{return +localStorage.getItem('arena-best')||0}catch(e){return 0}}
+function saveBest(v){try{localStorage.setItem('arena-best',String(v))}catch(e){}}
+
+/* ---------- state ---------- */
+var S={lvl:-1,score:0,streak:0,top:0,right:0,wrong:0,sound:true};
+var cur=null;
+
+/* ---------- icons ---------- */
+var IC={
+  id:'<path d="M12 2c1 4 6 6 6 11a6 6 0 01-12 0c0-3 2-4 3-7 1 1 2 2 3 1 .5-1.5 0-3 0-5z"/>',
+  ego:'<circle cx="8" cy="15" r="5"/><path d="M8 10h13v5h-6"/><path d="M6 15h4"/>',
+  sup:'<path d="M12 3v17M5 7h14M5 7l-3 7h6zM19 7l-3 7h6zM8 21h8"/>',
+  sndOn:'<path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/>',
+  sndOff:'<path d="M4 10v4h4l5 4V6L8 10z"/><path d="M17 9l5 6M22 9l-5 6"/>',
+  check:'<path d="M5 12.5l5 5 9-11" stroke-width="3"/>',
+  cross:'<path d="M6 6l12 12M18 6L6 18" stroke-width="3"/>',
+  arrow:'<path d="M19 12H5M11 6l-6 6 6 6"/>'
+};
+function icon(k){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[k]+'</svg>'}
+var STAR='<svg viewBox="0 0 24 24" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 7 7 .6-5.3 4.6 1.7 7.3L12 17.8 5.6 21.5l1.7-7.3L2 9.6 9 9z"/></svg>';
+
+/* ---------- characters (original drawings) ---------- */
+var SVG={
+id:'<svg viewBox="0 0 120 160" aria-hidden="true">'+
+ '<g class="flame"><path d="M60 0c7 10 15 13 11 24-2 5-7 8-11 8s-9-3-11-8C45 13 53 10 60 0z" fill="#ff8a2b"/><path d="M60 12c4 6 8 8 6 14-1 3-3 5-6 5s-5-2-6-5c-2-6 2-8 6-14z" fill="#ffd36a"/></g>'+
+ '<rect x="38" y="140" width="16" height="18" rx="6" fill="#b87a4d"/><rect x="66" y="140" width="16" height="18" rx="6" fill="#b87a4d"/>'+
+ '<path d="M34 94Q60 84 86 94L90 132H30Z" fill="#c98a5b"/>'+
+ '<path d="M50 99Q60 106 70 99M60 107V122" stroke="#a96f45" stroke-width="2.5" fill="none" stroke-linecap="round"/>'+
+ '<path d="M30 126H90L92 148H28Z" fill="#2f5be0"/><rect x="30" y="126" width="60" height="7" fill="#e9eeff"/>'+
+ '<path d="M38 98L22 110M82 98L98 110" stroke="#c98a5b" stroke-width="11" stroke-linecap="round"/>'+
+ '<circle cx="17" cy="112" r="15" fill="#3b6cff"/><circle cx="103" cy="112" r="15" fill="#3b6cff"/>'+
+ '<path d="M9 108q4-8 12-6M99 102q8-2 12 6" stroke="#9db8ff" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+ '<path d="M38 50L36 34L48 44L54 30L62 43L70 30L76 44L84 34L82 50Z" fill="#17172b"/>'+
+ '<circle cx="60" cy="64" r="24" fill="#c98a5b"/>'+
+ '<path d="M36 62Q34 40 60 40Q86 40 84 62Q72 52 60 54Q48 52 36 62Z" fill="#17172b"/>'+
+ '<path d="M44 57L56 63M76 57L64 63" stroke="#17172b" stroke-width="3.5" stroke-linecap="round"/>'+
+ '<circle cx="52" cy="68" r="4" fill="#fff"/><circle cx="68" cy="68" r="4" fill="#fff"/><circle cx="53" cy="69" r="2" fill="#17172b"/><circle cx="67" cy="69" r="2" fill="#17172b"/>'+
+ '<path d="M51 79Q60 91 69 79Q60 83 51 79Z" fill="#5a1620"/></svg>',
+ego:'<svg viewBox="0 0 120 160" aria-hidden="true">'+
+ '<ellipse class="halo" cx="60" cy="16" rx="24" ry="6" fill="none" stroke="#f2c75c" stroke-width="3" stroke-dasharray="4 5"/>'+
+ '<rect x="38" y="122" width="17" height="36" rx="5" fill="#1b1e2b"/><rect x="65" y="122" width="17" height="36" rx="5" fill="#1b1e2b"/>'+
+ '<path d="M36 92Q60 84 84 92L87 130H33Z" fill="#f4f6ff"/>'+
+ '<path d="M40 98L12 104M80 98L108 104" stroke="#f4f6ff" stroke-width="11" stroke-linecap="round"/>'+
+ '<circle cx="8" cy="105" r="7" fill="#e8bd94"/><circle cx="112" cy="105" r="7" fill="#e8bd94"/>'+
+ '<path d="M52 94L60 98L52 102ZM68 94L60 98L68 102Z" fill="#111"/><circle cx="60" cy="98" r="2.6" fill="#111"/>'+
+ '<circle cx="60" cy="112" r="1.8" fill="#9aa4c7"/><circle cx="60" cy="121" r="1.8" fill="#9aa4c7"/>'+
+ '<path d="M50 92Q60 114 70 92" stroke="#f2c75c" stroke-width="1.6" fill="none"/>'+
+ '<rect x="55" y="108" width="12" height="7" rx="3.5" fill="#f2c75c"/>'+
+ '<circle cx="60" cy="64" r="23" fill="#e8bd94"/>'+
+ '<path d="M37 62Q36 40 60 40Q84 40 83 62Q78 52 66 50Q56 54 37 62Z" fill="#17172b"/>'+
+ '<path d="M46 58Q52 55 57 58M63 58Q68 55 74 58" stroke="#17172b" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+ '<circle cx="52" cy="66" r="3.6" fill="#fff"/><circle cx="68" cy="66" r="3.6" fill="#fff"/><circle cx="52" cy="67" r="1.9" fill="#17172b"/><circle cx="68" cy="67" r="1.9" fill="#17172b"/>'+
+ '<path d="M49 76Q55 71 60 75Q65 71 71 76Q65 80 60 77Q55 80 49 76Z" fill="#17172b"/>'+
+ '<path d="M54 83Q60 88 66 83" stroke="#8a4a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>',
+sup:'<svg viewBox="0 0 120 160" aria-hidden="true">'+
+ '<g class="scale" stroke="#ffd36a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M60 3V30"/><path d="M42 11H78"/><path d="M42 11L35 24H49Z"/><path d="M78 11L71 24H85Z"/></g>'+
+ '<rect x="38" y="140" width="16" height="18" rx="6" fill="#d39565"/><rect x="66" y="140" width="16" height="18" rx="6" fill="#d39565"/>'+
+ '<path d="M34 94Q60 84 86 94L90 132H30Z" fill="#e2ab7c"/>'+
+ '<path d="M30 126H90L92 148H28Z" fill="#c73b22"/><rect x="30" y="126" width="60" height="7" fill="#ffe3dc"/>'+
+ '<path d="M38 98L24 106M82 98L96 106" stroke="#e2ab7c" stroke-width="11" stroke-linecap="round"/>'+
+ '<circle cx="19" cy="108" r="15" fill="#ff6a4d"/><circle cx="101" cy="108" r="15" fill="#ff6a4d"/>'+
+ '<path d="M11 104q4-8 12-6M97 98q8-2 12 6" stroke="#ffb3a4" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+ '<circle cx="60" cy="64" r="24" fill="#e2ab7c"/>'+
+ '<path d="M36 62Q34 40 60 40Q86 40 84 62Q76 49 60 49Q44 49 36 62Z" fill="#3a2418"/>'+
+ '<path d="M44 59L56 61M76 59L64 61" stroke="#3a2418" stroke-width="3.5" stroke-linecap="round"/>'+
+ '<circle cx="52" cy="67" r="4" fill="#fff"/><circle cx="68" cy="67" r="4" fill="#fff"/><circle cx="52" cy="68" r="2" fill="#17172b"/><circle cx="68" cy="68" r="2" fill="#17172b"/>'+
+ '<path d="M52 80H68" stroke="#7a3a2a" stroke-width="3" stroke-linecap="round"/></svg>'
+};
+var SIL='<svg viewBox="0 0 120 160" aria-hidden="true"><circle cx="60" cy="62" r="24" fill="#26345c"/><path d="M26 150Q28 94 60 92Q92 94 94 150Z" fill="#26345c"/><text x="60" y="76" text-anchor="middle" font-family="Lalezar,Tahoma,sans-serif" font-size="40" fill="#8fa0d6">؟</text></svg>';
+
+/* ---------- content (from the three textbook pages) ---------- */
+var ROLE={
+  id:{name:'الهو',short:'غريزي',c:'--id',tag:'لاشعوري · غريزي',
+      says:'أريد الآن! ولا حدود لي!',
+      pts:['قوة لاشعورية غريزية، وهي محور الشخصية وأساسها.',
+           'يحتفظ بطبيعته البدائية والطفولية من أول الحياة.',
+           'مستودع الغرائز والحوادث والذكريات المؤلمة والمرفوضة اجتماعياً.',
+           'همه الوحيد: اللذة والإشباع المبالغ فيه دون حدود تضبطه.']},
+  ego:{name:'الأنا',short:'واقعي',c:'--ego',tag:'شعوري · واقعي',
+      says:'لنفكر في الواقع أولاً.',
+      pts:['قوة شعورية تتعامل مع الواقع: ضوابط المجتمع وشروط البيئة.',
+           'مهمتها التوفيق بين متطلبات الشخصية ودوافعها.',
+           'تلبي مطالب الهو، أو تؤخرها، أو تكفها وتمنعها من التحقق.']},
+  sup:{name:'الأنا الأعلى',short:'ضمير',c:'--sup',tag:'لاشعوري · أخلاقي',
+      says:'عيب! لا تفعل ذلك.',
+      pts:['قوة لاشعورية: القيم والعادات والتقاليد التي يمتصها الفرد بالتنشئة الاجتماعية.',
+           'تسمى صوت المجتمع أو الضمير.',
+           'تكف رغبات الهو وتقف في وجه دوافعه، وتعين الأنا على استبدال الأهداف غير الاجتماعية بأخرى مقبولة.']}
+};
+
+var WHO=[
+ {t:'أريد الحلوى الآن! ولا يهمني ما يقوله أحد.',a:'id',r:'الهو يطلب اللذة والإشباع دون حدود.'},
+ {t:'سآكل الحلوى بعد الغداء، حتى لا أخالف نظام البيت.',a:'ego',r:'الأنا تؤخر الإشباع وتراعي الواقع.'},
+ {t:'عيب! لا يجوز أن تأخذ ما ليس لك.',a:'sup',r:'هذه تعاليم المجتمع وقيمه، وهي صوت الضمير.'},
+ {t:'أنا غاضب جداً، سأضرب زميلي الآن!',a:'id',r:'اندفاع غريزي لا تضبطه حدود.'},
+ {t:'يمكنني أن أنتظر دوري، فالانتظار يحقق ما أريد دون مشكلات.',a:'ego',r:'الأنا توفق بين الرغبة وظروف الواقع.'},
+ {t:'ضميري يؤنبني لأنني كذبت على صديقي.',a:'sup',r:'التأنيب والمراقبة وظيفة الأنا الأعلى.'},
+ {t:'سألعب الآن، والواجب لا يهمني أبداً!',a:'id',r:'يريد المتعة فوراً دون النظر إلى العواقب.'},
+ {t:'الوقت ضيق، سأنهي الواجب أولاً ثم ألعب.',a:'ego',r:'الأنا تنظم الرغبات بما يناسب الواقع.'},
+ {t:'يجب أن أحترم عادات مجتمعي وتقاليده.',a:'sup',r:'الأنا الأعلى يمثل القيم والعادات والتقاليد.'}
+];
+
+var REF=[
+ {s:'أنت عطشان بعد الرياضة، وأمامك ماء نظيف يخصك.',id:'اشرب الآن!',sup:'لا مانع لدي.',a:1,
+  r:'الرغبة مشروعة والبيئة تسمح بها، فتلبيها الأنا.'},
+ {s:'أنت جائع في منتصف الحصة، ومعك ساندويتش.',id:'كُل الآن!',sup:'عيب، ليس الآن!',a:2,
+  r:'تؤخر الأنا الإشباع إلى وقت مناسب، وهو الفسحة.'},
+ {s:'رأيت قلماً جميلاً على طاولة زميلك.',id:'خذه لنفسك!',sup:'هذه سرقة، عيب!',a:3,
+  r:'الرغبة تتعارض مع القيم والأخلاق، فتكفها الأنا وتمنعها.'},
+ {s:'غداً امتحان، وأصدقاؤك يدعونك إلى اللعب الآن.',id:'العب الآن!',sup:'ذاكر أولاً!',a:2,
+  r:'تؤجل الأنا اللعب حتى تنجز المذاكرة، فيتحقق الهدفان.'}
+];
+var OPT=[{b:'ألبّي',s:'نعم، الآن'},{b:'أؤجّل',s:'ليس الآن'},{b:'أمنع',s:'لا'}];
+/* REF.a: 1 = تلبية, 2 = تأجيل, 3 = منع */
+
+var SEQ=[
+ 'يتعرض الإنسان لمثير داخلي أو خارجي.',
+ 'يصبح في حالة استثارة وتوتر، ويشعر بالضيق.',
+ 'يقوم بنشاط معين بنية التخلص من هذا التوتر.',
+ 'يصل إلى حالة الاتزان.',
+ 'يعود إلى حالته الأولى، فيشعر بالسعادة واللذة.'
+];
+
+var TF=[
+ {t:'الأنا الأعلى قوة لاشعورية، وتسمى صوت المجتمع أو الضمير.',a:true,r:'صحيح: فهي تمثل تعاليم المجتمع وقيمه المتوارثة.'},
+ {t:'الأنا قوة لاشعورية غريزية تبحث عن اللذة دون حدود.',a:false,r:'خطأ: هذا وصف الهو. أما الأنا فقوة شعورية تتعامل مع الواقع.'},
+ {t:'يحتفظ الهو بطبيعته البدائية والطفولية، ولا تضبطه حدود.',a:true,r:'صحيح: همه الوحيد البحث عن اللذة والإشباع.'},
+ {t:'مهمة الأنا التوفيق بين متطلبات الهو وشروط الواقع.',a:true,r:'صحيح: فهي تلبي مطالب الهو أو تؤخرها أو تكفها.'},
+ {t:'الصوت الذي يقول في داخلنا «عيب، لا تفعل ذلك» هو صوت الهو.',a:false,r:'خطأ: هو صوت الأنا الأعلى، أي الضمير.'},
+ {t:'يقلد الطفل سلطة والده، فينهى غيره بما نُهي عنه.',a:true,r:'صحيح: ومع الوقت تصبح هذه السلطة ضميراً يؤنبه ويراقبه.'},
+ {t:'بعد التعرض للمثير يبقى الإنسان في توتر دائم ولا يعود إلى اتزانه.',a:false,r:'خطأ: يقوم بنشاط للتخلص من التوتر، ثم يعود إلى حالته الأولى.'},
+ {t:'سلوك الإنسان يتحدد بالعلاقة بين الهو والأنا والأنا الأعلى.',a:true,r:'صحيح: فكل سلوك يقع تحت تأثير القوى الثلاث.'}
+];
+
+/* ---------- audio (synthesized, starts after first tap) ---------- */
+var AC=null,master=null,musicTimer=null,mStep=0;
+function ensureAudio(){
+  if(!AC){
+    try{AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=.85;master.connect(AC.destination)}catch(e){AC=null}
+  }
+  if(AC&&AC.state==='suspended'){try{AC.resume()}catch(e){}}
+}
+function tone(f,d,type,v,delay,slide){
+  if(!AC||!S.sound)return;
+  d=d||.15;v=v||.15;delay=delay||0;
+  var t=AC.currentTime+delay,o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f,t);
+  if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.05);
+}
+var SFX={
+  tap:function(){tone(520,.07,'triangle',.12)},
+  ok:function(){tone(660,.12,'triangle',.2);tone(990,.2,'triangle',.2,.09)},
+  bad:function(){tone(220,.28,'sawtooth',.12,0,110)},
+  step:function(n){tone(330*Math.pow(1.122,n*2),.16,'triangle',.2);tone(660*Math.pow(1.122,n*2),.12,'sine',.1,.05)},
+  bell:function(){[880,1320,1760,2640].forEach(function(f,i){tone(f,1.3,'sine',.11/(i+1)*1.6)})},
+  up:function(){[523,659,784,1047].forEach(function(f,i){tone(f,.22,'triangle',.18,i*.09)})},
+  star:function(i){tone(700+i*180,.3,'triangle',.2);tone(1400+i*360,.25,'sine',.08,.06)},
+  win:function(){[523,659,784,1047,1319,1568].forEach(function(f,i){tone(f,.3,'triangle',.18,i*.1)})}
+};
+var PAT=[0,2,4,2,5,4,2,1],SC=[261.63,293.66,329.63,392,440,523.25];
+function startMusic(){
+  stopMusic();if(!AC||!S.sound)return;
+  musicTimer=setInterval(function(){
+    var n=PAT[mStep%PAT.length];
+    tone(SC[n],.55,'sine',.035);
+    if(mStep%8===0)tone(SC[0]/2,1.6,'triangle',.05);
+    if(mStep%4===2)tone(SC[(n+2)%6]*2,.3,'sine',.018);
+    mStep++;
+  },430);
+}
+function stopMusic(){if(musicTimer){clearInterval(musicTimer);musicTimer=null}}
+document.addEventListener('visibilitychange',function(){if(document.hidden)stopMusic();else if(S.lvl>=0&&S.lvl<5)startMusic()});
+
+/* ---------- visual fx ---------- */
+var cv=$('#fx'),cx=cv.getContext('2d'),parts=[],raf=0;
+function sizeCv(){var d=window.devicePixelRatio||1;cv.width=innerWidth*d;cv.height=innerHeight*d;cx.setTransform(d,0,0,d,0,0)}
+function burst(x,y,n){
+  if(RM)return;sizeCv();
+  var cols=['#4a7bff','#f2c75c','#ff6a4d','#eef2ff','#3ed6a0'];
+  for(var i=0;i<n;i++)parts.push({x:x,y:y,vx:(Math.random()-.5)*11,vy:-Math.random()*11-3,g:.32,s:Math.random()*6+3,c:cols[i%cols.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,l:1});
+  if(!raf)raf=requestAnimationFrame(loop);
+}
+function loop(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  parts=parts.filter(function(p){return p.l>0&&p.y<innerHeight+30});
+  parts.forEach(function(p){
+    p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;p.l-=.008;
+    cx.save();cx.globalAlpha=Math.max(p.l,0);cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66);cx.restore();
+  });
+  raf=parts.length?requestAnimationFrame(loop):0;
+  if(!raf)cx.clearRect(0,0,innerWidth,innerHeight);
+}
+function burstAt(el,n){var r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,n||36)}
+function popAt(el,text,color){
+  var r=el.getBoundingClientRect(),p=document.createElement('span');
+  p.className='pop';p.textContent=text;p.style.left=(r.left+r.width/2)+'px';p.style.top=(r.top+4)+'px';p.style.color=color;
+  document.body.appendChild(p);setTimeout(function(){p.remove()},1000);
+}
+function retrig(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)}
+function mood(k,m){var el=$('.char.'+k);if(el){el.classList.remove('cheer','hurt');void el.offsetWidth;el.classList.add(m)}}
+
+/* ---------- HUD & scoring ---------- */
+function hud(bump){
+  var t=S.lvl<0?'جاهز للمباراة؟':S.lvl>=5?'النتيجة النهائية':'المرحلة '+(S.lvl+1)+' من 5';
+  var dots='';for(var i=0;i<5;i++)dots+='<i class="'+(i<S.lvl?'done':i===S.lvl?'cur':'')+'"></i>';
+  $('#hud').innerHTML=
+   '<div class="lvl"><span>'+t+'</span><div class="dots">'+dots+'</div></div>'+
+   '<div class="score'+(bump?' bump':'')+'">'+(S.streak>=2?'<span class="combo">'+icon('id')+'×'+S.streak+'</span>':'')+'<b>'+S.score+'</b><small>نقطة</small></div>'+
+   '<button class="icon-btn" data-act="mute" aria-label="'+(S.sound?'إيقاف الصوت':'تشغيل الصوت')+'">'+icon(S.sound?'sndOn':'sndOff')+'</button>';
+}
+function award(base,el){
+  S.streak++;S.top=Math.max(S.top,S.streak);S.right++;
+  var pts=base+Math.min(S.streak-1,5)*20;S.score+=pts;hud(true);
+  popAt(el,'+'+pts,'var(--good)');SFX.ok();burstAt(el,S.streak>=3?30:14);
+}
+function miss(el){S.streak=0;S.wrong++;hud();SFX.bad();retrig(el,'shake')}
+function view(html){app.innerHTML=html;window.scrollTo(0,0)}
+function fbHTML(ok,msg,label){
+  return '<div class="fb '+(ok?'ok':'no')+'" id="fb" role="status"><b>'+icon(ok?'check':'cross')+(ok?'أحسنت!':'ليست هذه')+'</b><p>'+msg+'</p><button class="btn primary" data-act="next">'+label+'</button></div>';
+}
+function showFb(ok,msg,label){
+  var box=document.createElement('div');box.innerHTML=fbHTML(ok,msg,label);
+  app.firstElementChild.appendChild(box.firstChild);
+  var f=$('#fb');setTimeout(function(){f.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'})},50);
+}
+
+/* ---------- ring builder ---------- */
+function ring(o){
+  o=o||{};var tap=o.tap,bub=o.bub||{},cls=o.cls||'',order=['id','ego','sup'],h='';
+  order.forEach(function(k){
+    var tg=tap?'button':'div';
+    h+='<div class="slot">'+(bub[k]?'<div class="sbub '+k+'">'+bub[k]+'</div>':'')+
+      '<'+tg+' class="char '+k+'"'+(tap?' data-act="pick" data-k="'+k+'" aria-label="'+ROLE[k].name+'"':'')+'>'+SVG[k]+'<span class="nm">'+ROLE[k].name+'</span></'+tg+'></div>';
+  });
+  return '<div class="ring '+cls+'"><div class="ropes"><i class="rope r1"></i><i class="rope r2"></i><i class="rope r3"></i></div><div class="cast">'+h+'</div><div class="floor"></div></div>';
+}
+
+/* ---------- levels ---------- */
+var LEVELS=[
+ {title:'تعرّف على المتنافسين',rule:'اضغط على كل متنافس واقرأ بطاقته. حين تتعرف على الثلاثة تُفتح المباراة.',run:runLearn},
+ {title:'من المتكلم؟',rule:'اقرأ العبارة، ثم اختر من يقولها: الهو أم الأنا أم الأنا الأعلى. الإجابات المتتالية تضاعف نقاطك.',run:runWho},
+ {title:'كن الحكم',rule:'أنت الأنا الآن. اسمع الهو والأنا الأعلى، ثم قرّر: تلبّي الرغبة أم تؤجّلها أم تمنعها.',run:runRef},
+ {title:'من التوتر إلى الاتزان',rule:'الإنسان جهاز طاقة معقد. رتّب خطوات العملية النفسية بالضغط عليها بالتسلسل الصحيح.',run:runSeq},
+ {title:'نزال الحسم',rule:TF.length+' عبارات في المباراة الأخيرة. هل هي صحيحة أم خاطئة؟',run:runTF}
+];
+function briefing(){
+  var L=LEVELS[S.lvl];cur=null;hud();
+  view('<section class="screen"><p class="eyebrow">المرحلة '+(S.lvl+1)+' من '+LEVELS.length+'</p><h2>'+L.title+'</h2>'+ring({cls:'mini'})+'<p class="rule">'+L.rule+'</p><button class="btn primary big" data-act="go">ابدأ الجولة</button></section>');
+  SFX.bell();
+}
+function nextLevel(){
+  S.lvl++;SFX.up();
+  if(S.lvl>=LEVELS.length){result()}else{briefing()}
+}
+
+/* L1 — learn */
+function runLearn(){
+  var seen={},n=0;
+  view('<section class="screen">'+ring({tap:true})+
+    '<div class="panel info" id="info"><p class="rule">اضغط على أحد المتنافسين لتقرأ بطاقته.</p></div>'+
+    '<div class="learn-foot"><div class="seen" aria-label="البطاقات المقروءة"><i></i><i></i><i></i></div><button class="btn primary" id="ln" data-act="fin" disabled>إلى المباراة</button></div></section>');
+  cur={
+    pick:function(b){
+      var k=b.dataset.k,R=ROLE[k];SFX.tap();
+      document.querySelectorAll('button.char').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');mood(k,'cheer');
+      var info=$('#info');info.style.setProperty('--c','var('+R.c+')');
+      info.innerHTML='<div class="info-head"><span class="badge">'+icon(k)+'</span><h3>'+R.name+'</h3><span class="chip">'+R.tag+'</span></div>'+
+        '<p class="says">«'+R.says+'»</p><ul class="facts">'+R.pts.map(function(p){return '<li>'+p+'</li>'}).join('')+'</ul>';
+      retrig(info,'flash');
+      if(!seen[k]){
+        seen[k]=1;n++;S.score+=30;hud(true);popAt(b,'+30','var(--ego)');SFX.star(n-1);
+        document.querySelectorAll('.seen i').forEach(function(d,i){if(i<n)d.classList.add('on')});
+        if(n===3){$('#ln').disabled=false;burstAt($('#ln'),30);SFX.up()}
+      }
+    },
+    fin:function(){nextLevel()}
+  };
+}
+
+/* L2 — who speaks */
+function runWho(){
+  var qs=shuffle(WHO),i=0,lock=false;
+  function draw(){
+    lock=false;var q=qs[i],h='';
+    ['id','ego','sup'].forEach(function(k){
+      h+='<button class="ans '+k+'" data-act="pick" data-k="'+k+'"><span class="ico">'+icon(k)+'</span><span class="nm">'+ROLE[k].name+'</span><span class="sub">'+ROLE[k].short+'</span></button>';
+    });
+    view('<section class="screen"><div class="prog"><span>العبارة '+(i+1)+' من '+qs.length+'</span><div class="bar"><i style="width:'+(i/qs.length*100)+'%"></i></div></div>'+
+      '<div class="who-stage"><div class="speaker" id="spk">'+SIL+'</div><div class="bubble"><p>«'+q.t+'»</p></div></div>'+
+      '<div class="answers" id="ans">'+h+'</div></section>');
+  }
+  cur={
+    pick:function(b){
+      if(lock)return;lock=true;
+      var q=qs[i],k=b.dataset.k,ok=k===q.a;
+      document.querySelectorAll('.ans').forEach(function(x){
+        x.disabled=true;
+        if(x.dataset.k===q.a)x.classList.add('right');else if(x===b)x.classList.add('wrong');else x.classList.add('dim');
+      });
+      $('#spk').innerHTML='<div class="char '+q.a+' cheer" style="width:100%">'+SVG[q.a]+'</div>';
+      if(ok)award(100,b);else miss(b);
+      showFb(ok,(ok?'':'المتكلم هو '+ROLE[q.a].name+'. ')+q.r,i===qs.length-1?'إنهاء المرحلة':'التالي');
+    },
+    next:function(){SFX.tap();i++;if(i<qs.length)draw();else nextLevel()}
+  };
+  draw();
+}
+
+/* L3 — be the referee */
+function runRef(){
+  var qs=shuffle(REF),i=0,lock=false;
+  function draw(){
+    lock=false;var q=qs[i];
+    view('<section class="screen"><div class="prog"><span>الموقف '+(i+1)+' من '+qs.length+'</span><div class="bar"><i style="width:'+(i/qs.length*100)+'%"></i></div></div>'+
+      '<div class="panel scene"><span class="lab">الموقف</span><p>'+q.s+'</p></div>'+
+      ring({bub:{id:q.id,ego:'أنت الحكم',sup:q.sup}})+
+      '<div class="opts" id="opts">'+OPT.map(function(o,n){return '<button class="opt" data-act="pick" data-n="'+(n+1)+'"><b>'+o.b+'</b><small>'+o.s+'</small></button>'}).join('')+'</div></section>');
+  }
+  cur={
+    pick:function(b){
+      if(lock)return;lock=true;
+      var q=qs[i],n=+b.dataset.n,ok=n===q.a;
+      document.querySelectorAll('.opt').forEach(function(x){
+        x.disabled=true;var m=+x.dataset.n;
+        if(m===q.a)x.classList.add('right');else if(x===b)x.classList.add('wrong');else x.classList.add('dim');
+      });
+      if(ok){
+        award(120,b);mood('ego','cheer');
+        if(q.a===1)mood('id','cheer');
+        if(q.a===3){mood('sup','cheer');mood('id','hurt')}
+      }else{miss(b);mood('ego','hurt')}
+      showFb(ok,(ok?'':'الأفضل: '+OPT[q.a-1].b+'. ')+q.r,i===qs.length-1?'إنهاء المرحلة':'التالي');
+    },
+    next:function(){SFX.tap();i++;if(i<qs.length)draw();else nextLevel()}
+  };
+  draw();
+}
+
+/* L4 — sequence */
+function runSeq(){
+  var order=shuffle(SEQ.map(function(t,n){return {t:t,n:n}})),next=0,done=false;
+  var slots='',chips='';
+  SEQ.forEach(function(_,n){slots+='<li class="sl" id="sl'+n+'"><span class="n">'+(n+1)+'</span><span class="txt">؟</span></li>'});
+  order.forEach(function(c){chips+='<button class="chip-b" data-act="chip" data-n="'+c.n+'">'+c.t+'</button>'});
+  view('<section class="screen"><div class="panel meter"><div class="meter-top"><span>توتر</span><span>اتزان</span></div><div class="track"><i id="fill"></i></div></div>'+
+    '<ol class="slots">'+slots+'</ol><div class="chips" id="chips">'+chips+'</div></section>');
+  cur={
+    chip:function(b){
+      if(done||b.classList.contains('used'))return;
+      var n=+b.dataset.n;
+      if(n===next){
+        var s=$('#sl'+next);s.classList.add('filled');s.querySelector('.txt').textContent=SEQ[n];
+        b.classList.add('used');award(100,s);SFX.step(next);next++;
+        $('#fill').style.transform='scaleX('+Math.max(.06,next/SEQ.length)+')';
+        if(next===SEQ.length){
+          done=true;SFX.bell();burstAt($('#fill'),60);
+          showFb(true,'هذه هي الدورة كاملة. وتتم العملية عبر قوى الشخصية الثلاث: الهو والأنا والأنا الأعلى.','إلى النزال الأخير');
+        }
+      }else{miss(b)}
+    },
+    next:function(){SFX.tap();nextLevel()}
+  };
+}
+
+/* L5 — true / false */
+function runTF(){
+  var qs=shuffle(TF),i=0,lock=false;
+  function draw(){
+    lock=false;var q=qs[i];
+    view('<section class="screen"><div class="prog"><span>العبارة '+(i+1)+' من '+qs.length+'</span><div class="bar"><i style="width:'+(i/qs.length*100)+'%"></i></div></div>'+
+      '<div class="statement"><p>'+q.t+'</p></div>'+
+      '<div class="tf"><button class="btn t" data-act="pick" data-v="1">'+icon('check')+'صح</button><button class="btn f" data-act="pick" data-v="0">'+icon('cross')+'خطأ</button></div></section>');
+  }
+  cur={
+    pick:function(b){
+      if(lock)return;lock=true;
+      var q=qs[i],v=b.dataset.v==='1',ok=v===q.a;
+      document.querySelectorAll('.tf .btn').forEach(function(x){
+        x.disabled=true;
+        if((x.dataset.v==='1')===q.a)x.classList.add('right');else x.classList.add('dim');
+      });
+      if(ok)award(120,b);else miss(b);
+      showFb(ok,q.r,i===qs.length-1?'اعرف نتيجتك':'التالي');
+    },
+    next:function(){SFX.tap();i++;if(i<qs.length)draw();else nextLevel()}
+  };
+  draw();
+}
+
+/* result */
+function result(){
+  cur=null;stopMusic();hud();
+  var tot=S.right+S.wrong,acc=tot?Math.round(S.right/tot*100):0;
+  var stars=acc>=85?3:acc>=65?2:1;
+  var rank=stars===3?'بطل الاتزان':stars===2?'حكم ماهر':'حكم صاعد';
+  var best=loadBest(),isBest=S.score>best;if(isBest){saveBest(S.score);best=S.score}
+  var st='';for(var i=0;i<3;i++)st+=STAR.replace('<svg','<svg data-s="'+i+'"');
+  var rows=[
+    ['id','الهو','قوة لاشعورية غريزية، أساس الشخصية. يبحث عن اللذة والإشباع دون حدود.'],
+    ['ego','الأنا','قوة شعورية تتعامل مع الواقع. توفق بين الدوافع والمتطلبات: تلبي أو تؤجل أو تمنع.'],
+    ['sup','الأنا الأعلى','قوة لاشعورية من القيم والتقاليد. صوت المجتمع والضمير، يكف رغبات الهو.']
+  ].map(function(r){return '<div class="sumrow" style="--c:var('+ROLE[r[0]].c+')"><span class="badge" style="color:'+(r[0]==='ego'?'var(--ego-ink)':'#fff')+'">'+icon(r[0])+'</span><div><h4>'+r[1]+'</h4><p>'+r[2]+'</p></div></div>'}).join('');
+  view('<section class="screen">'+
+    '<p class="eyebrow" style="text-align:center">انتهت المباراة</p>'+
+    '<div class="stars" id="stars">'+st+'</div>'+
+    '<div class="rank"><h2>'+rank+'</h2><p class="sub">'+(isBest?'رقم قياسي جديد على هذا الجهاز.':'أعلى نتيجة لك على هذا الجهاز: '+best)+'</p></div>'+
+    '<div class="stats"><div class="stat"><b>'+S.score+'</b><span>النقاط</span></div><div class="stat"><b>'+acc+'٪</b><span>الدقة</span></div><div class="stat"><b>×'+S.top+'</b><span>أطول متتالية</span></div></div>'+
+    '<div class="panel sum"><h3>ملخص الدرس</h3>'+
+      '<p>الإنسان جهاز طاقة؛ حين يتعرض لمثير يتوتر، ثم يتحرك ليعود إلى الاتزان واللذة. وتتم هذه العملية عبر ثلاث قوى:</p>'+rows+
+      '<p>ويبدأ الأنا الأعلى بسلطة الأب: ينهى الطفل ويوجهه، فيقلدها، ثم تصير ضميراً يؤنبه ويراقبه.</p>'+
+      '<div class="key">العلاقة بين الهو والأنا والأنا الأعلى هي التي تحدد نوع سلوك الإنسان.</div></div>'+
+    '<div class="panel sum"><h3>ناقش زملاءك</h3><ul class="think">'+
+      '<li>بعض الأحداث يكذبون أو يسرقون أو يهربون أو يعتدون لغير سبب واضح. كيف يفسر التحليل النفسي ذلك؟</li>'+
+      '<li>أحياناً ينسى الطالب أسماء زملائه في المراحل الأولى من الدراسة. ما علاقة ذلك بالصراع بين عناصر الشخصية؟</li></ul></div>'+
+    '<button class="btn primary big" data-act="again">العب من جديد</button></section>');
+  SFX.bell();
+  setTimeout(function(){burst(innerWidth/2,innerHeight*.3,70)},300);
+  for(var s=0;s<stars;s++){(function(s){setTimeout(function(){
+    var el=$('#stars svg[data-s="'+s+'"]');if(el){el.classList.add('on');SFX.star(s)}
+    if(s===stars-1){SFX.win();burst(innerWidth/2,innerHeight*.28,60)}
+  },700+s*450)})(s)}
+}
+
+/* ---------- global actions ---------- */
+var G={
+  start:function(){S.lvl=0;S.score=0;S.streak=0;S.top=0;S.right=0;S.wrong=0;startMusic();briefing()},
+  go:function(){SFX.tap();LEVELS[S.lvl].run()},
+  again:function(){SFX.tap();intro()},
+  mute:function(){
+    S.sound=!S.sound;
+    if(!S.sound)stopMusic();else{ensureAudio();SFX.tap();if(S.lvl>=0&&S.lvl<5)startMusic()}
+    hud();
+  }
+};
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]');if(!b||b.disabled)return;
+  ensureAudio();
+  var a=b.dataset.act,f=(cur&&cur[a])||G[a];if(f)f(b,e);
+});
+
+/* ---------- intro ---------- */
+function intro(){
+  S.lvl=-1;cur=null;stopMusic();hud();
+  view('<section class="screen">'+
+    '<p class="eyebrow">الصحة النفسية · التحليل النفسي</p>'+
+    '<h1>حلبة الشخصية</h1>'+
+    '<p class="sub">ثلاث قوى تتصارع داخل كل إنسان، والأنا هو الحكم بينها. هل تستطيع أن تدير المباراة؟</p>'+
+    ring({bub:{id:'أريد الآن!',ego:'مهلاً، لنفكر',sup:'عيب! لا تفعل'}})+
+    '<button class="btn primary big" data-act="start">ابدأ المباراة</button>'+
+    '<p class="tiny">5 مراحل، نحو 6 دقائق. شغّل الصوت لتحصل على التجربة كاملة.</p></section>');
+}
+intro();
+})();
+</script>
+
+<footer dir="rtl" lang="ar" style="max-width:640px;margin:18px auto 0;padding:10px 16px 20px;border-top:1px solid currentColor;text-align:center;font-size:13px;line-height:1.7;color:inherit;opacity:.7;font-family:Tajawal,Tahoma,sans-serif">© ٢٠٢٦ جميع الحقوق محفوظة، تصميم معلمة الفلسفة حوراء محمود بخش</footer>
+<a href="./#mental-health" id="dzback" onclick="if(history.length>1){event.preventDefault();history.back()}" style="position:fixed;z-index:9999;top:calc(10px + env(safe-area-inset-top,0px));left:max(10px,env(safe-area-inset-left,0px));background:#ffffffee;color:#271f3d;border:2px solid #d9d2ea;border-radius:999px;padding:6px 14px;font:700 14px Tahoma,sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.18)" dir="rtl">→ دروازة</a><script id="dzback">(function(){var h;try{h=JSON.parse(localStorage.getItem("darwaza:hub")||"null")}catch(e){}
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="./#"],a[href="./"]');if(!a||!h)return;e.preventDefault();var x=a.getAttribute("href").slice(2);location.href=h+(x||"#")},true)})();</script></body></html>

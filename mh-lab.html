@@ -1,0 +1,499 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>مختبر الشخصية</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+/* Layout concept: a single centered column on a soft teal ground with drifting colored orbs; one card per screen (intro, question, result); each of the six value types owns one color that follows the learner through progress, radar and result. */
+:root{
+  --bg:#EAF5F2; --surface:#FFFFFF; --ink:#12303A; --muted:#4A6870; --line:#CDE2DC;
+  --brand:#0B7F70; --brand-ink:#FFFFFF; --shadow:rgba(18,48,58,.16);
+  --c-T:#2F6FED; --c-E:#C97F00; --c-A:#DB3A82; --c-S:#16895E; --c-P:#DE4A28; --c-R:#7352D1;
+  --display:'Lalezar','Tajawal',system-ui,sans-serif;
+  --body:'Tajawal',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0C1D23; --surface:#142B33; --ink:#E8F4F1; --muted:#9DB8BF; --line:#264651;
+    --brand:#3CC9B2; --brand-ink:#06201C; --shadow:rgba(0,0,0,.45);
+    --c-T:#7BA3FF; --c-E:#F5B83A; --c-A:#FF84B4; --c-S:#4CCB9A; --c-P:#FF8F70; --c-R:#AE9AF4;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0C1D23; --surface:#142B33; --ink:#E8F4F1; --muted:#9DB8BF; --line:#264651;
+  --brand:#3CC9B2; --brand-ink:#06201C; --shadow:rgba(0,0,0,.45);
+  --c-T:#7BA3FF; --c-E:#F5B83A; --c-A:#FF84B4; --c-S:#4CCB9A; --c-P:#FF8F70; --c-R:#AE9AF4;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.7;
+  direction:rtl; min-height:100%;
+  padding-block:14px 40px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+
+/* drifting orbs */
+.orbs{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.orbs i{position:absolute;border-radius:50%;opacity:.16;animation:drift 18s ease-in-out infinite}
+.orbs i:nth-child(1){width:220px;height:220px;background:var(--c-T);top:-60px;right:-50px}
+.orbs i:nth-child(2){width:150px;height:150px;background:var(--c-A);top:30%;left:-50px;animation-delay:-4s}
+.orbs i:nth-child(3){width:190px;height:190px;background:var(--c-E);bottom:6%;right:-70px;animation-delay:-8s}
+.orbs i:nth-child(4){width:120px;height:120px;background:var(--c-S);bottom:-30px;left:20%;animation-delay:-12s}
+.orbs i:nth-child(5){width:90px;height:90px;background:var(--c-R);top:12%;left:30%;animation-delay:-6s}
+.orbs i:nth-child(6){width:70px;height:70px;background:var(--c-P);top:58%;right:22%;animation-delay:-2s}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-26px)}}
+
+.app{position:relative;z-index:1;max-width:660px;margin:0 auto;display:grid;gap:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-family:var(--display);font-size:21px;color:var(--brand);display:flex;align-items:center;gap:8px}
+.brand svg{width:26px;height:26px}
+.icon-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink)}
+.icon-btn svg{width:22px;height:22px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:22px 20px;box-shadow:0 14px 34px -16px var(--shadow)}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;line-height:1.25}
+h1{font-size:clamp(32px,9vw,46px)}
+h2{font-size:clamp(24px,6.4vw,30px)}
+h3{font-size:21px}
+p{margin:0}
+.muted{color:var(--muted)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:12px 26px;border-radius:999px;border:0;background:var(--brand);color:var(--brand-ink);font-weight:800;font-size:17px;transition:transform .15s ease,box-shadow .15s ease;box-shadow:0 8px 20px -8px var(--brand)}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.btn.ghost:hover{border-color:var(--brand)}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+
+/* intro */
+.intro{display:grid;gap:16px;justify-items:center;text-align:center}
+.hero-art{width:min(260px,70%);aspect-ratio:1;max-width:100%}
+.orbit{transform-origin:50% 50%;animation:spin 26s linear infinite}
+.orbit.rev{animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bob{animation:bob 3.2s ease-in-out infinite;transform-origin:50% 50%}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:999px;background:color-mix(in srgb,var(--brand) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--brand) 30%,var(--line));font-size:14px;font-weight:700}
+.six{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.six span{padding:2px 12px;border-radius:999px;font-size:13px;font-weight:700;border:2px solid var(--c);color:var(--ink);background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+
+/* quiz */
+.prog{display:flex;gap:5px}
+.prog i{flex:1;height:9px;border-radius:9px;background:var(--line);transition:background .3s,transform .3s}
+.prog i.on{background:var(--c)}
+.prog i.now{transform:scaleY(1.5);background:color-mix(in srgb,var(--brand) 45%,var(--line))}
+.qhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.count{font-weight:800;color:var(--muted);font-size:15px}
+.back{min-height:40px;padding:4px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;font-weight:700;font-size:14px}
+.back[disabled]{opacity:.35;cursor:default}
+.opts{display:grid;gap:10px;margin-top:16px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:start;padding:13px 14px;border:2px solid var(--line);border-radius:18px;background:var(--surface);font-size:16.5px;line-height:1.55;transition:border-color .15s,transform .15s,background .15s;animation:rise .45s both}
+.opt:nth-child(2){animation-delay:.05s}.opt:nth-child(3){animation-delay:.1s}.opt:nth-child(4){animation-delay:.15s}
+.opt:hover{border-color:var(--brand);transform:translateX(-3px)}
+.opt .lt{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:color-mix(in srgb,var(--brand) 14%,var(--surface));color:var(--ink)}
+.opt.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--surface));animation:pop .35s ease}
+.opt.sel .lt{background:var(--c);color:var(--surface)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.hint{font-size:14px;color:var(--muted);margin-top:14px;text-align:center}
+
+/* result */
+.res-hero{display:grid;gap:14px;justify-items:center;text-align:center;background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 18%,var(--surface)),var(--surface) 70%)}
+.res-art{width:132px;height:132px;border-radius:50%;background:color-mix(in srgb,var(--tc) 20%,var(--surface));border:3px solid var(--tc);display:grid;place-items:center;color:var(--tc);animation:bob 3.2s ease-in-out infinite}
+.res-art svg{width:88px;height:88px}
+.kicker{font-size:14px;font-weight:800;color:var(--tc)}
+.badge{display:inline-block;padding:3px 14px;border-radius:999px;background:var(--tc);color:var(--surface);font-weight:800;font-size:14px}
+.pct{font-family:var(--display);font-size:20px}
+.radar{width:100%;height:auto;display:block;max-width:420px;margin:0 auto}
+.rg{fill:none;stroke:var(--line);stroke-width:1}
+.rax{stroke:var(--line);stroke-width:1}
+.rl{fill:var(--ink);font-family:var(--body);font-size:13.5px;font-weight:700}
+.rpoly{fill:color-mix(in srgb,var(--tc) 32%,transparent);stroke:var(--tc);stroke-width:2.5;stroke-linejoin:round;transform-origin:190px 165px;animation:grow .9s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes grow{from{transform:scale(.05);opacity:0}to{transform:scale(1);opacity:1}}
+.bars{display:grid;gap:12px;margin-top:6px}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;font-weight:700;font-size:15px}
+.bar .tr{grid-column:1/-1;height:12px;border-radius:12px;background:color-mix(in srgb,var(--c) 14%,var(--surface));overflow:hidden}
+.bar .tr b{display:block;height:100%;width:0;border-radius:12px;background:var(--c);transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.bar small{font-size:14px;color:var(--muted);font-weight:700}
+.cols{display:grid;gap:16px}
+@media (min-width:560px){.cols.two{grid-template-columns:1fr 1fr}}
+.lst{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.lst li{position:relative;padding-inline-start:26px}
+.lst li::before{content:"";position:absolute;inset-inline-start:0;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--tc)}
+.note{padding:14px 16px;border-radius:16px;background:color-mix(in srgb,var(--tc) 12%,var(--surface));border:1px dashed var(--tc)}
+.copybox{width:100%;min-height:90px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;padding:10px;direction:rtl}
+.toast{position:fixed;inset-inline:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20}
+.toast span{background:var(--ink);color:var(--bg);padding:8px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;transform:translateY(10px);transition:.3s}
+.toast.show span{opacity:1;transform:none}
+#conf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:15}
+.screen[hidden]{display:none!important}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+<div class="orbs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<canvas id="conf" aria-hidden="true"></canvas>
+
+<main class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="16" cy="9" r="3.4" style="fill:var(--c-T)"/><circle cx="22.5" cy="19.5" r="3.4" style="fill:var(--c-A)"/><circle cx="9.5" cy="19.5" r="3.4" style="fill:var(--c-S)"/></svg>
+      مختبر الشخصية
+    </div>
+    <button class="icon-btn" id="snd" type="button" aria-pressed="true" aria-label="تشغيل أو إيقاف المؤثرات الصوتية">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor"/>
+        <g id="waves"><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></g>
+        <path id="mute" d="M16 9l5 6M21 9l-5 6" hidden/>
+      </svg>
+    </button>
+  </header>
+
+  <section id="intro" class="screen card intro">
+    <svg class="hero-art" viewBox="0 0 200 200" role="img" aria-label="قبعة تخرج تدور حولها ست كرات ملونة">
+      <circle cx="100" cy="100" r="78" fill="none" style="stroke:var(--line)" stroke-width="2" stroke-dasharray="3 7"/>
+      <g class="orbit">
+        <circle cx="178" cy="100" r="15" style="fill:var(--c-T)"/>
+        <circle cx="139" cy="167.5" r="15" style="fill:var(--c-E)"/>
+        <circle cx="61" cy="167.5" r="15" style="fill:var(--c-A)"/>
+        <circle cx="22" cy="100" r="15" style="fill:var(--c-S)"/>
+        <circle cx="61" cy="32.5" r="15" style="fill:var(--c-P)"/>
+        <circle cx="139" cy="32.5" r="15" style="fill:var(--c-R)"/>
+      </g>
+      <g class="bob">
+        <circle cx="100" cy="100" r="46" style="fill:var(--surface);stroke:var(--line)" stroke-width="2"/>
+        <path d="M78 99v17c0 5 10 10 22 10s22-5 22-10V99l-22 10z" style="fill:var(--brand)"/>
+        <polygon points="100,72 142,89 100,106 58,89" style="fill:var(--ink)"/>
+        <path d="M138 91v22" style="stroke:var(--c-E)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="138" cy="115" r="4" style="fill:var(--c-E)"/>
+      </g>
+    </svg>
+    <h1>اكتشف شخصيتك</h1>
+    <p class="muted">اختبار قصير مستوحى من القيم الست التي وصفها عالم النفس جوردون أولبورت. اختر في كل موقف من حياتك اليومية ما يشبهك أكثر، ثم اكتشف نمطك وما يناسبك في الدراسة والحياة.</p>
+    <div class="chips"><span class="chip">12 موقفًا</span><span class="chip">نحو 3 دقائق</span><span class="chip">لا توجد إجابة خاطئة</span></div>
+    <div class="six" aria-label="الأنماط الستة">
+      <span style="--c:var(--c-T)">المفكر</span><span style="--c:var(--c-E)">العملي</span><span style="--c:var(--c-A)">المبدع</span>
+      <span style="--c:var(--c-S)">المتعاون</span><span style="--c:var(--c-P)">القائد</span><span style="--c:var(--c-R)">صاحب الرسالة</span>
+    </div>
+    <button class="btn" id="start" type="button">ابدأ الرحلة</button>
+  </section>
+
+  <section id="quiz" class="screen card" hidden>
+    <div class="prog" id="prog" aria-hidden="true"></div>
+    <div class="qhead" style="margin-top:14px">
+      <span class="count" id="count" aria-live="polite"></span>
+      <button class="back" id="back" type="button">السابق</button>
+    </div>
+    <h2 id="qtext"></h2>
+    <div class="opts" id="opts"></div>
+    <p class="hint">اضغط على الإجابة الأقرب إليك، أو استخدم الأرقام 1 إلى 4 في لوحة المفاتيح</p>
+  </section>
+
+  <section id="result" class="screen" hidden></section>
+</main>
+<div class="toast" id="toast" role="status"><span></span></div>
+<script>
+(function(){
+document.documentElement.dir='rtl';
+document.documentElement.lang='ar';
+
+var KEYS=['T','E','A','S','P','R'];
+
+/* illustrations, one per type, drawn in currentColor */
+var ICONS={
+T:'<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="52" cy="52" r="32"/><path d="M76 76l28 28"/><path d="M52 38a14 14 0 0 0-8 25v5h16v-5a14 14 0 0 0-8-25z" fill="currentColor" stroke-width="3"/><path d="M46 74h12" stroke-width="4"/></svg>',
+E:'<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="60" cy="60" r="38" stroke-width="16" stroke-dasharray="8.4 6.6"/><circle cx="60" cy="60" r="28" stroke-width="8"/><path d="M47 60l9 9 17-18" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+A:'<svg viewBox="0 0 120 120" aria-hidden="true"><path d="M60 14C32 14 12 34 12 58c0 22 16 38 36 38 8 0 10-5 8-10-3-7 2-13 10-13h14c14 0 28-6 28-22C108 32 88 14 60 14z" fill="currentColor"/><circle cx="36" cy="52" r="7" style="fill:var(--surface)"/><circle cx="56" cy="36" r="7" style="fill:var(--surface)"/><circle cx="80" cy="40" r="7" style="fill:var(--surface)"/><circle cx="34" cy="74" r="7" style="fill:var(--surface)"/></svg>',
+S:'<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="40" cy="62" r="13" fill="currentColor"/><path d="M14 104c0-17 11-28 26-28s26 11 26 28z" fill="currentColor"/><circle cx="82" cy="66" r="11" fill="currentColor" opacity=".6"/><path d="M60 104c0-14 9-24 22-24s24 10 24 24z" fill="currentColor" opacity=".6"/><path d="M60 40c-8-8-20-3-20 6 0 8 10 14 20 21 10-7 20-13 20-21 0-9-12-14-20-6z" fill="currentColor" transform="translate(0 -22) scale(1)"/></svg>',
+P:'<svg viewBox="0 0 120 120" aria-hidden="true"><rect x="26" y="12" width="8" height="98" rx="4" fill="currentColor"/><path d="M34 18c14-8 24 8 40 0 8-4 14-4 18-2v40c-4-2-10-2-18 2-16 8-26-8-40 0z" fill="currentColor"/><rect x="14" y="104" width="32" height="8" rx="4" fill="currentColor"/></svg>',
+R:'<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" stroke-width="7"/><path d="M60 22l12 38-12 38-12-38z" fill="currentColor" opacity=".35"/><path d="M60 22l12 38H48z" fill="currentColor"/><circle cx="60" cy="60" r="6" style="fill:var(--surface)" stroke="currentColor" stroke-width="3"/><path d="M60 8v8M60 104v8M8 60h8M104 60h8" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg>'
+};
+
+var TYPES={
+T:{n:'المفكر الباحث',s:'المفكر',a:'النمط النظري',tag:'يحرّكك السؤال: لماذا؟',
+ d:'تحب الفهم العميق وتسأل عن الأسباب في كل شيء. تستمتع بالقراءة والتفكير والنقاش الهادئ، وترتاح حين تصل إلى الحقيقة بنفسك.',
+ st:['تفكير تحليلي ونقدي','فضول لا ينتهي','قدرة على تبسيط الأفكار المعقدة'],
+ tp:['دوّن أسئلتك في دفتر صغير وابحث عن إجاباتها','اقرأ في موضوعات متنوعة خارج المنهج','جرّب ما تعرفه في موقف حقيقي'],
+ g:'لا تؤجل التجربة بسبب كثرة البحث. ابدأ بخطوة صغيرة ثم حسّنها.'},
+E:{n:'العملي المنجز',s:'العملي',a:'النمط الاقتصادي (العملي)',tag:'تسأل: ما فائدة هذا وأين أستخدمه؟',
+ d:'تحب الأشياء المفيدة التي تُنتج نتيجة واضحة وتوفّر الوقت والجهد. أنت منظّم، وتقيس نجاحك بما أنجزته فعلًا.',
+ st:['تنظيم الوقت والأولويات','تركيز على النتائج','تحويل الأفكار إلى عمل'],
+ tp:['اكتب قائمة مهام يومية وعلّم ما أنجزته','قسّم أي هدف كبير إلى خطوات صغيرة','اربط ما تتعلمه بموقف تستفيد منه فعلًا'],
+ g:'أعطِ نفسك مساحة لتجربة أشياء بلا فائدة فورية. قد تصبح أجمل ما في حياتك.'},
+A:{n:'المبدع الفنان',s:'المبدع',a:'النمط الجمالي',tag:'ترى العالم بالعين والخيال والإحساس',
+ d:'تلاحظ الجمال والتناسق في الأشياء وتحب التعبير عن نفسك بطرق مبتكرة. الحياة عندك تجربة حسية وإبداعية.',
+ st:['خيال واسع وأفكار أصيلة','ذائقة بصرية راقية','قدرة على الشرح والتعبير بطرق مبتكرة'],
+ tp:['استخدم الألوان والرسوم في ملخصاتك وخططك','حوّل أفكارك إلى قصة أو تصميم أو عرض','خصّص وقتًا ثابتًا لهوايتك الإبداعية'],
+ g:'ضع جدولًا ثابتًا لالتزاماتك حتى لا يسبق المزاج الإنجاز.'},
+S:{n:'المتعاون الاجتماعي',s:'المتعاون',a:'النمط الاجتماعي',tag:'تزدهر حين تكون مع الناس',
+ d:'تهتم بالآخرين وتبني علاقات دافئة، وتشعر أن الأشياء تزداد قيمة حين تُشارَك مع من تحب.',
+ st:['مهارات تواصل وإصغاء','روح الفريق والمساعدة','قدرة على فهم مشاعر الآخرين'],
+ tp:['كوّن مجموعة صغيرة للمذاكرة أو للهوايات','اشرح ما تعرفه لصديق، فالشرح يثبّت الفهم','اطلب رأي من تثق بهم بانتظام'],
+ g:'خصّص وقتًا لنفسك وحدك حتى لا يعتمد مزاجك وتقدمك على وجود الآخرين.'},
+P:{n:'القائد المؤثر',s:'القائد',a:'النمط السياسي (القيادي)',tag:'تحب المبادرة والتحدي واتخاذ القرار',
+ d:'تميل إلى القيادة وتحمّل المسؤولية والتنافس الشريف، وتجد دافعك في الأهداف الكبيرة وفي التأثير على من حولك.',
+ st:['مبادرة وثقة بالنفس','قدرة على تنظيم الفرق وتحفيزها','سرعة في اتخاذ القرار'],
+ tp:['ضع أهدافًا أسبوعية يمكن قياسها','حوّل واجباتك إلى تحدٍّ بلوحة نقاط','تولَّ دور المنسّق في الأنشطة الجماعية'],
+ g:'تدرّب على الإصغاء لآراء الآخرين. القيادة القوية تبدأ بالاستماع.'},
+R:{n:'صاحب الرسالة',s:'صاحب الرسالة',a:'نمط الغاية والمعنى',tag:'تبحث عن القيمة وراء كل ما تفعله',
+ d:'تربط حياتك بالقيم والغاية الكبرى، وتحب الأفكار التي تخدم الناس وتترك أثرًا طيبًا.',
+ st:['دافعية داخلية قوية','نظرة بعيدة وصبر','التزام بالقيم والمبادئ'],
+ tp:['اكتب سبب اهتمامك بكل هدف في سطر واحد','اقرأ قصص أشخاص تركوا أثرًا في مجتمعهم','شارك في مبادرات تطوعية تخدم من حولك'],
+ g:'قسّم أحلامك الكبيرة إلى خطوات يومية صغيرة حتى لا تبقى أحلامًا.'}
+};
+
+/* 12 everyday situations, 4 options each, option type in first slot */
+var Q=[
+{q:'جاءتك إجازة نهاية الأسبوع بلا خطط. ماذا تفعل غالبًا؟',o:[['T','أقرأ أو أشاهد وثائقيًا عن موضوع يثير فضولي'],['E','أنجز أمورًا مؤجلة وأرتب غرفتي وجدولي'],['S','أخرج مع الأصدقاء أو أزور الأقارب'],['P','أنظّم لعبة أو مسابقة وأجمع الشباب']]},
+{q:'أي هدية تسعدك أكثر؟',o:[['E','شيء مفيد أستخدمه كل يوم'],['A','شيء جميل بتصميم فني مميز'],['P','شيء يمنحني مسؤولية أو فرصة للقيادة'],['R','شيء له معنى وقصة تهمني']]},
+{q:'ماذا تفعل حين تشعر بالضيق؟',o:[['A','أرسم أو أكتب أو أستمع إلى الموسيقى'],['S','أتحدث مع صديق أو أحد أفراد أسرتي'],['R','أتأمل وأذكّر نفسي بما هو مهم فعلًا'],['T','أحلل سبب ضيقي وأبحث عن حل منطقي']]},
+{q:'ما الذي يشعرك بالفخر أكثر؟',o:[['S','أن أساعد شخصًا فيشكرني من قلبه'],['P','أن أقود فريقي إلى الفوز'],['T','أن أفهم شيئًا صعبًا أو أحلّ لغزًا'],['E','أن أنجز عملي كاملًا في وقته']]},
+{q:'في رحلة مع أصدقائك، ما دورك المفضّل؟',o:[['P','من يقرر الخطة ويوزّع المهام'],['R','من يحرص أن يكون الجميع بخير وأن نلتزم بالآداب'],['E','من يتولى الميزانية والحجوزات'],['A','من يصوّر اللحظات ويختار الأماكن الجميلة']]},
+{q:'أي قصة أو برنامج تفضّل متابعته؟',o:[['R','قصص ملهمة عن أشخاص تركوا أثرًا طيبًا'],['T','برامج علمية وأسئلة كبرى عن الكون والإنسان'],['A','أفلام وفنون ومقاطع مليئة بالجمال'],['S','قصص عن الصداقة والعلاقات بين الناس']]},
+{q:'عندما تحتاج إلى اتخاذ قرار مهم، كيف تقرر؟',o:[['T','أجمع المعلومات وأقارن بينها بدقة'],['E','أنظر إلى الفائدة والتكلفة والنتيجة'],['S','أستشير من أثق بهم وأسمع آراءهم'],['P','أحسم بسرعة وأتحمل مسؤولية قراري']]},
+{q:'لو حصلت على مبلغ من المال، ماذا تفعل به؟',o:[['E','أدّخره أو أستثمره في شيء نافع'],['A','أشتري أدوات لهوايتي الإبداعية'],['P','أبدأ به مشروعًا صغيرًا أقوده بنفسي'],['R','أتبرع بجزء منه لمن يحتاج']]},
+{q:'ما اللحظة التي تحبها أكثر في المناسبات العائلية؟',o:[['A','تزيين المكان واختيار الألوان والتصوير'],['S','الجلوس مع الجميع والضحك والحديث'],['R','مواقف الاحترام والتقدير والدعاء لبعضنا'],['T','النقاشات الممتعة وتبادل المعلومات']]},
+{q:'كيف تتعامل مع هدف صعب تريده؟',o:[['S','أطلب دعم من حولي وأتشارك معهم'],['P','أرفع التحدي وأتنافس مع نفسي'],['T','أدرس الطريق جيدًا قبل أن أبدأ'],['E','أقسّمه إلى مهام صغيرة وأتابعها']]},
+{q:'كيف ترى نفسك بعد عشر سنوات؟',o:[['P','قائدًا لفريق أو مشروع كبير'],['R','إنسانًا ترك أثرًا طيبًا في مجتمعه'],['E','ناجحًا في عمل مستقر ومريح'],['A','مبدعًا يقدم أفكارًا وأعمالًا جميلة']]},
+{q:'حين يسيء إليك أحد زملائك، ماذا تفعل؟',o:[['R','أسامحه وأتذكر قيمة التسامح'],['T','أفهم أسبابه وأفكر بهدوء'],['A','أحاول تخفيف الموقف بلمسة مرحة'],['S','أتحدث معه بهدوء لنعيد الصداقة']]}
+];
+
+var $=function(s){return document.querySelector(s)};
+var reduced=false;
+try{reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
+var LET=['أ','ب','ج','د'];
+
+/* ---------- sound ---------- */
+var actx=null,soundOn=true;
+function ac(){
+  if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+  if(actx&&actx.state==='suspended'){try{actx.resume()}catch(e){}}
+  return actx;
+}
+function tone(f,t,d,type,v){
+  if(!soundOn)return;var a=ac();if(!a)return;
+  try{
+    var o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t;
+    o.type=type||'sine';o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,s);
+    g.gain.exponentialRampToValueAtTime(v||0.12,s+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001,s+d);
+    o.connect(g);g.connect(a.destination);o.start(s);o.stop(s+d+0.05);
+  }catch(e){}
+}
+var sfx={
+  start:function(){[523,659,784,1047].forEach(function(f,i){tone(f,i*0.09,0.22,'triangle',0.13)})},
+  pick:function(i){tone(440+i*70,0,0.16,'triangle',0.14);tone(660+i*70,0.07,0.18,'sine',0.08)},
+  next:function(){tone(330,0,0.09,'sine',0.07)},
+  back:function(){tone(262,0,0.12,'sine',0.07)},
+  done:function(){
+    [523,659,784,1047,1319].forEach(function(f,i){tone(f,i*0.12,0.3,'triangle',0.14)});
+    [523,659,784,1047].forEach(function(f){tone(f,0.75,0.9,'sine',0.07)});
+  }
+};
+$('#snd').addEventListener('click',function(){
+  soundOn=!soundOn;
+  this.setAttribute('aria-pressed',String(soundOn));
+  $('#waves').style.display=soundOn?'':'none';
+  $('#mute').hidden=soundOn;
+  if(soundOn){ac();tone(660,0,0.15,'triangle',0.12)}
+});
+
+/* ---------- state ---------- */
+var cur=0,answers=[],orders=[],locked=false,last=null;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function show(id){
+  ['intro','quiz','result'].forEach(function(n){$('#'+n).hidden=(n!==id)});
+  window.scrollTo(0,0);
+}
+function reset(){
+  cur=0;locked=false;
+  answers=Q.map(function(){return null});
+  orders=Q.map(function(q){return shuffle(q.o)});
+}
+
+/* ---------- quiz ---------- */
+function drawProg(){
+  var h='';
+  for(var i=0;i<Q.length;i++){
+    var a=answers[i];
+    h+='<i class="'+(a?'on':'')+(i===cur?' now':'')+'"'+(a?' style="--c:var(--c-'+a+')"':'')+'></i>';
+  }
+  $('#prog').innerHTML=h;
+}
+function render(){
+  var q=Q[cur];
+  $('#count').textContent='الموقف '+(cur+1)+' من '+Q.length;
+  $('#qtext').textContent=q.q;
+  $('#back').disabled=(cur===0);
+  var h='';
+  orders[cur].forEach(function(o,i){
+    var sel=(answers[cur]===o[0]);
+    h+='<button type="button" class="opt'+(sel?' sel':'')+'" data-k="'+o[0]+'" data-i="'+i+'"'+(sel?' style="--c:var(--c-'+o[0]+')"':'')+'><span class="lt">'+LET[i]+'</span><span>'+o[1]+'</span></button>';
+  });
+  $('#opts').innerHTML=h;
+  drawProg();
+}
+function pick(btn){
+  if(locked)return;
+  locked=true;
+  var k=btn.getAttribute('data-k'),i=+btn.getAttribute('data-i');
+  answers[cur]=k;
+  var all=$('#opts').querySelectorAll('.opt');
+  for(var j=0;j<all.length;j++){all[j].classList.remove('sel');all[j].style.removeProperty('--c')}
+  btn.style.setProperty('--c','var(--c-'+k+')');
+  btn.classList.add('sel');
+  drawProg();
+  sfx.pick(i);
+  setTimeout(function(){locked=false;advance()},reduced?150:560);
+}
+function advance(){
+  if(cur<Q.length-1){cur++;render();sfx.next()}
+  else finish();
+}
+$('#opts').addEventListener('click',function(e){
+  var b=e.target.closest('.opt');if(b)pick(b);
+});
+$('#back').addEventListener('click',function(){
+  if(cur>0&&!locked){cur--;render();sfx.back()}
+});
+document.addEventListener('keydown',function(e){
+  if($('#quiz').hidden)return;
+  var n=parseInt(e.key,10);
+  if(n>=1&&n<=4){var b=$('#opts').querySelectorAll('.opt')[n-1];if(b)pick(b)}
+});
+$('#start').addEventListener('click',function(){
+  ac();sfx.start();reset();show('quiz');render();
+});
+
+/* ---------- result ---------- */
+function toast(msg){
+  var t=$('#toast');t.querySelector('span').textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},2200);
+}
+function radarSVG(score,top){
+  var cx=190,cy=165,R=105,max=8,i,k,ang,x,y,svg='';
+  svg+='<svg class="radar" viewBox="0 0 380 330" role="img" aria-label="رسم عنكبوتي لدرجاتك في الأنماط الستة">';
+  [2,4,6,8].forEach(function(lv){
+    var pts=[];
+    for(i=0;i<6;i++){ang=(i*60-90)*Math.PI/180;pts.push((cx+R*lv/max*Math.cos(ang)).toFixed(1)+','+(cy+R*lv/max*Math.sin(ang)).toFixed(1))}
+    svg+='<polygon class="rg" points="'+pts.join(' ')+'"/>';
+  });
+  for(i=0;i<6;i++){ang=(i*60-90)*Math.PI/180;svg+='<line class="rax" x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(ang)).toFixed(1)+'" y2="'+(cy+R*Math.sin(ang)).toFixed(1)+'"/>'}
+  var poly=[],dots='';
+  for(i=0;i<6;i++){
+    k=KEYS[i];ang=(i*60-90)*Math.PI/180;
+    var r=R*Math.max(score[k],0.35)/max;
+    x=cx+r*Math.cos(ang);y=cy+r*Math.sin(ang);
+    poly.push(x.toFixed(1)+','+y.toFixed(1));
+    dots+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="6" style="fill:var(--c-'+k+');stroke:var(--surface);stroke-width:2"/>';
+  }
+  svg+='<polygon class="rpoly" points="'+poly.join(' ')+'"/>'+dots;
+  for(i=0;i<6;i++){
+    k=KEYS[i];ang=(i*60-90)*Math.PI/180;
+    x=cx+(R+26)*Math.cos(ang);y=cy+(R+26)*Math.sin(ang)+5;
+    svg+='<text class="rl" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle">'+TYPES[k].s+'</text>';
+  }
+  return svg+'</svg>';
+}
+function finish(){
+  var score={T:0,E:0,A:0,S:0,P:0,R:0};
+  answers.forEach(function(a){if(a)score[a]++});
+  var rank=KEYS.map(function(k){return {k:k,s:score[k]}}).sort(function(a,b){return b.s-a.s||KEYS.indexOf(a.k)-KEYS.indexOf(b.k)});
+  var t1=rank[0],t2=rank[1],t3=rank[2],tp=TYPES[t1.k];
+  var total=Q.length;
+  var pct=function(s){return Math.round(s/total*100)};
+  var level=t1.s>=7?'سمة طاغية':'سمة مركزية';
+  var tie=(t1.s===t2.s);
+  last={name:tp.n,p1:pct(t1.s),n2:TYPES[t2.k].n,p2:pct(t2.s),n3:TYPES[t3.k].n,p3:pct(t3.s),tie:tie};
+
+  var bars='';
+  rank.forEach(function(r,i){
+    var lab=(i===0?'سمة مركزية':(i<3?'سمة ثانوية':'سمة هامشية'));
+    bars+='<div class="bar" style="--c:var(--c-'+r.k+')"><span>'+TYPES[r.k].n+' <small>('+lab+')</small></span><span>'+pct(r.s)+'%</span><div class="tr"><b data-w="'+pct(r.s)+'"></b></div></div>';
+  });
+  var li=function(arr){return '<ul class="lst">'+arr.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>'};
+  var mix=tie?'<p class="note">تساوى عندك نمطان في المرتبة الأولى: <b>'+tp.n+'</b> و<b>'+TYPES[t2.k].n+'</b>. شخصيتك متوازنة بينهما، وقد تستفيد من نصائح النمطين معًا.</p>':'';
+
+  $('#result').innerHTML=
+   '<div style="--tc:var(--c-'+t1.k+');display:grid;gap:16px">'+
+   '<div class="card res-hero"><span class="kicker">نتيجتك في اختبار القيم الست</span>'+
+   '<div class="res-art">'+ICONS[t1.k]+'</div>'+
+   '<h1>'+tp.n+'</h1>'+
+   '<div class="row" style="justify-content:center"><span class="badge">'+tp.a+'</span><span class="badge" style="background:transparent;color:var(--tc);border:2px solid var(--tc)">'+level+' '+pct(t1.s)+'%</span></div>'+
+   '<p class="muted" style="font-weight:700">'+tp.tag+'</p>'+
+   '<p>'+tp.d+'</p>'+mix+'</div>'+
+
+   '<div class="card"><h3>خريطة شخصيتك</h3><p class="muted" style="margin-bottom:8px">كلما ابتعدت النقطة عن المركز زادت قوة هذا النمط عندك.</p>'+radarSVG(score,t1.k)+'<div class="bars" id="bars">'+bars+'</div>'+
+   '<p class="muted" style="margin-top:14px;font-size:14px">يرى أولبورت أن الشخصية مجموعة سمات: سمة مركزية تقودك، وسمات ثانوية تظهر في مواقف محددة. هذا الاختبار تربوي مبسّط للتأمل الذاتي، وليس تشخيصًا نفسيًا.</p></div>'+
+
+   '<div class="cols two"><div class="card"><h3>نقاط قوتك</h3>'+li(tp.st)+'</div><div class="card"><h3>نصائح تناسبك</h3>'+li(tp.tp)+'</div></div>'+
+
+   '<div class="card"><h3>سمتك الثانوية</h3><p style="margin-top:8px">بعد '+tp.n+'، تظهر عندك سمتا <b style="color:var(--c-'+t2.k+')">'+TYPES[t2.k].n+'</b> ('+pct(t2.s)+'%) و<b style="color:var(--c-'+t3.k+')">'+TYPES[t3.k].n+'</b> ('+pct(t3.s)+'%). استعن بهما حين لا تنفع طريقتك المعتادة.</p>'+
+   '<p class="note" style="margin-top:12px"><b>نصيحة للنمو:</b> '+tp.g+'</p></div>'+
+
+   '<div class="card"><div class="row"><button class="btn" id="copy" type="button">نسخ نتيجتي</button><button class="btn ghost" id="again" type="button">إعادة الاختبار</button></div>'+
+   '<textarea class="copybox" id="cbox" readonly hidden aria-label="نص النتيجة"></textarea></div></div>';
+
+  show('result');
+  sfx.done();
+  confetti();
+  setTimeout(function(){
+    var bs=document.querySelectorAll('#bars .tr b');
+    for(var i=0;i<bs.length;i++){bs[i].style.width=bs[i].getAttribute('data-w')+'%'}
+  },120);
+}
+document.addEventListener('click',function(e){
+  if(e.target.id==='again'){ac();sfx.start();reset();show('intro')}
+  if(e.target.id==='copy'&&last){
+    var txt='نتيجتي في مختبر الشخصية: '+last.name+' ('+last.p1+'%). ثم '+last.n2+' ('+last.p2+'%) و'+last.n3+' ('+last.p3+'%).';
+    var box=$('#cbox');
+    var fallback=function(){box.hidden=false;box.value=txt;box.focus();box.select()};
+    try{
+      navigator.clipboard.writeText(txt).then(function(){toast('تم نسخ النتيجة')},fallback);
+    }catch(err){fallback()}
+  }
+});
+
+/* ---------- confetti ---------- */
+function confetti(){
+  if(reduced)return;
+  var c=$('#conf'),g=c.getContext('2d'),dpr=window.devicePixelRatio||1;
+  var W=window.innerWidth,H=window.innerHeight;
+  c.width=W*dpr;c.height=H*dpr;g.setTransform(dpr,0,0,dpr,0,0);
+  var cs=getComputedStyle(document.documentElement);
+  var cols=KEYS.map(function(k){return cs.getPropertyValue('--c-'+k).trim()||'#888'});
+  var ps=[],n=130,i;
+  for(i=0;i<n;i++){
+    ps.push({x:W/2+(Math.random()-.5)*80,y:H*0.35,vx:(Math.random()-.5)*13,vy:-Math.random()*12-4,
+      w:6+Math.random()*7,h:4+Math.random()*6,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%6]});
+  }
+  var t0=performance.now();
+  (function frame(t){
+    var el=t-t0;
+    g.clearRect(0,0,W,H);
+    var alive=0;
+    ps.forEach(function(p){
+      p.vy+=0.28;p.vx*=0.992;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      if(p.y<H+20){alive++}
+      g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;
+      g.globalAlpha=Math.max(0,1-el/4200);
+      g.fillRect(-p.w/2,-p.h/2,p.w,p.h);g.restore();
+    });
+    if(el<4200&&alive>0)requestAnimationFrame(frame);
+    else g.clearRect(0,0,W,H);
+  })(t0);
+}
+
+reset();
+})();
+</script>
+
+<footer dir="rtl" lang="ar" style="max-width:640px;margin:18px auto 0;padding:10px 16px 20px;border-top:1px solid currentColor;text-align:center;font-size:13px;line-height:1.7;color:inherit;opacity:.7;font-family:Tajawal,Tahoma,sans-serif">© ٢٠٢٦ جميع الحقوق محفوظة، تصميم معلمة الفلسفة حوراء محمود بخش</footer>
+<a href="./#mental-health" id="dzback" onclick="if(history.length>1){event.preventDefault();history.back()}" style="position:fixed;z-index:9999;top:calc(10px + env(safe-area-inset-top,0px));left:max(10px,env(safe-area-inset-left,0px));background:#ffffffee;color:#271f3d;border:2px solid #d9d2ea;border-radius:999px;padding:6px 14px;font:700 14px Tahoma,sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.18)" dir="rtl">→ دروازة</a><script id="dzback">(function(){var h;try{h=JSON.parse(localStorage.getItem("darwaza:hub")||"null")}catch(e){}
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="./#"],a[href="./"]');if(!a||!h)return;e.preventDefault();var x=a.getAttribute("href").slice(2);location.href=h+(x||"#")},true)})();</script></body></html>

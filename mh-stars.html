@@ -1,0 +1,561 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>نجوم التوافق</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: one narrow game stage. Every answer is an eight-point star, echoing the star diagram in the textbook page. */
+:root{
+  color-scheme:dark;
+  --bg:#17133F; --bg-2:#211A5C; --card:#2A2272; --card-2:#382F8C; --line:#4B40AE;
+  --ink:#FFF7E6; --muted:#C3BCF0; --gold:#FFC93C; --gold-ink:#2B1B00;
+  --good:#3DDC97; --bad:#FF5C7A;
+  --c-self:#FF7A7A; --c-social:#FFB84D; --c-mind:#4FD1E8; --c-marry:#FF8FC1;
+  --c-job:#7EDB7A; --c-faith:#B58CFF; --c-politic:#6FA8FF;
+  --font-display:'Lalezar','Tajawal',system-ui,sans-serif;
+  --font-body:'Tajawal',system-ui,'Segoe UI',Tahoma,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;
+  padding-block:6px 32px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-tap-highlight-color:transparent;overflow-x:hidden;
+}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(800px 480px at 85% -8%,#3B2DA3 0%,transparent 62%),
+    radial-gradient(700px 520px at 0% 105%,#2D2080 0%,transparent 60%),
+    var(--bg)}
+.bg::after{content:"";position:absolute;inset:0;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84'%3E%3Cg fill='none' stroke='white' stroke-width='1.4'%3E%3Crect x='24' y='24' width='36' height='36'/%3E%3Crect x='24' y='24' width='36' height='36' transform='rotate(45 42 42)'/%3E%3C/g%3E%3C/svg%3E")}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:40;pointer-events:none}
+.app{position:relative;z-index:1;max-width:560px;margin:0 auto}
+:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+.bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+.brand{display:flex;align-items:center;gap:8px;font:400 22px var(--font-display);color:var(--gold)}
+.brand svg{width:22px;height:22px;fill:var(--gold)}
+.icon-btn{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.icon-btn svg{width:22px;height:22px}
+.icon-btn.off .w{display:none}
+.icon-btn.on .x{display:none}
+
+.screen{animation:enter .35s ease both}
+@keyframes enter{from{opacity:.45;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* shared star tile */
+.star{position:relative;display:grid;place-items:center;aspect-ratio:1;border:0;background:none;padding:0;color:#1D1540;font:800 15px/1.15 var(--font-body);cursor:pointer}
+.star svg{position:absolute;inset:0;width:100%;height:100%;fill:var(--c);filter:drop-shadow(0 6px 0 rgba(0,0,0,.3));transition:transform .15s,fill .2s}
+.star span{position:relative;z-index:1;max-width:72%;text-align:center}
+.star:hover svg{transform:scale(1.07) rotate(5deg)}
+.star:active svg{transform:scale(.94)}
+.star[disabled]{cursor:default}
+.star[disabled]:hover svg{transform:none}
+.star.dim{opacity:.4}
+.star.correct svg{fill:var(--good);transform:scale(1.1)}
+.star.wrong svg{fill:var(--bad)}
+.star.wrong{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* home */
+.hero{text-align:center;padding:6px 0 0}
+.eyebrow{margin:0;font-weight:700;font-size:14px;color:var(--muted)}
+h1{margin:4px 0 10px;font:400 clamp(52px,17vw,80px)/1.05 var(--font-display);color:var(--gold);text-shadow:0 4px 0 #8A5A00,0 12px 26px rgba(0,0,0,.35);text-wrap:balance}
+.lead{max-width:32ch;margin:0 auto;font-size:18px}
+.galaxy{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:22px 0 6px}
+.galaxy .star{width:calc((100% - 24px)/4);animation:float 4s ease-in-out infinite;animation-delay:calc(var(--i)*-.6s)}
+@keyframes float{50%{transform:translateY(-6px)}}
+.hint{margin:0 0 18px;text-align:center;color:var(--muted);font-size:14px}
+.levels{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:10px}
+.levels li{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;padding:12px 14px}
+.levels .n{flex:none;width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--gold-ink);font:400 21px var(--font-display);display:grid;place-items:center}
+.levels b{display:block;font-weight:800}
+.levels span{color:var(--muted);font-size:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:0 28px;border:0;border-radius:999px;background:var(--gold);color:var(--gold-ink);font:400 24px var(--font-display);cursor:pointer;box-shadow:0 5px 0 #B98300,0 12px 20px rgba(0,0,0,.25);transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #B98300}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);box-shadow:none;font:700 18px var(--font-body)}
+.btn.block{width:100%}
+.best{margin:14px 0 0;text-align:center;color:var(--muted);font-size:15px}
+
+/* game */
+.hud{display:flex;align-items:center;gap:10px;margin:2px 0 10px}
+.lvl{flex:1;min-width:0}
+.lvl small{display:block;color:var(--muted);font-size:13px;font-weight:700}
+.lvl b{display:block;font:400 22px var(--font-display);color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scorebox{text-align:center;background:var(--card);border-radius:14px;padding:4px 16px;min-width:80px}
+.scorebox b{display:block;font:400 26px/1.15 var(--font-display);font-variant-numeric:tabular-nums}
+.scorebox small{color:var(--muted);font-size:12px}
+.scorebox.pop b{animation:pop .45s}
+@keyframes pop{40%{transform:scale(1.35);color:var(--gold)}}
+.prog{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;margin-bottom:12px}
+.prog i{height:8px;border-radius:4px;background:var(--card-2)}
+.prog i.now{background:var(--gold)}
+.prog i.ok{background:var(--good)}
+.prog i.no{background:var(--bad)}
+.q{background:var(--card);border-radius:24px;padding:16px 18px 18px;box-shadow:0 6px 0 rgba(0,0,0,.25);margin-bottom:14px}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:14px;font-weight:700;margin-bottom:6px}
+.streak{color:var(--gold);font-weight:800}
+.qlabel{margin:0 0 4px;color:var(--muted);font-size:15px}
+.qtext{margin:0;font-size:20px;line-height:1.85;font-weight:500}
+.qkw{margin:8px 0 2px;text-align:center;font:400 clamp(30px,9vw,40px)/1.35 var(--font-display);color:var(--gold);text-wrap:balance}
+.timer{height:10px;border-radius:5px;background:var(--bg);overflow:hidden;margin-top:12px}
+.timer i{display:block;height:100%;width:100%;background:var(--good);animation:drain var(--t) linear forwards}
+@keyframes drain{0%{width:100%;background:var(--good)}60%{background:var(--gold)}100%{width:0;background:var(--bad)}}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{display:flex;align-items:center;gap:10px;min-height:60px;padding:10px 12px;border-radius:16px;background:var(--card);border:2px solid var(--line);color:var(--ink);font:700 17px/1.3 var(--font-body);text-align:start;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.25);transition:border-color .15s,transform .1s}
+.opt .mini{flex:none;width:28px;height:28px;fill:var(--c)}
+.opt:hover{border-color:var(--c)}
+.opt:active{transform:translateY(3px)}
+.opt[disabled]{cursor:default}
+.opt.correct{border-color:var(--good);background:#1C5046}
+.opt.wrong{border-color:var(--bad);background:#5C2148;animation:shake .45s}
+.opt.dim{opacity:.45}
+.sopts{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.sopts .star{width:calc((100% - 24px)/4)}
+.fb{margin-top:14px;border-radius:20px;padding:14px 16px 16px;background:var(--card-2);border:2px solid var(--good);animation:enter .3s both}
+.fb.bad{border-color:var(--bad)}
+.fb h3{margin:0 0 4px;font:400 26px/1.3 var(--font-display)}
+.fb.good h3{color:var(--good)}
+.fb.bad h3{color:#FF9DB0}
+.fb .pts{display:inline-block;margin-inline-start:8px;padding:0 10px;border-radius:999px;background:var(--gold);color:var(--gold-ink);font:800 15px/1.7 var(--font-body);vertical-align:middle}
+.fb p{margin:4px 0;font-size:16px;line-height:1.75}
+.fb .btn{margin-top:12px;width:100%}
+.intro{text-align:center;padding:26px 18px 22px}
+.intro .big{font:400 58px/1.1 var(--font-display);color:var(--gold)}
+.intro h2{margin:0 0 6px;font:400 30px var(--font-display)}
+.intro p{margin:0 auto 18px;max-width:30ch;color:var(--muted)}
+
+/* result */
+.res{text-align:center}
+.rtitle{margin:2px 0 6px;font:400 34px/1.3 var(--font-display);color:var(--gold)}
+.stars3{display:flex;justify-content:center;gap:6px;margin:8px 0 14px}
+.stars3 svg{width:min(26vw,100px);height:min(26vw,100px);fill:var(--card-2)}
+.stars3 svg.on{fill:var(--gold);filter:drop-shadow(0 6px 0 #8A5A00);animation:starIn .6s both;animation-delay:var(--d)}
+@keyframes starIn{0%{transform:scale(.2) rotate(-90deg);opacity:0}70%{transform:scale(1.2) rotate(8deg);opacity:1}100%{transform:none}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats div{background:var(--bg-2);border-radius:14px;padding:8px 4px}
+.stats b{display:block;font:400 28px/1.2 var(--font-display);font-variant-numeric:tabular-nums}
+.stats small{color:var(--muted);font-size:13px}
+.sec{margin:22px 0 10px;font:400 24px var(--font-display);color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 12px;border-radius:999px;background:var(--card);border:2px solid var(--c);color:var(--ink);font:700 16px var(--font-body);cursor:pointer}
+.chip svg{width:20px;height:20px;fill:var(--c)}
+.allgood{margin:0;color:var(--good);font-weight:700}
+.btns{display:grid;gap:10px;margin-top:22px}
+.rv{display:flex;gap:12px;align-items:flex-start;background:var(--card);border-radius:18px;padding:12px 14px;margin-bottom:10px}
+.rv svg{flex:none;width:40px;height:40px;fill:var(--c);margin-top:2px}
+.rv b{display:block;font-weight:800;font-size:18px}
+.rv p{margin:2px 0 0;font-size:15px;line-height:1.75;color:var(--muted)}
+.rv.miss{outline:2px solid var(--bad)}
+
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);text-align:center;color:var(--muted)}
+.foot svg{width:18px;height:18px;fill:var(--gold);opacity:.9}
+.foot p{margin:4px 0 0;font-size:14px;line-height:1.7;font-weight:500}
+
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sheet .shade{position:absolute;inset:0;background:rgba(10,6,40,.72)}
+.panel{position:relative;width:min(560px,100%);max-height:86%;overflow:auto;background:var(--card);border-top:5px solid var(--c);border-radius:28px 28px 0 0;
+  padding-top:20px;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px));
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));animation:up .3s ease both}
+@keyframes up{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+.panel .head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.panel .head svg{width:60px;height:60px;fill:var(--c);flex:none;filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))}
+.panel h2{margin:0;font:400 30px var(--font-display)}
+.panel .lab{margin:12px 0 2px;color:var(--c);font-weight:800;font-size:14px}
+.panel p{margin:0;font-size:17px;line-height:1.85}
+.panel .btn{width:100%;margin-top:18px}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .timer i{animation-duration:var(--t)!important}
+}
+</style>
+
+<div class="bg" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div class="app" dir="rtl" lang="ar">
+  <div class="bar">
+    <div class="brand"><svg viewBox="0 0 100 100" aria-hidden="true" id="brandStar"></svg><span>نجوم التوافق</span></div>
+    <button class="icon-btn on" id="snd" type="button" aria-label="الصوت" aria-pressed="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="x" d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <main>
+    <section id="home" class="screen">
+      <div class="hero">
+        <p class="eyebrow">الصحة النفسية · أبعاد التوافق</p>
+        <h1>نجوم التوافق</h1>
+        <p class="lead">اقرأ، فكّر، واختر البعد الصحيح. أجب بسرعة وكوّن سلسلة إجابات متتالية لتجمع نقاطاً أكثر.</p>
+      </div>
+      <div class="galaxy" id="galaxy"></div>
+      <p class="hint">اضغط أي نجمة لتقرأ تعريفها قبل أن تبدأ</p>
+      <ol class="levels">
+        <li><span class="n">1</span><div><b>من أنا؟</b><span>تعريف يظهر وعليك تسمية البعد</span></div></li>
+        <li><span class="n">2</span><div><b>الموقف</b><span>موقف من الحياة وعليك تحديد نوع التوافق</span></div></li>
+        <li><span class="n">3</span><div><b>سباق الكلمات</b><span>عبارة قصيرة وعشر ثوانٍ لاختيار النجمة</span></div></li>
+      </ol>
+      <button class="btn block" id="startBtn" type="button">ابدأ اللعب</button>
+      <p class="best" id="best" hidden></p>
+    </section>
+
+    <section id="game" class="screen" hidden>
+      <div class="hud">
+        <div class="lvl"><small id="lvlN">المستوى 1 من 3</small><b id="lvlT">من أنا؟</b></div>
+        <div class="scorebox" id="scorebox"><b id="score">0</b><small>نقطة</small></div>
+      </div>
+      <div class="prog" id="prog" aria-hidden="true"></div>
+      <div id="stage"></div>
+    </section>
+
+    <section id="result" class="screen" hidden></section>
+  </main>
+
+  <footer class="foot">
+    <svg viewBox="0 0 100 100" aria-hidden="true" id="footStar"></svg>
+    <p>© ٢٠٢٦ جميع الحقوق محفوظة، تصميم معلمة الفلسفة حوراء محمود بخش</p>
+  </footer>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="shade" id="shade"></div>
+  <div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="pname"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+document.documentElement.lang='ar';
+document.documentElement.dir='rtl';
+
+/* ---------- data ---------- */
+function starPts(R,r){var p=[],i,a,rad;for(i=0;i<16;i++){a=(Math.PI/8)*i-Math.PI/2;rad=i%2?r:R;p.push((50+rad*Math.cos(a)).toFixed(1)+','+(50+rad*Math.sin(a)).toFixed(1));}return p.join(' ');}
+var PTS=starPts(48,36);
+var STAR='<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="'+PTS+'"/></svg>';
+
+var DIMS=[
+ {id:'self',name:'الذاتي',c:'var(--c-self)',
+  def:'هو التنظيم النفسي الذاتي للعلاقات الداخلية، ومدى قدرة الفرد على التوفيق بين دوافعه المتصارعة توفيقاً يؤدي به إلى السعادة مع النفس والرضا عنها.',
+  short:'رضا الفرد عن نفسه وتوفيقه بين دوافعه المتصارعة',
+  ex:'طالب يوازن بين رغبته في اللعب وواجب المذاكرة، فيشعر بالرضا عن قراره.'},
+ {id:'social',name:'الاجتماعي',c:'var(--c-social)',
+  def:'هو الذي يتعلق بالعلاقات بين الذات والآخرين، ومدى قدرة الفرد على الالتزام بأخلاقيات المجتمع.',
+  short:'علاقات سليمة مع الآخرين والتزام بأخلاقيات المجتمع',
+  ex:'الفرد الذي يريد أن يتوافق مع مجتمعه يقيم علاقات سليمة تقوم على احترام الآخرين والالتزام بأخلاقيات المجتمع والامتثال لقواعده.'},
+ {id:'mind',name:'العقلي',c:'var(--c-mind)',
+  def:'هو تكامل عناصر العمليات العقلية كالإدراك الحسي والتعلم والتذكر والذكاء والاستعدادات في القيام بمهامها على أكمل وجه.',
+  short:'تكامل العمليات العقلية كالتعلم والتذكر والذكاء',
+  ex:'توظيف المتعلم لقدراته العقلية المناسبة في مواقف التعلم وقيامه بجهد كبير لتحقيق النجاح.'},
+ {id:'marry',name:'الزواجي',c:'var(--c-marry)',
+  def:'هو التوافق المتعلق بقدرة الفرد على تحقيق السعادة الأسرية والحب المتبادل بين الزوجين وتحمل مسؤوليات الحياة والقدرة على حل المشكلات.',
+  short:'سعادة أسرية وحب متبادل بين الزوجين',
+  ex:'كلما كان هناك تفاهم بين الزوجين في التعامل مع الخلافات، تحقق التوافق الزواجي وتحققت الصحة النفسية.'},
+ {id:'job',name:'المهني',c:'var(--c-job)',
+  def:'هو الذي يتضمن رضا الفرد عن العمل المناسب للمهنة واقتناعه الشخصي بها.',
+  short:'رضا عن المهنة واقتناع شخصي بها',
+  ex:'شخص يعمل في وظيفة يحبها ويقتنع بها، فيذهب إلى عمله راضياً وينجز وينجح.'},
+ {id:'faith',name:'الديني',c:'var(--c-faith)',
+  def:'يتحقق بالإيمان الصادق بالله تعالى، وتوافق الفرد مع نفسه في حدود ما أمر به الله سبحانه وتعالى ونهى عنه، وقدرته على مقاومة أهواء النفس وشهواتها والتوازن والاعتدال.',
+  short:'إيمان صادق بالله والتزام بما أمر به ونهى عنه',
+  ex:'طاعة الله ورسوله، ومقاومة أهواء النفس بتوازن واعتدال.'},
+ {id:'politic',name:'السياسي',c:'var(--c-politic)',
+  def:'هو الذي يتحقق باعتناق الفرد للمبادئ السياسية التي تتماشى مع الجماعة والموافقة عليها والقدرة على المسايرة والتعايش وفق مبادئ الدولة.',
+  short:'اعتناق مبادئ سياسية تتماشى مع الجماعة والدولة',
+  ex:'قبول الفرد لمبادئ دولته والتعايش معها ومسايرة الجماعة فيما تتفق عليه.'}
+];
+var BY={};DIMS.forEach(function(d){BY[d.id]=d;});
+var CONF={self:['faith','mind'],social:['marry','politic'],mind:['job','self'],marry:['social','self'],job:['mind','social'],faith:['self','politic'],politic:['social','faith']};
+
+var SCEN=[
+ {dim:'self',text:'تشعر سارة بالتوتر قبل الاختبار، لكنها توازن بين رغبتها في اللعب وحاجتها للمذاكرة، وتنام راضية عن قرارها.'},
+ {dim:'self',text:'يؤجل خالد شراء ما يريده لأن هناك حاجة أهم، فيشعر بالسعادة والرضا عن نفسه ولا يعيش صراعاً داخلياً.'},
+ {dim:'social',text:'يحيّي أحمد جيرانه باحترام، ويتعاون معهم في تنظيم حفل الحي، ويلتزم بآداب المجتمع وقواعده.'},
+ {dim:'social',text:'سامحت منى زميلتها التي أخطأت في حقها، وحافظت على علاقة طيبة معها.'},
+ {dim:'mind',text:'يوظّف يوسف قدراته في الفهم والتذكر أثناء المذاكرة، ويبذل جهداً كبيراً ليحقق النجاح.'},
+ {dim:'mind',text:'لاحظت نورة أن طريقتها القديمة في المذاكرة لا تنفع، فاستفادت من تجاربها وغيّرت أسلوبها في التعلم.'},
+ {dim:'marry',text:'يختلف زوجان في أمر يخص الأسرة، فيتفاهمان ويحلان المشكلة، ويتحمل كل منهما مسؤوليته بمودة.'},
+ {dim:'marry',text:'يتقاسم زوجان أعباء البيت ويتعاونان على تربية أبنائهما في جو من الحب المتبادل.'},
+ {dim:'job',text:'اختار فهد مهنة التمريض لأنه يحبها ويقتنع بها، فيذهب إلى عمله كل يوم راضياً.'},
+ {dim:'job',text:'معلمة ترى في تدريس الأطفال مهنتها المفضلة، فتشعر بالرضا عن عملها رغم الجهد.'},
+ {dim:'faith',text:'يؤدي عبد الله ما أمره الله به وينتهي عما نهى عنه، ويقاوم أهواء نفسه بتوازن واعتدال.'},
+ {dim:'faith',text:'تحافظ ريم على صلاتها وتقوي إيمانها بالله، فتجد الاعتدال والطمأنينة في حياتها.'},
+ {dim:'politic',text:'يؤمن ماجد بالمبادئ السياسية التي تتفق مع جماعته، ويتعايش مع الآخرين وفق مبادئ دولته.'},
+ {dim:'politic',text:'يقبل سالم مبادئ دولته السياسية ويوافق عليها مع جماعته، ويتعايش معها دون صدام.'}
+];
+var KEYS=[
+ {dim:'self',text:'السعادة مع النفس والرضا عنها'},{dim:'self',text:'التوفيق بين الدوافع المتصارعة'},
+ {dim:'social',text:'أخلاقيات المجتمع'},{dim:'social',text:'التعاون والتسامح مع الآخرين'},
+ {dim:'mind',text:'الإدراك الحسي والتعلم والتذكر'},{dim:'mind',text:'الذكاء والاستعدادات'},
+ {dim:'marry',text:'الحب المتبادل بين الزوجين'},{dim:'marry',text:'السعادة الأسرية'},
+ {dim:'job',text:'الرضا عن العمل'},{dim:'job',text:'الاقتناع الشخصي بالمهنة'},
+ {dim:'faith',text:'الإيمان الصادق بالله'},{dim:'faith',text:'مقاومة أهواء النفس وشهواتها'},
+ {dim:'politic',text:'مبادئ الدولة'},{dim:'politic',text:'المسايرة والتعايش مع الجماعة'}
+];
+var DEFS=DIMS.map(function(d){return {dim:d.id,text:d.def};});
+var PRAISE=['أحسنت!','ممتاز!','رائع!','إجابة صحيحة!','عمل جميل!'];
+var PER=5, TIME=10;
+
+/* ---------- helpers ---------- */
+function $(id){return document.getElementById(id);}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function rand(a){return a[Math.floor(Math.random()*a.length)];}
+var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- sound ---------- */
+var ac=null,soundOn=true;
+function ctx(){
+  if(!ac){var AC=window.AudioContext||window.webkitAudioContext;if(AC){try{ac=new AC();}catch(e){ac=null;}}}
+  if(ac&&ac.state==='suspended'){try{ac.resume();}catch(e){}}
+  return ac;
+}
+function tone(f,t0,d,type,vol){
+  var a=ctx();if(!a||!soundOn)return;
+  var o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;
+  o.type=type;o.frequency.setValueAtTime(f,t);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.05);
+}
+var sfx={
+  tap:function(){tone(560,0,.07,'triangle',.07);},
+  start:function(){[392,523.25,659.25].forEach(function(f,i){tone(f,i*.09,.16,'triangle',.12);});},
+  good:function(s){var k=Math.pow(2,Math.min(s-1,6)/12);[523.25,659.25,783.99].forEach(function(f,i){tone(f*k,i*.07,.22,'sine',.14);});if(s>=3)tone(1318.5*k,.22,.3,'triangle',.08);},
+  bad:function(){tone(196,0,.16,'square',.05);tone(147,.14,.28,'square',.05);},
+  level:function(){[523.25,659.25,783.99,1046.5].forEach(function(f,i){tone(f,i*.1,.25,'triangle',.12);});},
+  win:function(){[523.25,659.25,783.99,1046.5,783.99,1046.5,1318.5].forEach(function(f,i){tone(f,i*.12,.3,'triangle',.13);});}
+};
+var sndBtn=$('snd');
+sndBtn.addEventListener('click',function(){
+  soundOn=!soundOn;
+  sndBtn.classList.toggle('on',soundOn);sndBtn.classList.toggle('off',!soundOn);
+  sndBtn.setAttribute('aria-pressed',String(soundOn));
+  if(soundOn){ctx();sfx.tap();}
+});
+
+/* ---------- confetti ---------- */
+var cv=$('fx'),cx=cv.getContext('2d'),parts=[],raf=0;
+var CONFETTI=['#FF7A7A','#FFB84D','#4FD1E8','#FF8FC1','#7EDB7A','#B58CFF','#6FA8FF','#FFC93C'];
+function fit(){var d=window.devicePixelRatio||1;cv.width=Math.round(innerWidth*d);cv.height=Math.round(innerHeight*d);cx.setTransform(d,0,0,d,0,0);}
+fit();window.addEventListener('resize',fit);
+function starPath(r){cx.beginPath();for(var i=0;i<16;i++){var a=(Math.PI/8)*i,rad=i%2?r*.62:r;var x=rad*Math.cos(a),y=rad*Math.sin(a);if(i)cx.lineTo(x,y);else cx.moveTo(x,y);}cx.closePath();}
+function burst(x,y,n){
+  if(reduced)return;
+  for(var i=0;i<n;i++){
+    var a=Math.random()*Math.PI*2,s=3+Math.random()*7;
+    parts.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-4,r:5+Math.random()*6,c:rand(CONFETTI),rot:Math.random()*6,vr:(Math.random()-.5)*.35,life:1,star:Math.random()<.55});
+  }
+  if(!raf)raf=requestAnimationFrame(loop);
+}
+function loop(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  parts=parts.filter(function(p){return p.life>0&&p.y<innerHeight+40;});
+  parts.forEach(function(p){
+    p.vy+=.24;p.vx*=.992;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.life-=.014;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.globalAlpha=Math.max(p.life,0);cx.fillStyle=p.c;
+    if(p.star){starPath(p.r);cx.fill();}else{cx.fillRect(-p.r/2,-p.r/3,p.r,p.r*.66);}
+    cx.restore();
+  });
+  if(parts.length){raf=requestAnimationFrame(loop);}else{raf=0;cx.clearRect(0,0,innerWidth,innerHeight);}
+}
+
+/* ---------- views ---------- */
+function show(id){
+  ['home','game','result'].forEach(function(s){$(s).hidden=(s!==id);});
+  window.scrollTo(0,0);
+}
+$('brandStar').innerHTML='<polygon points="'+PTS+'"/>';
+$('footStar').innerHTML='<polygon points="'+PTS+'"/>';
+function starBtn(d,i,extra){
+  return '<button class="star '+(extra||'')+'" type="button" data-pick="'+d.id+'" style="--c:'+d.c+';--i:'+i+'">'+STAR+'<span>'+d.name+'</span></button>';
+}
+$('galaxy').innerHTML=DIMS.map(function(d,i){return starBtn(d,i,'');}).join('');
+$('galaxy').addEventListener('click',function(e){var b=e.target.closest('[data-pick]');if(b){ctx();openSheet(b.dataset.pick);}});
+
+var BEST_KEY='compat-stars-best';
+function getBest(){try{return parseInt(localStorage.getItem(BEST_KEY)||'0',10)||0;}catch(e){return 0;}}
+function setBest(v){try{localStorage.setItem(BEST_KEY,String(v));}catch(e){}}
+function showBest(){var b=getBest(),el=$('best');if(b>0){el.hidden=false;el.textContent='أفضل نتيجة لك: '+b+' نقطة';}else{el.hidden=true;}}
+showBest();
+
+/* sheet */
+var sheet=$('sheet'),panel=$('panel'),lastFocus=null;
+function openSheet(id){
+  var d=BY[id];lastFocus=document.activeElement;
+  panel.style.setProperty('--c',d.c);
+  panel.innerHTML='<div class="head">'+STAR+'<h2 id="pname">التوافق '+d.name+'</h2></div>'+
+    '<div class="lab">التعريف</div><p>'+d.def+'</p>'+
+    '<div class="lab">مثال</div><p>'+d.ex+'</p>'+
+    '<button class="btn" id="closeSheet" type="button">فهمت</button>';
+  sheet.hidden=false;sfx.tap();
+  $('closeSheet').focus();
+}
+function closeSheet(){sheet.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+$('shade').addEventListener('click',closeSheet);
+panel.addEventListener('click',function(e){if(e.target.closest('#closeSheet'))closeSheet();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!sheet.hidden)closeSheet();});
+
+/* ---------- game ---------- */
+var S=null,levels=[],stage=$('stage'),scorebox=$('scorebox');
+
+function pickDistinct(pool,n){
+  var ids=shuffle(DIMS.map(function(d){return d.id;})).slice(0,n);
+  return ids.map(function(id){return rand(pool.filter(function(p){return p.dim===id;}));});
+}
+function buildLevels(){
+  return [
+    {title:'من أنا؟',sub:'اقرأ التعريف واختر البعد الذي يصفه.',type:'choice',label:'ما البعد الذي يصفه هذا التعريف؟',items:pickDistinct(DEFS,PER)},
+    {title:'الموقف',sub:'اقرأ الموقف واكتشف أي بعد من أبعاد التوافق يمثله.',type:'choice',label:'ما البعد الذي يمثله هذا الموقف؟',items:pickDistinct(SCEN,PER)},
+    {title:'سباق الكلمات',sub:'تظهر عبارة، وأمامك '+TIME+' ثوانٍ لاختيار النجمة الصحيحة. السرعة تمنحك نقاطاً إضافية.',type:'stars',label:'أي نجمة تطابق هذه العبارة؟',items:pickDistinct(KEYS,PER)}
+  ];
+}
+function choices(id){
+  var conf=shuffle(CONF[id]),set=[id,conf[0]];
+  var rest=shuffle(DIMS.map(function(d){return d.id;}).filter(function(x){return set.indexOf(x)<0;}));
+  while(set.length<4)set.push(rest.pop());
+  return shuffle(set).map(function(x){return BY[x];});
+}
+function renderProg(now){
+  var h='';
+  for(var i=0;i<PER*levels.length;i++){h+='<i class="'+(S.log[i]===true?'ok':S.log[i]===false?'no':i===now?'now':'')+'"></i>';}
+  $('prog').innerHTML=h;
+}
+function setLevelHud(){
+  $('lvlN').textContent='المستوى '+(S.li+1)+' من '+levels.length;
+  $('lvlT').textContent=levels[S.li].title;
+}
+function start(){
+  ctx();
+  levels=buildLevels();
+  S={li:0,qi:0,score:0,streak:0,best:0,right:0,locked:true,t0:0,missed:{},log:[]};
+  $('score').textContent='0';
+  show('game');sfx.start();showIntro();
+}
+function showIntro(){
+  var L=levels[S.li];
+  setLevelHud();renderProg(-1);
+  stage.innerHTML='<div class="q intro"><div class="big">المستوى '+(S.li+1)+'</div><h2>'+L.title+'</h2><p>'+L.sub+'</p><button class="btn" type="button" data-act="go" id="goBtn">هيا نبدأ</button></div>';
+  $('goBtn').focus({preventScroll:true});
+}
+function showQ(){
+  var L=levels[S.li],it=L.items[S.qi],gi=S.li*PER+S.qi;
+  S.locked=false;S.t0=performance.now();
+  renderProg(gi);
+  var body,opts,timer='';
+  if(L.type==='stars'){
+    body='<div class="qkw">'+it.text+'</div>';
+    timer='<div class="timer" style="--t:'+TIME+'s"><i></i></div>';
+    opts='<div class="sopts">'+shuffle(DIMS).map(function(d,i){return starBtn(d,i,'');}).join('')+'</div>';
+  }else{
+    body='<p class="qtext">'+it.text+'</p>';
+    opts='<div class="opts">'+choices(it.dim).map(function(d){
+      return '<button class="opt" type="button" data-pick="'+d.id+'" style="--c:'+d.c+'">'+STAR.replace('<svg','<svg class="mini"')+'<span>التوافق '+d.name+'</span></button>';
+    }).join('')+'</div>';
+  }
+  stage.innerHTML='<div class="q"><div class="qtop"><span>السؤال '+(S.qi+1)+' من '+PER+'</span><span class="streak" id="streakChip"'+(S.streak>1?'':' hidden')+'>سلسلة ×'+S.streak+'</span></div>'+
+    '<p class="qlabel">'+L.label+'</p>'+body+timer+'</div>'+opts+'<div id="fbHost"></div>';
+}
+function answer(btn){
+  if(S.locked)return;
+  S.locked=true;
+  var L=levels[S.li],it=L.items[S.qi],gi=S.li*PER+S.qi;
+  var pick=btn.dataset.pick,ok=(pick===it.dim),bonus=0,pts=0;
+  var bar=stage.querySelector('.timer i');
+  if(L.type==='stars'){
+    var used=(performance.now()-S.t0)/1000;
+    if(bar)bar.style.animationPlayState='paused';
+    if(ok)bonus=Math.max(0,Math.round(5*(1-used/TIME)));
+  }
+  if(ok){
+    S.streak++;S.best=Math.max(S.best,S.streak);S.right++;
+    pts=10+Math.min(S.streak-1,5)*2+bonus;S.score+=pts;
+  }else{
+    S.streak=0;S.missed[it.dim]=true;
+  }
+  S.log[gi]=ok;renderProg(-1);
+  $('score').textContent=S.score;
+  scorebox.classList.remove('pop');void scorebox.offsetWidth;if(ok)scorebox.classList.add('pop');
+  var chip=$('streakChip');
+  if(chip){if(S.streak>1){chip.hidden=false;chip.textContent='سلسلة ×'+S.streak;}else{chip.hidden=true;}}
+
+  stage.querySelectorAll('[data-pick]').forEach(function(b){
+    b.disabled=true;
+    if(b.dataset.pick===it.dim)b.classList.add('correct');
+    else if(b===btn)b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+
+  if(ok){
+    sfx.good(S.streak);
+    var r=btn.getBoundingClientRect();
+    burst(r.left+r.width/2,r.top+r.height/2,S.streak>=3?70:36);
+  }else{sfx.bad();}
+
+  var d=BY[it.dim],ch=BY[pick],last=(gi===PER*levels.length-1);
+  var html='<div class="fb '+(ok?'good':'bad')+'" role="status">'+
+    '<h3>'+(ok?rand(PRAISE)+'<span class="pts">+'+pts+'</span>':'الصحيح: التوافق '+d.name)+'</h3>'+
+    '<p><b>التوافق '+d.name+'</b> يعني '+d.short+'.</p>'+
+    (ok?'':'<p>أما التوافق '+ch.name+' فيعني '+ch.short+'.</p>')+
+    '<button class="btn" type="button" data-act="next" id="nextBtn">'+(last?'عرض النتيجة':'التالي')+'</button></div>';
+  var host=$('fbHost');host.innerHTML=html;
+  var nb=$('nextBtn');nb.focus({preventScroll:true});
+  host.firstChild.scrollIntoView({behavior:reduced?'auto':'smooth',block:'nearest'});
+}
+function next(){
+  S.qi++;
+  if(S.qi>=PER){
+    S.li++;S.qi=0;
+    if(S.li>=levels.length){finish();return;}
+    sfx.level();showIntro();return;
+  }
+  sfx.tap();showQ();
+}
+function finish(){
+  var total=PER*levels.length,acc=Math.round(S.right/total*100);
+  var n=acc>=85?3:acc>=55?2:1;
+  var titles=['بداية جيدة، حاول مرة أخرى','أداء جميل!','نجم التوافق!'];
+  var prevBest=getBest();if(S.score>prevBest)setBest(S.score);showBest();
+  var starsH='';for(var i=0;i<3;i++){starsH+='<svg viewBox="0 0 100 100" class="'+(i<n?'on':'')+'" style="--d:'+(0.25+i*0.3)+'s" aria-hidden="true"><polygon points="'+PTS+'"/></svg>';}
+  var missed=DIMS.filter(function(d){return S.missed[d.id];});
+  var missH=missed.length?'<div class="chips">'+missed.map(function(d){return '<button class="chip" type="button" data-pick="'+d.id+'" style="--c:'+d.c+'">'+STAR+'التوافق '+d.name+'</button>';}).join('')+'</div>':'<p class="allgood">لم تخطئ في أي بعد. أحسنت!</p>';
+  var rv=DIMS.map(function(d){return '<article class="rv'+(S.missed[d.id]?' miss':'')+'" style="--c:'+d.c+'">'+STAR+'<div><b>التوافق '+d.name+'</b><p>'+d.def+'</p></div></article>';}).join('');
+  $('result').innerHTML=
+    '<div class="q res"><p class="eyebrow">انتهت الجولة</p><h2 class="rtitle">'+titles[n-1]+'</h2><div class="stars3">'+starsH+'</div>'+
+    '<div class="stats"><div><b>'+S.score+'</b><small>النقاط</small></div><div><b>'+acc+'%</b><small>الدقة</small></div><div><b>'+S.best+'</b><small>أطول سلسلة</small></div></div>'+
+    (S.score>prevBest&&prevBest>0?'<p class="best">رقم قياسي جديد!</p>':'')+'</div>'+
+    '<h3 class="sec">أبعاد تحتاج مراجعة</h3>'+missH+
+    '<div class="btns"><button class="btn" type="button" data-act="again">العب مرة أخرى</button><button class="btn ghost" type="button" data-act="home">الصفحة الرئيسية</button></div>'+
+    '<h3 class="sec">ملخص الأبعاد السبعة</h3>'+rv;
+  show('result');sfx.win();
+  if(n>=2){setTimeout(function(){burst(innerWidth*.25,innerHeight*.3,50);burst(innerWidth*.75,innerHeight*.3,50);},350);}
+}
+
+/* ---------- events ---------- */
+$('startBtn').addEventListener('click',start);
+stage.addEventListener('click',function(e){
+  var p=e.target.closest('[data-pick]');
+  if(p&&stage.contains(p)){answer(p);return;}
+  var a=e.target.closest('[data-act]');
+  if(!a)return;
+  if(a.dataset.act==='go'){sfx.tap();showQ();}
+  else if(a.dataset.act==='next'){next();}
+});
+$('result').addEventListener('click',function(e){
+  var p=e.target.closest('[data-pick]');
+  if(p){openSheet(p.dataset.pick);return;}
+  var a=e.target.closest('[data-act]');
+  if(!a)return;
+  if(a.dataset.act==='again'){start();}
+  else if(a.dataset.act==='home'){sfx.tap();show('home');}
+});
+})();
+</script>
+
+<a href="./#mental-health" id="dzback" onclick="if(history.length>1){event.preventDefault();history.back()}" style="position:fixed;z-index:9999;top:calc(10px + env(safe-area-inset-top,0px));left:max(10px,env(safe-area-inset-left,0px));background:#ffffffee;color:#271f3d;border:2px solid #d9d2ea;border-radius:999px;padding:6px 14px;font:700 14px Tahoma,sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.18)" dir="rtl">→ دروازة</a><script id="dzback">(function(){var h;try{h=JSON.parse(localStorage.getItem("darwaza:hub")||"null")}catch(e){}
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="./#"],a[href="./"]');if(!a||!h)return;e.preventDefault();var x=a.getAttribute("href").slice(2);location.href=h+(x||"#")},true)})();</script></body></html>
