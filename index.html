@@ -1,7 +1,7 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="دروازة: منصة ألعاب تعليمية تفاعلية للفلسفة وعلم النفس والاجتماع والدستور ودولة الكويت والصحة النفسية. تصميم معلمة الفلسفة حوراء محمود بخش."><meta name="theme-color" content="#c98a2e"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="دروازة"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><title>دروازة</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style id="dzsplash-css">
-#dzsplash{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 40%,#fff6e0,#f4d8a4);overflow:hidden;transition:opacity .7s ease;font-family:"Readex Pro",Tahoma,sans-serif}
+#dzsplash{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 40%,#fff6e0,#f4d8a4);overflow:hidden;transition:opacity .5s ease;font-family:"Readex Pro",Tahoma,sans-serif}
 #dzsplash *{box-sizing:border-box}
 #dzsplash.dzs-out{opacity:0;pointer-events:none}
 #dzsplash .dzs-ic{position:absolute;width:96px;display:flex;flex-direction:column;align-items:center;gap:5px;left:calc(50% + clamp(-300px,var(--x)*1vw,300px) - 48px);top:var(--y);opacity:0;transform:scale(.2) rotate(-14deg);transition:opacity .4s ease var(--d),transform .55s cubic-bezier(.4,1.7,.5,1) var(--d)}
@@ -43,12 +43,12 @@
 #dzsplash.dzs-open .dzs-rays{animation:dzsRays 1.6s ease-out forwards}
 #dzsplash.dzs-open .dzs-shine i{animation:dzsSpark .9s ease-out forwards}
 #dzsplash.dzs-open .dzs-shine i:nth-of-type(2n){animation-delay:.12s}#dzsplash.dzs-open .dzs-shine i:nth-of-type(3n){animation-delay:.24s}#dzsplash.dzs-open .dzs-shine i:nth-of-type(4n){animation-delay:.36s}
-#dzsplash .dzs-flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#fffdf3,#fff3cf 60%,#ffe7a8);opacity:0;pointer-events:none;z-index:5}
-#dzsplash.dzs-zoom .dzs-flash{animation:dzsFlash 1.1s ease forwards}
+#dzsplash .dzs-flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#fffdf3cc,#fff3cf88 55%,transparent 80%);opacity:0;pointer-events:none;z-index:5}
+#dzsplash.dzs-zoom .dzs-flash{animation:dzsFlash .5s ease forwards}
 @keyframes dzsHalo{0%{opacity:0;transform:scale(.3)}40%{opacity:1;transform:scale(1.25)}100%{opacity:.9;transform:scale(2.2)}}
 @keyframes dzsRays{0%{opacity:0;transform:scale(.4) rotate(0)}35%{opacity:1}100%{opacity:.7;transform:scale(1.5) rotate(40deg)}}
 @keyframes dzsSpark{0%{opacity:0;transform:translate(0,0) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.2)}}
-@keyframes dzsFlash{0%{opacity:0}45%{opacity:1}100%{opacity:1}}
+@keyframes dzsFlash{0%{opacity:0}50%{opacity:.75}100%{opacity:.6}}
 @keyframes dzsFloat{to{translate:0 -8px}}@keyframes dzsRing{0%{opacity:1}100%{opacity:0;transform:scale(16)}}@keyframes dzsPop{to{opacity:1;transform:none}}
 @keyframes dzsUp{to{opacity:1;transform:none}}@keyframes dzsFade{to{opacity:1}}@keyframes dzsPulse{50%{transform:scale(1.06)}}
 @media (prefers-reduced-motion:reduce){#dzsplash *{animation-duration:.01s!important;transition-duration:.01s!important;transition-delay:0s!important;animation-delay:0s!important}}
@@ -80,7 +80,7 @@ function whoosh(at){var a=ac();if(!a)return;try{var t=a.currentTime+at,n=a.creat
  n.connect(f);f.connect(g);g.connect(a.destination);n.start(t);n.stop(t+L)}catch(e){}}
 function chime(at){var a=ac();if(!a)return;try{[784,988,1175,1568].forEach(function(fr,k){var o=a.createOscillator(),g=a.createGain(),st=a.currentTime+at+k*.07;o.type="triangle";o.frequency.value=fr;g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(.07,st+.02);g.gain.exponentialRampToValueAtTime(.0001,st+.9);o.connect(g);g.connect(a.destination);o.start(st);o.stop(st+.95)})}catch(e){}}
 function enter(){if(done)return;done=true;ac();s.classList.add("dzs-merge");[0,.12,.24,.36,.48].forEach(function(x){whoosh(x)});chime(1.0);
- setTimeout(function(){creak();s.classList.add("dzs-open");chime(.55)},1900);setTimeout(function(){s.classList.add("dzs-zoom")},2600);setTimeout(close,3700)}
+ setTimeout(function(){creak();s.classList.add("dzs-open");chime(.55)},1900);setTimeout(function(){s.classList.add("dzs-zoom")},2600);setTimeout(close,3150)}
 function fill(){try{s.querySelectorAll(".dzs-ic").forEach(function(el){var w=el.querySelector(".dzs-win");if(typeof scene==="function")w.innerHTML=scene(el.dataset.k).replace('class="scene"','')})}catch(e){}}
 function go(){fill();requestAnimationFrame(function(){requestAnimationFrame(function(){s.classList.add("dzs-go")})})}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
