@@ -798,14 +798,23 @@ footer b{color:var(--ink)}
 .bgprize.pop{animation:bgPop .6s cubic-bezier(.3,1.6,.5,1)}
 .bgprize.ball{width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 10%,var(--bc) 12%,color-mix(in srgb,var(--bc) 75%,#000));display:grid;place-items:center;box-shadow:0 12px 24px #0003}
 .bgprize.ball span{background:#fff;border-radius:50%;min-width:110px;min-height:110px;padding:6px;box-sizing:border-box;display:grid;place-items:center;font-family:Lalezar,serif;font-size:clamp(26px,5vw,54px);color:#222;text-align:center;line-height:1.1;word-break:break-word}
-.bgprize.stick{display:flex;align-items:center;filter:drop-shadow(0 10px 16px #0003)}
-.bgice{width:90px;height:110px;border-radius:50px 14px 14px 50px;background:var(--bc);margin-left:-8px;order:2}
-.bgwood{order:1;background:linear-gradient(#efd3a6,#d9a866);border-radius:40px 0 0 40px;padding:18px 26px 18px 40px;font-family:Lalezar,serif;font-size:clamp(26px,5vw,48px);color:#5e3b1f;min-width:120px;text-align:center}
-.bgprize.pencil{display:flex;align-items:center;filter:drop-shadow(0 10px 16px #0003)}
-.bgtip{width:0;height:0;border-top:36px solid transparent;border-bottom:36px solid transparent;border-left:0;border-right:54px solid #f1d2a4;position:relative}
-.bgtip::after{content:"";position:absolute;left:-2px;top:-10px;border-top:10px solid transparent;border-bottom:10px solid transparent;border-right:16px solid #333;right:auto;margin-left:38px}
-.bgbody{height:72px;display:grid;place-items:center;padding:0 30px;min-width:150px;background:linear-gradient(var(--bc) 0 33%,color-mix(in srgb,var(--bc) 78%,#000) 33% 66%,var(--bc) 66%);font-family:Lalezar,serif;font-size:clamp(24px,4.6vw,44px);color:#fff;text-shadow:0 2px 0 #0004}
-.bgerase{width:40px;height:72px;background:linear-gradient(90deg,#c0c0c0 0 40%,#ff9ec4 40%);border-radius:0 12px 12px 0}
+
+
+
+
+
+
+
+
+.bgprize.stick,.bgprize.pencil{display:flex;align-items:center;direction:ltr;filter:drop-shadow(0 10px 16px #0003)}
+.bgice{position:relative;width:96px;height:118px;border-radius:56px 18px 18px 56px;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--bc) 55%,#fff),var(--bc) 60%);margin-right:-10px;z-index:2;overflow:hidden}
+.bgice i{position:absolute;width:12px;height:40px;border-radius:6px;background:#ffffff66;top:18px;left:22px;transform:rotate(18deg)}.bgice i+i{width:7px;height:7px;border-radius:50%;top:72px;left:40px;transform:none;background:#ffffffaa}
+.bgwood{direction:rtl;background:linear-gradient(#f1d9b0,#d9a866);border-radius:0 44px 44px 0;padding:18px 34px 18px 30px;font-family:Lalezar,serif;font-size:clamp(26px,5vw,48px);color:#5e3b1f;min-width:130px;text-align:center;box-shadow:inset 0 -5px 0 #0001}
+.bgerase{width:42px;height:72px;background:#ff9ec4;border-radius:14px 0 0 14px}
+.bgferr{width:18px;height:72px;background:repeating-linear-gradient(90deg,#c9ced6 0 4px,#9aa3b1 4px 6px)}
+.bgbody{direction:rtl;height:72px;display:grid;place-items:center;padding:0 30px;min-width:150px;background:linear-gradient(var(--bc) 0 33%,color-mix(in srgb,var(--bc) 78%,#000) 33% 66%,var(--bc) 66%);font-family:Lalezar,serif;font-size:clamp(24px,4.6vw,44px);color:#fff;text-shadow:0 2px 0 #0004}
+.bgtip{position:relative;width:62px;height:72px;background:#f1d2a4;clip-path:polygon(0 0,100% 50%,0 100%)}
+.bgtip i{position:absolute;right:0;top:50%;width:20px;height:22px;margin-top:-11px;background:#333;clip-path:polygon(0 0,100% 50%,0 100%)}
 .bghist{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}.bgh{background:var(--bc);color:#fff;font-weight:800;border-radius:99px;padding:3px 12px;font-size:15px}.bgh.new{outline:3px solid #ffc23d}
 @keyframes bgBob{to{transform:translateY(-6px)}}@keyframes bgMix{0%{transform:translate(0,0)}25%{transform:translate(30px,-40px)}50%{transform:translate(-20px,-10px)}75%{transform:translate(20px,30px)}100%{transform:translate(0,0)}}
 @keyframes bgCrank{to{transform:rotate(360deg)}}@keyframes bgShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}75%{transform:translate(3px,-2px)}}
@@ -1962,9 +1971,9 @@ function playBingo(){
     return `<div class="bgm pencils"><div class="bgcup pen"><div class="bgsticks">${sample.slice(0,12).map((v,i)=>`<i class="pc" style="--bc:${colOf(v)};--r:${(i-5.5)*3.5}deg;--h:${100+(i*31)%50}px;--l:${14+i*6.4}%"></i>`).join("")}</div><div class="bgcupb pen"></div></div></div>`}
   function prize(v){const c=colOf(v);
     if(O.theme==="balls")return `<div class="bgprize ball" style="--bc:${c}"><span>${fmt(v)}</span></div>`;
-    if(O.theme==="sticks")return `<div class="bgprize stick" style="--bc:${c}"><span class="bgice"></span><span class="bgwood">${fmt(v)}</span></div>`;
+    if(O.theme==="sticks")return `<div class="bgprize stick" style="--bc:${c}"><span class="bgice"><i></i><i></i></span><span class="bgwood">${fmt(v)}</span></div>`;
     if(O.theme==="papers")return `<div class="bgprize paper" style="--bc:${c}"><span class="bglabel">${fmt(v)}</span><span class="bgflap"></span></div>`;
-    return `<div class="bgprize pencil" style="--bc:${c}"><span class="bgtip"></span><span class="bgbody">${fmt(v)}</span><span class="bgerase"></span></div>`}
+    return `<div class="bgprize pencil" style="--bc:${c}"><span class="bgerase"></span><span class="bgferr"></span><span class="bgbody">${fmt(v)}</span><span class="bgtip"><i></i></span></div>`}
   function render(last){const P=pool(),left=P.filter(v=>!O.drawn.includes(v));
     body.innerHTML=`<div class="stage bgstage">
       <details class="wcset bgset"${P.length?"":" open"}><summary>⚙️ إعدادات القرعة</summary><div class="wcsetb">
