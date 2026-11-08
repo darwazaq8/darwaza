@@ -753,10 +753,10 @@ footer b{color:var(--ink)}
 .bgshine{position:absolute;top:18px;left:34px;width:50px;height:26px;border-radius:50%;background:#fff9;transform:rotate(-30deg)}
 .bgneck{position:absolute;left:100px;top:190px;width:40px;height:30px;background:#c9d7e2}
 .bgbase{position:absolute;left:30px;top:214px;width:180px;height:80px;border-radius:18px 18px 10px 10px;background:linear-gradient(#ff7a6b,#d94f42);box-shadow:0 6px 0 #a83a30}
-.bgcrank{position:absolute;right:-26px;top:20px;width:30px;height:12px;border-radius:6px;background:#8a8f99;transform-origin:left center}
-.bgcrank::after{content:"";position:absolute;right:-6px;top:-10px;width:16px;height:16px;border-radius:50%;background:#ffc23d}
+
+
 .bgchute{position:absolute;left:96px;top:270px;width:48px;height:22px;border-radius:0 0 14px 14px;background:#333}
-.bgm.balls.bgspin .bgmix i{animation:bgMix .25s linear infinite}.bgm.balls.bgspin .bgcrank{animation:bgCrank .5s linear infinite}.bgm.bgspin .bgdome{animation:bgShake .2s infinite}
+.bgm.balls.bgspin .bgmix i{animation:bgMix2 var(--sp) ease-in-out infinite alternate}.bgm.bgspin .bgdome{animation:bgShake .2s infinite}
 .bgcup{position:absolute;left:30px;bottom:0;width:180px;height:280px}
 .bgsticks{position:absolute;left:0;right:0;bottom:120px;height:140px}
 .bgsticks i{position:absolute;bottom:0;left:var(--l,46%);width:18px;height:var(--h);border-radius:9px 9px 3px 3px;background:linear-gradient(90deg,#e8c48f,#d9a866);transform:rotate(var(--r));transform-origin:bottom center;box-shadow:inset 0 6px 0 var(--bc)}
@@ -794,6 +794,17 @@ footer b{color:var(--ink)}
 .bgcap{margin:6px 0 0;font-weight:800;color:#8a5a34;background:#fff;padding:4px 16px;border-radius:99px;box-shadow:0 3px 0 #0001}
 @keyframes bgBulb{50%{background:#fff;box-shadow:0 0 14px #fff}}@keyframes bgCd{0%{opacity:0;transform:scale(2.2)}30%{opacity:1}100%{opacity:0;transform:scale(.6)}}@keyframes bgRays{to{transform:rotate(360deg)}}
 @media (max-width:560px){.bgshow{padding:54px 6px 10px}.bgsign{font-size:20px}.bgrays{width:300px;height:300px;margin:-150px 0 0 -150px}}
+.bgknob{position:absolute;right:-16px;top:22px;width:30px;height:30px;border-radius:50%;background:radial-gradient(#d9dee6,#8a93a1);box-shadow:0 2px 0 #0003}
+.bgcrank{position:absolute;left:50%;top:50%;width:0;height:0}
+.bgcrank i{position:absolute;left:-4px;top:-4px;width:34px;height:8px;border-radius:4px;background:#8a8f99;transform-origin:4px 4px}
+.bgcrank i::after{content:"";position:absolute;right:-8px;top:-6px;width:18px;height:18px;border-radius:50%;background:#ffc23d;box-shadow:0 2px 0 #c47f10}
+.bgm.balls.bgspin .bgcrank i{animation:bgCrank .45s linear infinite}
+.bgexit{position:absolute;left:104px;top:268px;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 12%,var(--bc) 14%);opacity:0;z-index:4}
+.bgm.balls.bgdrop .bgexit{animation:bgExit .5s ease-out forwards}
+.bgsign span.go{display:inline-block;animation:bgSg .5s ease-out}
+@keyframes bgMix2{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(var(--mx),var(--my)) rotate(180deg)}100%{transform:translate(calc(var(--mx)*-1),calc(var(--my)*.3)) rotate(360deg)}}
+@keyframes bgExit{0%{opacity:1;transform:translateY(-10px) scale(.6)}60%{opacity:1;transform:translateY(30px) scale(1)}100%{opacity:0;transform:translateY(40px) scale(1.2)}}
+@keyframes bgSg{from{transform:scale(2);opacity:0}}
 .bgout{min-width:260px;min-height:200px;display:grid;place-items:center}.bgwait{opacity:.6;font-weight:700}
 .bgprize.pop{animation:bgPop .6s cubic-bezier(.3,1.6,.5,1)}
 .bgprize.ball{width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 10%,var(--bc) 12%,color-mix(in srgb,var(--bc) 75%,#000));display:grid;place-items:center;box-shadow:0 12px 24px #0003}
@@ -1965,7 +1976,7 @@ function playBingo(){
   const fmt=v=>O.mode==="num"?AR(v):escapeHtml(v);
   function rattle(d){try{if(!sound)return;const c=ctx();if(!c)return;const n=Math.round(d*14);for(let i=0;i<n;i++){const t0=c.currentTime+i/14+Math.random()*.03,o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=900+Math.random()*900;g.gain.setValueAtTime(.035,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.05);o.connect(g).connect(c.destination);o.start(t0);o.stop(t0+.06)}}catch(e){}}
   function machine(){const P=pool(),left=P.filter(v=>!O.drawn.includes(v)),sample=(left.length?left:P).slice(0,24);
-    if(O.theme==="balls")return `<div class="bgm balls"><div class="bgdome"><div class="bgmix">${sample.slice(0,16).map((v,i)=>`<i style="--bc:${colOf(v)};--x:${(i*37)%80+6}%;--y:${(i*53)%60+18}%;--d:${(i*.13).toFixed(2)}s"></i>`).join("")}</div><span class="bgshine"></span></div><div class="bgneck"></div><div class="bgbase"><span class="bgcrank"></span></div><div class="bgchute"></div></div>`;
+    if(O.theme==="balls")return `<div class="bgm balls"><div class="bgdome"><div class="bgmix">${sample.slice(0,16).map((v,i)=>`<i style="--bc:${colOf(v)};--x:${Math.round(8+((i*.618034)%1)*64)}%;--y:${Math.round(22+((i*.414214+.2)%1)*50)}%;--d:${(i*.13).toFixed(2)}s;--mx:${((i*29)%60-30)}px;--my:${-((i*41)%60+30)}px;--sp:${(.32+(i%5)*.06).toFixed(2)}s"></i>`).join("")}</div><span class="bgshine"></span></div><div class="bgneck"></div><div class="bgbase"><span class="bgknob"><span class="bgcrank"><i></i></span></span></div><div class="bgchute"></div><span class="bgexit" style="--bc:${colOf(left[0]||P[0]||"1")}"></span></div>`;
     if(O.theme==="sticks")return `<div class="bgm sticks"><div class="bgcup"><div class="bgsticks">${sample.slice(0,12).map((v,i)=>`<i style="--bc:${colOf(v)};--r:${(i-5.5)*4}deg;--h:${90+(i*29)%50}px;--l:${14+i*6.4}%"></i>`).join("")}</div><div class="bgcupb"><b>🍦</b></div></div></div>`;
     if(O.theme==="papers")return `<div class="bgm papers"><div class="bgbowl"><div class="bgfolds">${sample.slice(0,14).map((v,i)=>`<i style="--bc:${colOf(v)};--x:${8+(i*41)%78}%;--y:${(i*23)%46}px;--r:${(i*47)%70-35}deg"></i>`).join("")}</div><div class="bgbowlf"></div></div></div>`;
     return `<div class="bgm pencils"><div class="bgcup pen"><div class="bgsticks">${sample.slice(0,12).map((v,i)=>`<i class="pc" style="--bc:${colOf(v)};--r:${(i-5.5)*3.5}deg;--h:${100+(i*31)%50}px;--l:${14+i*6.4}%"></i>`).join("")}</div><div class="bgcupb pen"></div></div></div>`}
@@ -1982,7 +1993,7 @@ function playBingo(){
         :`<label class="wcrow"><span>أسماء المتعلمين (اسم في كل سطر)</span><textarea id="bgnames" rows="6" dir="rtl" placeholder="أحمد&#10;سارة&#10;يوسف">${escapeHtml(O.names)}</textarea><small>يمكنك أيضًا الفصل بالفاصلة «،»</small></label><button type="button" class="mini" id="bgsave">✔ احفظ الأسماء</button>`}
         <div class="wcrow"><span>شكل الآلة</span><div class="wcopts">${Object.entries(BG_TH).map(([k,th])=>`<button type="button" class="wcopt${O.theme===k?" on":""}" data-th="${k}"><b class="bgic">${k==="balls"?"🎱":k==="sticks"?"🍦":k==="pencils"?"✏️":"📜"}</b><em>${th.n}</em></button>`).join("")}</div></div>
       </div></details>
-      <div class="bgarea"><div class="bgshow"><div class="bgsign"><span>آلة الحظ</span>${Array.from({length:14},(_,i)=>`<i style="--i:${i}"></i>`).join("")}</div>${machine()}<div class="bgcount" id="bgcd"></div></div><div class="bgout" id="bgout"><span class="bgrays"></span>${last?prize(last):`<p class="bgwait">${P.length?"اضغط الزر لتبدأ القرعة":"أضف الأسماء من الإعدادات أولًا"}</p>`}${last?`<p class="bgcap">${O.mode==="num"?"الرقم المختار":"المتعلم المختار"}</p>`:""}</div></div>
+      <div class="bgarea"><div class="bgshow"><div class="bgsign"><span>آلة الحظ</span>${Array.from({length:14},(_,i)=>`<i style="--i:${i}"></i>`).join("")}</div>${machine()}</div><div class="bgout" id="bgout"><span class="bgrays"></span>${last?prize(last):`<p class="bgwait">${P.length?"اضغط الزر لتبدأ القرعة":"أضف الأسماء من الإعدادات أولًا"}</p>`}${last?`<p class="bgcap">${O.mode==="num"?"الرقم المختار":"المتعلم المختار"}</p>`:""}</div></div>
       <div class="acts"><button class="bigbtn" id="bggo" type="button"${!left.length?" disabled":""}>${left.length?BG_TH[O.theme].btn:"انتهت القرعة"}</button><button class="mini" id="bgreset" type="button">↺ قرعة جديدة</button></div>
       <div class="counter">${O.mode==="num"?"أرقام":"أسماء"} مسحوبة: ${AR(O.drawn.length)} من ${AR(P.length)}</div>
       <div class="bghist">${O.drawn.slice().reverse().map((v,i)=>`<span class="bgh${i===0?" new":""}" style="--bc:${colOf(v)}">${fmt(v)}</span>`).join("")}</div></div>`;
@@ -1993,8 +2004,8 @@ function playBingo(){
     if($("#bgsave"))$("#bgsave").onclick=()=>{O.names=$("#bgnames").value;O.drawn=[];O.key=key();save();chord();render()};
     $("#bgreset").onclick=()=>{O.drawn=[];save();WSFX.whoosh();render()};
     $("#bggo").onclick=()=>{if(busy)return;const L=pool().filter(v=>!O.drawn.includes(v));if(!L.length)return;busy=true;
-      const v=L[Math.random()*L.length|0],m=body.querySelector(".bgm");m.classList.add("bgspin");$("#bgout").innerHTML="";body.querySelector(".bgshow").classList.add("on");const cd=$("#bgcd");["٣","٢","١"].forEach((x,i)=>setTimeout(()=>{cd.textContent=x;cd.classList.remove("go");void cd.offsetWidth;cd.classList.add("go");WSFX.tick&&WSFX.tick()},i*520));WSFX.drumroll(1.6);if(O.theme==="balls"){WSFX.crank(1.6);WSFX.balls(1.6)}else if(O.theme==="sticks")WSFX.wood(1.6);else if(O.theme==="papers")WSFX.rustle(1.6);else WSFX.pencils(1.6);
-      setTimeout(()=>{m.classList.remove("bgspin");m.classList.add("drop");O.drawn.push(v);save();if(O.theme==="balls")WSFX.roll();else if(O.theme==="papers")WSFX.pull();else{WSFX.pull();if(O.theme==="pencils")WSFX.scribble()}
+      const v=L[Math.random()*L.length|0],m=body.querySelector(".bgm");m.classList.add("bgspin");$("#bgout").innerHTML="";body.querySelector(".bgshow").classList.add("on");const sg=body.querySelector(".bgsign span"),sgt=sg.textContent;["٣","٢","١"].forEach((x,i)=>setTimeout(()=>{sg.textContent=x;sg.classList.remove("go");void sg.offsetWidth;sg.classList.add("go");WSFX.tick&&WSFX.tick()},i*520));setTimeout(()=>{sg.textContent=sgt},1650);WSFX.drumroll(1.6);if(O.theme==="balls"){WSFX.crank(1.6);WSFX.balls(1.6)}else if(O.theme==="sticks")WSFX.wood(1.6);else if(O.theme==="papers")WSFX.rustle(1.6);else WSFX.pencils(1.6);
+      setTimeout(()=>{m.classList.remove("bgspin");m.classList.add("bgdrop");O.drawn.push(v);save();if(O.theme==="balls")WSFX.roll();else if(O.theme==="papers")WSFX.pull();else{WSFX.pull();if(O.theme==="pencils")WSFX.scribble()}
         setTimeout(()=>{busy=false;render(v);const pr=$("#bgout .bgprize");pr.classList.add("pop");$("#bgout").classList.add("lit");[784,988,1319].forEach((f,i)=>tone(f,.18,.07,"triangle",i*.08));if(O.theme==="papers"){setTimeout(()=>{pr.classList.add("open");WSFX.unfold()},650);setTimeout(()=>{burstAt(pr,26);WSFX.fanfare()},1250)}else{burstAt(pr,26);setTimeout(()=>WSFX.fanfare(),150)}},450)},1700)};
   }
   render(O.drawn[O.drawn.length-1]);
