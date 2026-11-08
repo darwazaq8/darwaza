@@ -3642,5 +3642,247 @@ kitInit();runKScales(G);
 
 </script>
 <script id="dzback">(function(){var h;try{h=JSON.parse(localStorage.getItem("darwaza:hub")||"null")}catch(e){}
-document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="./#"],a[href="./"]');if(!a||!h)return;e.preventDefault();var x=a.getAttribute("href").slice(2);location.href=h+(x||"#")},true)})();</script></body>
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="./#"],a[href="./"]');if(!a||!h)return;e.preventDefault();var x=a.getAttribute("href").slice(2);location.href=h+(x||"#")},true)})();</script><script id="dza-js">
+/* دروازة · لوحة إمكانية الوصول (مشتركة بين المنصة وكل الألعاب) */
+(function(){
+if(window.DZA)return;
+const KEY="darwaza:a11y";
+const DEF={deaf:false,size:0,hc:false,calm:false,read:false,dys:false,cursor:false,vib:true};
+let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){S=Object.assign({},DEF)}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const root=document.documentElement;
+const CUR="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path d="M4 3l26 13-11 3-5 11z" fill="#111" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg>');
+
+const css=`
+html.dza-z1 body{zoom:1.15}html.dza-z2 body{zoom:1.3}
+html.dza-hc{filter:contrast(1.3) saturate(1.15)}
+html.dza-hc :is(button,a,input,select,textarea):focus-visible{outline:4px solid #000!important;outline-offset:3px!important;box-shadow:0 0 0 7px #ffd400!important}
+html.dza-calm *,html.dza-calm *::before,html.dza-calm *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+html.dza-calm .party .conf,html.dza-calm .party .balloon,html.dza-calm .burst,html.dza-calm .party .garland{display:none!important}
+html.dza-calm{filter:saturate(.75)}html.dza-hc.dza-calm{filter:contrast(1.3) saturate(.9)}
+html.dza-dys body{word-spacing:.14em}
+html.dza-dys :is(p,li,label,h2,h3,h4,dd,dt,blockquote){letter-spacing:.02em!important;line-height:1.85!important}
+html.dza-cur,html.dza-cur *{cursor:url("${CUR}") 4 3,auto!important}
+html.dza-read :is(p,h1,h2,h3,h4,li,label,button,[role=button],.q,.card,td,th):hover{outline:2px dashed #2f9fe0;outline-offset:2px}
+.dza-fab{position:fixed;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:2147483000;width:54px;height:54px;border-radius:50%;border:3px solid #fff;background:#2f6fe0;color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px #0004;cursor:pointer;padding:0;transition:transform .2s}
+.dza-fab:hover{transform:scale(1.08)}.dza-fab:focus-visible{outline:4px solid #ffd400;outline-offset:2px}
+.dza-fab svg{width:30px;height:30px}
+.dza-fab.dza-on::after{content:"";position:absolute;top:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:#22c55e;border:2px solid #fff}
+.dza-fab.dza-ping{animation:dzaPing .5s!important}
+@keyframes dzaPing{50%{transform:scale(1.18);box-shadow:0 0 0 10px #2f6fe055}}
+.dza-ov{position:fixed;inset:0;z-index:2147483001;background:#0d142680;display:flex;align-items:flex-end;justify-content:center;font-family:"Readex Pro",Tahoma,sans-serif;direction:rtl}
+.dza-ov[hidden]{display:none!important}
+.dza-box{background:#fff;color:#16203a;width:min(640px,100%);max-height:92vh;overflow:auto;border-radius:26px 26px 0 0;padding:20px max(18px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));box-shadow:0 -10px 40px #0005;zoom:1!important}
+@media (min-width:700px){.dza-ov{align-items:center}.dza-box{border-radius:26px}}
+.dza-hd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.dza-hd h2{margin:0;font-size:22px;flex:1;font-weight:700}
+.dza-x{width:42px;height:42px;border-radius:50%;border:0;background:#eef2fb;font-size:20px;cursor:pointer;color:#16203a}
+.dza-sub{margin:0 0 14px;color:#56607a;font-size:14px;line-height:1.7}
+.dza-sec{font-size:13px;font-weight:700;color:#2f6fe0;margin:16px 2px 8px;letter-spacing:.02em}
+.dza-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.dza-t{display:flex;gap:12px;align-items:center;text-align:right;border:2px solid #e2e7f3;background:#f8faff;border-radius:18px;padding:12px 14px;cursor:pointer;font:inherit;color:inherit;width:100%}
+.dza-t:focus-visible{outline:4px solid #ffd400;outline-offset:2px}
+.dza-t .dza-ic{font-size:28px;flex:none;width:40px;text-align:center}
+.dza-t b{display:block;font-size:16px}.dza-t small{display:block;color:#56607a;font-size:12.5px;line-height:1.6;margin-top:2px}
+.dza-t .dza-sw{margin-inline-start:auto;flex:none;width:46px;height:26px;border-radius:13px;background:#c9d1e3;position:relative;transition:background .2s}
+.dza-t .dza-sw::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:right .2s}
+.dza-t[aria-pressed=true]{border-color:#2f6fe0;background:#eaf1ff}
+.dza-t[aria-pressed=true] .dza-sw{background:#2f6fe0}.dza-t[aria-pressed=true] .dza-sw::after{right:23px}
+.dza-seg{display:flex;gap:6px;background:#eef2fb;border-radius:14px;padding:5px}
+.dza-seg button{flex:1;border:0;border-radius:10px;padding:10px 4px;background:transparent;font:inherit;font-weight:700;color:#16203a;cursor:pointer}
+.dza-seg button[aria-pressed=true]{background:#2f6fe0;color:#fff}
+.dza-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.dza-b{border:0;border-radius:14px;padding:11px 18px;font:inherit;font-weight:700;cursor:pointer;background:#2f6fe0;color:#fff}
+.dza-b.dza-g{background:#eef2fb;color:#16203a}
+.dza-note{font-size:12.5px;color:#56607a;background:#fff8e6;border-radius:12px;padding:10px 12px;line-height:1.7;margin-top:10px}
+.dza-cap{position:fixed;left:50%;bottom:calc(84px + var(--dzaLift,0px) + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147482999;display:flex;align-items:center;gap:12px;padding:12px 22px;border-radius:999px;background:#111827f2;color:#fff;font:700 clamp(18px,2.6vw,30px) "Readex Pro",Tahoma,sans-serif;direction:rtl;border:4px solid var(--dzc,#fff);box-shadow:0 10px 30px #0006;pointer-events:none;max-width:calc(100vw - 32px);white-space:nowrap}
+.dza-cap i{font-style:normal;font-size:1.3em}
+.dza-cap.dza-in{animation:dzaCap .25s ease-out}
+@keyframes dzaCap{from{transform:translate(-50%,20px);opacity:0}}
+.dza-edge{position:fixed;inset:0;z-index:2147482998;pointer-events:none;box-shadow:inset 0 0 0 10px var(--dzc,#fff);opacity:0;transition:opacity .4s}
+.dza-edge.dza-in{opacity:.85;transition:none}
+.dza-sign{position:fixed;right:calc(12px + env(safe-area-inset-right,0px));bottom:calc(80px + var(--dzaLift,0px) + env(safe-area-inset-bottom,0px));z-index:2147482997;width:min(300px,46vw);background:#111;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px #0006;border:3px solid #fff;touch-action:none}
+.dza-sign.dza-big{width:min(520px,80vw)}
+.dza-sign video{display:block;width:100%;max-height:60vh;background:#000}
+.dza-sign .dza-sbar{display:flex;gap:4px;align-items:center;padding:4px 6px;background:#1f2937;color:#fff;font:600 13px "Readex Pro",Tahoma,sans-serif;cursor:move;direction:rtl}
+.dza-sign .dza-sbar span{flex:1}
+.dza-sign .dza-sbar button{border:0;background:#374151;color:#fff;border-radius:8px;width:30px;height:28px;cursor:pointer;font-size:14px}
+`;
+const st=document.createElement("style");st.id="dza-css";st.textContent=css;document.head.appendChild(st);
+
+function apply(){
+  root.classList.toggle("dza-z1",S.size===1);root.classList.toggle("dza-z2",S.size===2);
+  root.classList.toggle("dza-hc",S.hc);root.classList.toggle("dza-calm",S.calm);
+  root.classList.toggle("dza-dys",S.dys);root.classList.toggle("dza-cur",S.cursor);root.classList.toggle("dza-read",S.read);
+  if(fab)fab.classList.toggle("dza-on",S.deaf||S.size||S.hc||S.calm||S.read||S.dys||S.cursor);
+}
+
+/* ---------- بديل مرئي للأصوات ---------- */
+const KINDS={
+  bad:{t:"صوت: إجابة غير صحيحة",i:"✖",c:"#ef4444",v:[90,60,90]},
+  win:{t:"صوت: احتفال وتصفيق",i:"🎉",c:"#f5b301",v:[220]},
+  ok:{t:"صوت: إجابة صحيحة",i:"✔",c:"#22c55e",v:[120]},
+  tick:{t:"صوت: تكتكة",i:"⏱",c:"#60a5fa",v:null,small:1},
+  gen:{t:"مؤثر صوتي",i:"🔊",c:"#a78bfa",v:null}
+};
+const PR={gen:0,tick:1,ok:2,win:3,bad:4,label:5};
+let pend=null,pendLabel=null,grp={tri:0,saw:0,sq:0,n:0},gt=0,cap,edge,capT=0;
+function sig(k,label){
+  if(!S.deaf)return;
+  if(k==="label"){pendLabel=label}
+  if(!pend||PR[k]>PR[pend])pend=k;
+  clearTimeout(gt);gt=setTimeout(flush,110);
+}
+function flush(){
+  let k=pend;const L=pendLabel;
+  if(k!=="label"&&k!=="bad"){if(grp.saw)k="bad";else if(grp.tri>=6)k="win";else if(grp.tri>=3)k="ok";else if(grp.sq&&grp.n===grp.sq)k="tick"}
+  pend=null;pendLabel=null;grp={tri:0,saw:0,sq:0,n:0};
+  show(k==="label"?{t:L.t,i:L.i,c:L.c||"#a78bfa",v:null}:KINDS[k]||KINDS.gen);
+}
+function show(K){
+  if(!cap){cap=document.createElement("div");cap.className="dza-cap";cap.setAttribute("role","status");cap.setAttribute("aria-live","polite");
+    edge=document.createElement("div");edge.className="dza-edge";document.body.append(edge,cap)}
+  cap.style.setProperty("--dzc",K.c);edge.style.setProperty("--dzc",K.c);
+  cap.innerHTML=`<i aria-hidden="true">${K.i}</i><span>${K.t}</span>`;
+  cap.hidden=false;cap.style.fontSize=K.small?"18px":"";
+  cap.classList.remove("dza-in");void cap.offsetWidth;cap.classList.add("dza-in");
+  if(!K.small){edge.classList.add("dza-in");setTimeout(()=>edge.classList.remove("dza-in"),220)}
+  if(fab){fab.classList.remove("dza-ping");void fab.offsetWidth;fab.classList.add("dza-ping")}
+  if(S.vib&&K.v&&navigator.vibrate)try{navigator.vibrate(K.v)}catch(e){}
+  clearTimeout(capT);capT=setTimeout(()=>{cap.hidden=true},K.small?700:1800);
+}
+/* ربط الأصوات */
+function hookTone(){
+  if(typeof window.tone!=="function"||window.tone.__dza)return;
+  const orig=window.tone;
+  const w=function(f,d,v,type,t0){
+    type=type||"sine";
+    grp.n++;if(type==="triangle")grp.tri++;else if(type==="sawtooth"&&f<420)grp.saw++;else if(type==="square"&&f>=1000&&(d||.1)<=.05)grp.sq++;
+    sig("gen");
+    if(S.calm&&v!=null)v=v*.35;else if(S.calm)v=.03;
+    return orig.call(this,f,d,v,type,t0);
+  };w.__dza=1;window.tone=w;
+}
+function hookFX(){
+  let fx;try{fx=WSFX}catch(e){return}
+  if(!fx||fx.__dza)return;fx.__dza=1;
+  const L={drumroll:["🥁","قرع طبول… ترقّب"],crank:["⚙️","صوت دوران الآلة"],balls:["🔵","صوت خلط الكرات"],roll:["🎲","صوت دحرجة"],wood:["🪵","صوت أعواد خشبية"],pull:["✋","صوت سحب"],pencils:["✏️","صوت أقلام"],rustle:["📄","صوت أوراق"],unfold:["📜","صوت فتح الورقة"],fanfare:["🎺","احتفال! النتيجة ظهرت"],sparkle:["✨","صوت لمعة"],whoosh:["💨","صوت حركة"],boing:["🟢","صوت قفزة"],pop:["🫧","صوت فقاعة"],scribble:["🖍️","صوت كتابة"]};
+  Object.keys(fx).forEach(k=>{if(typeof fx[k]!=="function"||!L[k])return;const o=fx[k];fx[k]=function(){sig("label",{i:L[k][0],t:L[k][1]});return o.apply(this,arguments)}});
+}
+try{const P=(window.AudioScheduledSourceNode||{}).prototype;if(P&&P.start&&!P.start.__dza){const o=P.start;P.start=function(){sig("gen");return o.apply(this,arguments)};P.start.__dza=1}}catch(e){}
+/* الاحتفال الكبير */
+function hookCelebrate(){
+  if(typeof window.celebrate!=="function"||window.celebrate.__dza)return;
+  const o=window.celebrate;const w=function(text){sig("label",{i:"🎉",t:"احتفال: "+String(text||"أحسنتم").replace(/<[^>]+>/g,"").slice(0,40),c:"#f5b301"});return o.apply(this,arguments)};w.__dza=1;window.celebrate=w;
+}
+
+/* ---------- القراءة الصوتية ---------- */
+let arVoice=null;
+function voices(){try{const v=speechSynthesis.getVoices();arVoice=v.find(x=>/^ar/i.test(x.lang))||null}catch(e){}}
+if("speechSynthesis" in window){voices();try{speechSynthesis.onvoiceschanged=voices}catch(e){}}
+function speak(t){if(!("speechSynthesis" in window)||!t)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=arVoice?arVoice.lang:"ar-SA";if(arVoice)u.voice=arVoice;u.rate=.92;speechSynthesis.speak(u)}catch(e){}}
+document.addEventListener("click",e=>{
+  if(!S.read||e.target.closest(".dza-ov,.dza-fab,.dza-sign"))return;
+  const el=e.target.closest("p,h1,h2,h3,h4,li,label,button,[role=button],td,th,.q,.card")||e.target;
+  let t=(el.innerText||el.getAttribute("aria-label")||"").replace(/\s+/g," ").trim();
+  if(!t&&el.getAttribute)t=el.getAttribute("aria-label")||"";
+  if(t)speak(t.slice(0,400));
+},true);
+
+/* ---------- فيديو لغة الإشارة (يحفظ على هذا الجهاز) ---------- */
+const PAGE=(location.pathname.split("/").pop()||"index.html");
+function idb(){return new Promise((res,rej)=>{try{const r=indexedDB.open("dz-sign",1);r.onupgradeneeded=()=>r.result.createObjectStore("v");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+async function vget(){try{const db=await idb();return await new Promise(r=>{const q=db.transaction("v").objectStore("v").get(PAGE);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)})}catch(e){return null}}
+async function vput(b){const db=await idb();return new Promise((r,j)=>{const tx=db.transaction("v","readwrite");b?tx.objectStore("v").put(b,PAGE):tx.objectStore("v").delete(PAGE);tx.oncomplete=()=>r();tx.onerror=()=>j(tx.error)})}
+let signBox=null,signURL=null;
+async function openSign(){
+  const b=await vget();if(!b){openPanel();return}
+  if(signBox)signBox.remove();if(signURL)URL.revokeObjectURL(signURL);
+  signURL=URL.createObjectURL(b);
+  signBox=document.createElement("div");signBox.className="dza-sign";signBox.setAttribute("role","region");signBox.setAttribute("aria-label","فيديو لغة الإشارة");
+  signBox.innerHTML=`<div class="dza-sbar"><span>🤟 لغة الإشارة</span><button type="button" data-a="big" aria-label="تكبير أو تصغير">⤢</button><button type="button" data-a="x" aria-label="إغلاق">✕</button></div><video controls playsinline src="${signURL}"></video>`;
+  document.body.appendChild(signBox);
+  signBox.querySelector('[data-a="x"]').onclick=()=>{signBox.remove();signBox=null};
+  signBox.querySelector('[data-a="big"]').onclick=()=>signBox.classList.toggle("dza-big");
+  const bar=signBox.querySelector(".dza-sbar");let sx,sy,ox,oy,drag=false;
+  bar.addEventListener("pointerdown",e=>{if(e.target.closest("button"))return;drag=true;bar.setPointerCapture(e.pointerId);const r=signBox.getBoundingClientRect();sx=e.clientX;sy=e.clientY;ox=r.left;oy=r.top});
+  bar.addEventListener("pointermove",e=>{if(!drag)return;signBox.style.left=Math.max(0,Math.min(innerWidth-60,ox+e.clientX-sx))+"px";signBox.style.top=Math.max(0,Math.min(innerHeight-40,oy+e.clientY-sy))+"px";signBox.style.right="auto";signBox.style.bottom="auto"});
+  bar.addEventListener("pointerup",()=>drag=false);
+  try{signBox.querySelector("video").play().catch(()=>{})}catch(e){}
+}
+
+/* ---------- الواجهة ---------- */
+const ICON='<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="12" cy="4" r="2.2"/><path d="M4 7.5c0-.6.5-1 1.1-.9 2.3.4 4.6.6 6.9.6s4.6-.2 6.9-.6c.6-.1 1.1.3 1.1.9 0 .5-.3.9-.8 1-1.8.4-3.6.6-5.2.7v3.6l2 7.6c.2.6-.2 1.2-.8 1.3-.5.1-1-.2-1.2-.7L12 15.6 9.9 21c-.2.5-.7.8-1.2.7-.6-.1-1-.7-.8-1.3l2-7.6V9.2c-1.6-.1-3.4-.3-5.2-.7-.5-.1-.8-.5-.7-1z"/></svg>';
+let fab,ov;
+function toggleCard(k,ic,title,desc){return `<button type="button" class="dza-t" data-k="${k}" aria-pressed="${!!S[k]}"><span class="dza-ic" aria-hidden="true">${ic}</span><span><b>${title}</b><small>${desc}</small></span><span class="dza-sw" aria-hidden="true"></span></button>`}
+function build(){
+  fab=document.createElement("button");fab.type="button";fab.className="dza-fab";fab.setAttribute("aria-label","إمكانية الوصول");fab.title="إمكانية الوصول";fab.innerHTML=ICON;
+  fab.onclick=openPanel;
+  ov=document.createElement("div");ov.className="dza-ov";ov.hidden=true;ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-labelledby","dza-h");
+  ov.addEventListener("click",e=>{if(e.target===ov)closePanel()});
+  document.body.append(fab,ov);
+  addEventListener("keydown",e=>{if(e.key==="Escape"&&!ov.hidden)closePanel();if(e.altKey&&(e.key==="a"||e.key==="ش")){e.preventDefault();ov.hidden?openPanel():closePanel()}});
+  apply();
+}
+async function drawPanel(){
+  const has=!!(await vget());
+  ov.innerHTML=`<div class="dza-box">
+  <div class="dza-hd"><h2 id="dza-h">♿ إمكانية الوصول</h2><button type="button" class="dza-x" aria-label="إغلاق">✕</button></div>
+  <p class="dza-sub">اختر ما يناسب المتعلمين في صفك. الإعدادات تُحفظ على هذا الجهاز وتعمل في كل ألعاب دروازة.</p>
+  <div class="dza-sec">السمع</div>
+  <div class="dza-grid">
+   ${toggleCard("deaf","🧏","وضع الصم وضعاف السمع","كل صوت يظهر كتابةً بأيقونة ولون، مع وميض حول الشاشة")}
+   ${toggleCard("vib","📳","اهتزاز مع الأصوات","في الجوال والتابلت: اهتزاز للإجابة الصحيحة والخاطئة")}
+  </div>
+  <div class="dza-t" style="cursor:default;margin-top:10px;flex-wrap:wrap"><span class="dza-ic" aria-hidden="true">🤟</span><span style="flex:1;min-width:180px"><b>فيديو لغة الإشارة لهذه الصفحة</b><small>${has?"تم رفع فيديو لهذه الصفحة. يظهر في نافذة صغيرة تقدر تحركها.":"المعلم يرفع فيديو شرح بلغة الإشارة لهذه اللعبة (يُحفظ على هذا الجهاز فقط)."}</small></span>
+   <span style="display:flex;gap:6px;flex-wrap:wrap">${has?'<button type="button" class="dza-b" data-a="play">▶ عرض</button><button type="button" class="dza-b dza-g" data-a="del">حذف</button>':""}<button type="button" class="dza-b ${has?"dza-g":""}" data-a="up">${has?"تغيير":"⬆ رفع فيديو"}</button></span>
+   <input type="file" accept="video/*" hidden data-a="file"></div>
+  <div class="dza-sec">البصر</div>
+  <div style="font-weight:700;margin:0 2px 6px">🔠 حجم النص والعناصر</div>
+  <div class="dza-seg" role="group" aria-label="حجم النص">${["عادي","كبير","كبير جدًا"].map((n,i)=>`<button type="button" data-z="${i}" aria-pressed="${S.size===i}">${n}</button>`).join("")}</div>
+  <div class="dza-grid" style="margin-top:10px">
+   ${toggleCard("hc","◐","تباين عالٍ","ألوان أوضح وحدود قوية حول الزر المحدد")}
+   ${toggleCard("cursor","🖱️","مؤشر كبير","سهم فأرة كبير وواضح على الشاشة الذكية")}
+   ${toggleCard("read","🔊","اقرأ لي","اضغط على أي سؤال أو زر ليُقرأ بصوت عالٍ")}
+  </div>
+  <div class="dza-sec">التركيز والتعلّم</div>
+  <div class="dza-grid">
+   ${toggleCard("calm","🌙","وضع هادئ","حركة أقل، أصوات أخفض، بدون قصاصات احتفال. مناسب لطيف التوحد وتشتت الانتباه")}
+   ${toggleCard("dys","📖","قراءة مريحة","مسافات أوسع بين الأسطر والكلمات لصعوبات القراءة")}
+  </div>
+  ${S.read&&!arVoice?'<div class="dza-note">💡 جهازك ما فيه صوت عربي للقراءة. من إعدادات الجهاز: اللغة ← تحويل النص إلى كلام ← نزّل الصوت العربي.</div>':""}
+  <div class="dza-row"><button type="button" class="dza-b" data-a="done">تم</button><button type="button" class="dza-b dza-g" data-a="reset">إرجاع الإعدادات الأصلية</button><button type="button" class="dza-b dza-g" data-a="test">جرّب الصوت المرئي</button></div>
+  <p class="dza-sub" style="margin:12px 0 0;font-size:12px">اختصار لوحة المفاتيح: Alt + A</p>
+  </div>`;
+  ov.querySelector(".dza-x").onclick=closePanel;
+  ov.querySelectorAll(".dza-t[data-k]").forEach(b=>b.onclick=()=>{const k=b.dataset.k;S[k]=!S[k];save();apply();b.setAttribute("aria-pressed",S[k]);
+    if(k==="deaf"&&S.deaf)show({i:"🧏",t:"وضع الصم مفعّل",c:"#2f6fe0"});if(k==="read"){if(S.read)speak("تم تفعيل القراءة الصوتية");drawPanel()}});
+  ov.querySelectorAll("[data-z]").forEach(b=>b.onclick=()=>{S.size=+b.dataset.z;save();apply();ov.querySelectorAll("[data-z]").forEach(x=>x.setAttribute("aria-pressed",x===b))});
+  const fi=ov.querySelector('[data-a="file"]');
+  ov.querySelector('[data-a="up"]').onclick=()=>fi.click();
+  fi.onchange=async()=>{const f=fi.files[0];if(!f)return;if(f.size>200*1024*1024){alertBox("الفيديو أكبر من ٢٠٠ ميغابايت. اختر فيديو أقصر.");return}try{await vput(f);await drawPanel();closePanel();openSign()}catch(e){alertBox("ما قدرنا نحفظ الفيديو على هذا الجهاز.")}};
+  const p=ov.querySelector('[data-a="play"]');if(p)p.onclick=()=>{closePanel();openSign()};
+  const d=ov.querySelector('[data-a="del"]');if(d)d.onclick=async()=>{if(!d.dataset.c){d.dataset.c=1;d.textContent="اضغط مرة ثانية للحذف";return}await vput(null);if(signBox){signBox.remove();signBox=null}drawPanel()};
+  ov.querySelector('[data-a="done"]').onclick=closePanel;
+  ov.querySelector('[data-a="test"]').onclick=()=>{const was=S.deaf;S.deaf=true;show(KINDS.ok);setTimeout(()=>show(KINDS.bad),1300);setTimeout(()=>{show(KINDS.win);S.deaf=was},2600)};
+  ov.querySelector('[data-a="reset"]').onclick=()=>{S=Object.assign({},DEF);save();apply();drawPanel()};
+}
+function alertBox(m){const n=document.createElement("div");n.className="dza-note";n.textContent=m;ov.querySelector(".dza-box").appendChild(n)}
+let lastFocus=null;
+async function openPanel(){lastFocus=document.activeElement;await drawPanel();ov.hidden=false;ov.querySelector(".dza-x").focus()}
+function closePanel(){ov.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+
+function lift(){const s=document.querySelector(".strip");const h=s&&!s.hidden&&getComputedStyle(s).position==="fixed"?s.offsetHeight:0;
+  fab.style.bottom=`calc(${h+12}px + ${h?"0px":"env(safe-area-inset-bottom,0px)"})`;root.style.setProperty("--dzaLift",h+"px")}
+function init(){build();hookTone();hookFX();hookCelebrate();lift();addEventListener("resize",lift);try{const s=document.querySelector(".strip");s&&new ResizeObserver(lift).observe(s)}catch(e){}
+  vget().then(b=>{if(b&&S.deaf)openSign()});
+}
+apply();
+if(document.body)init();else addEventListener("DOMContentLoaded",init);
+addEventListener("storage",e=>{if(e.key===KEY){try{S=Object.assign({},DEF,JSON.parse(e.newValue||"{}"))}catch(_){}apply()}});
+window.DZA={sig,show,open:openPanel,get state(){return Object.assign({},S)}};
+})();
+
+</script><!--/dza-->
+</body>
 </html>
