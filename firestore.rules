@@ -45,5 +45,17 @@ service cloud.firestore {
         && (n(request.resource.data, 'devices') - n(resource.data, 'devices')) in [0, 1]
         && (n(request.resource.data, 'installs') - n(resource.data, 'installs')) in [0, 1];
     }
+
+    function d01(k) { return (n(request.resource.data, k) - n(resource.data, k)) in [0, 1]; }
+    function c01(k) { return n(request.resource.data, k) in [0, 1]; }
+    match /monthly/{m} {
+      allow read: if true;
+      allow create: if signed() && m.matches('^[0-9]{4}-[0-9]{2}$')
+        && request.resource.data.keys().hasOnly(['visits', 'devices', 'installs', 'plays'])
+        && c01('visits') && c01('devices') && c01('installs') && c01('plays');
+      allow update: if signed()
+        && request.resource.data.keys().hasOnly(['visits', 'devices', 'installs', 'plays'])
+        && d01('visits') && d01('devices') && d01('installs') && d01('plays');
+    }
   }
 }

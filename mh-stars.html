@@ -843,6 +843,8 @@ const NAME=p=>`projects/${PID}/databases/(default)/documents/${p}`;
 const inc=(path,fields,extra)=>({update:{name:NAME(path),fields:extra||{}},updateMask:{fieldPaths:Object.keys(extra||{})},updateTransforms:Object.entries(fields).map(([f,v])=>({fieldPath:f,increment:{integerValue:String(v)}}))});
 
 /* ---------- العدّادات ---------- */
+const MKEY=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")};
+const monthly=f=>commit([inc("monthly/"+MKEY(),f)]); /* منفصل: لو فشل ما يأثر على العداد الكلي */
 const standalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
 async function countHub(){
   const f={};
@@ -850,13 +852,13 @@ async function countHub(){
   if(!LS.g("device",false)){f.devices=1}
   if(standalone()&&!LS.g("installed",false)){f.installs=1}
   if(!Object.keys(f).length)return;
-  if(await commit([inc("stats/global",f)])){SS.s("visit");LS.s("device",true);if(f.installs)LS.s("installed",true)}
+  if(await commit([inc("stats/global",f)])){monthly(f);SS.s("visit");LS.s("device",true);if(f.installs)LS.s("installed",true)}
 }
-addEventListener("appinstalled",async()=>{if(LS.g("installed",false))return;if(await commit([inc("stats/global",{installs:1})]))LS.s("installed",true)});
+addEventListener("appinstalled",async()=>{if(LS.g("installed",false))return;if(await commit([inc("stats/global",{installs:1})])){monthly({installs:1});LS.s("installed",true)}});
 async function countPlay(){
   if(SS.g("p:"+GID))return;
   const t=(document.title||GID).slice(0,60);
-  if(await commit([inc("games/"+GID,{plays:1},{t:{stringValue:t}})]))SS.s("p:"+GID);
+  if(await commit([inc("games/"+GID,{plays:1},{t:{stringValue:t}})])){monthly({plays:1});SS.s("p:"+GID)}
 }
 
 /* ---------- زر الإعجاب ---------- */
@@ -886,6 +888,14 @@ const css=`.dzl-btn{display:inline-flex;align-items:center;gap:8px;border:2px so
 .dzx-row i{font-style:normal;color:#a8641b;font-weight:700;text-align:center}
 .dzx-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,#f2b84b,#c98a2e);margin-top:4px}
 .dzx-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dzx-h3{margin:18px 2px 4px;font-size:17px}
+.dzx-chart{display:flex;align-items:flex-end;gap:6px;height:200px;padding:8px 4px 0;border-bottom:2px solid #efdfc6;overflow-x:auto}
+.dzx-col{flex:1;min-width:38px;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}
+.dzx-col b{font-size:13px;color:#a8641b;font-variant-numeric:tabular-nums;min-height:18px}
+.dzx-cb{flex:1;width:70%;max-width:44px;display:flex;align-items:flex-end}
+.dzx-cb i{display:block;width:100%;border-radius:8px 8px 3px 3px;background:linear-gradient(#f2b84b,#c98a2e);transition:height .5s}
+.dzx-col.now .dzx-cb i{background:linear-gradient(#ffcf6b,#e08a1e);box-shadow:0 0 0 2px #fff,0 0 0 4px #f2b84b}
+.dzx-col small{font-size:11px;color:#7a6650;text-align:center;line-height:1.3;padding-bottom:4px}
 .dzx-note{font-size:12.5px;color:#7a6650;margin-top:12px;line-height:1.7}`;
 const st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
 
@@ -927,12 +937,27 @@ async function listGames(){
     if(!j.nextPageToken)break;pt=j.nextPageToken}}catch(e){}
   return out;
 }
+async function listMonths(){try{const r=await fetch(`${DB}/monthly?pageSize=60`);if(!r.ok)return {};const j=await r.json();const o={};
+  (j.documents||[]).forEach(d=>{const f=d.fields||{};o[d.name.split("/").pop()]={visits:num(f.visits),devices:num(f.devices),installs:num(f.installs),plays:num(f.plays)}});return o}catch(e){return {}}}
+const MN=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+let mview="visits";
+function chart(M){
+  const d=new Date(),keys=[];for(let i=11;i>=0;i--){const x=new Date(d.getFullYear(),d.getMonth()-i,1);keys.push(x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0"))}
+  const first=keys.findIndex(k=>M[k]);const ks=first<0?keys.slice(-1):keys.slice(Math.max(0,Math.min(first,keys.length-3)));
+  const vals=ks.map(k=>(M[k]||{})[mview]||0),mx=Math.max(1,...vals);
+  const L={visits:"👀 الزيارات",plays:"🎮 مرات اللعب",devices:"📱 أجهزة جديدة",installs:"⬇️ التنزيلات"};
+  return `<h3 class="dzx-h3">📈 النمو شهرًا بشهر</h3>
+  <div class="dzx-tabs" role="group" aria-label="نوع الرسم">${Object.keys(L).map(k=>`<button type="button" data-m="${k}" aria-pressed="${mview===k}">${L[k]}</button>`).join("")}</div>
+  <div class="dzx-chart" role="img" aria-label="${L[mview]} لكل شهر: ${ks.map((k,i)=>MN[+k.slice(5)-1]+" "+vals[i]).join("، ")}">
+  ${ks.map((k,i)=>`<div class="dzx-col${k===MKEY()?" now":""}"><b>${vals[i]?AR(vals[i]):""}</b><span class="dzx-cb"><i style="height:${vals[i]?Math.max(4,vals[i]/mx*100):0}%"></i></span><small>${MN[+k.slice(5)-1]}<br>${AR(k.slice(2,4))}</small></div>`).join("")}
+  </div>${Object.keys(M).length?"":'<p class="dzx-note">الرسم يبدأ من هذا الشهر، وكل شهر جديد ينضاف عمود.</p>'}`;
+}
 let ov=null,view="plays";
 async function openDash(){
   if(!ov){ov=document.createElement("div");ov.className="dzx-ov";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-labelledby","dzx-h");ov.onclick=e=>{if(e.target===ov)ov.hidden=true};document.body.appendChild(ov);addEventListener("keydown",e=>{if(e.key==="Escape"&&ov)ov.hidden=true})}
   ov.hidden=false;ov.innerHTML=`<div class="dzx-box"><div class="dzx-hd"><h2 id="dzx-h">📊 أرقام دروازة</h2><button class="dzx-x" type="button" aria-label="إغلاق">✕</button></div><p>جاري التحميل…</p></div>`;
   ov.querySelector(".dzx-x").onclick=()=>ov.hidden=true;
-  const [s,games]=await Promise.all([getDoc("stats/global"),listGames()]);
+  const [s,games,M]=await Promise.all([getDoc("stats/global"),listGames(),listMonths()]);
   if(s===null){ov.querySelector("p").textContent="ما قدرنا نوصل للأرقام الحين. تأكد من الإنترنت وحاول مرة ثانية.";return}
   const tot=k=>games.reduce((a,g)=>a+g[k],0);
   const draw=()=>{
@@ -945,11 +970,13 @@ async function openDash(){
       <div class="dzx-k"><b>${AR(tot("plays"))}</b><span>🎮 مرة فتح فيها لعبة</span></div>
       <div class="dzx-k"><b>${AR(tot("likes"))}</b><span>❤️ إعجاب</span></div>
     </div>
+    ${chart(M)}
+    <h3 class="dzx-h3">🏆 ترتيب الألعاب</h3>
     <div class="dzx-tabs" role="group" aria-label="ترتيب الألعاب"><button type="button" data-v="plays" aria-pressed="${view==="plays"}">🎮 الأكثر لعبًا</button><button type="button" data-v="likes" aria-pressed="${view==="likes"}">❤️ الأكثر إعجابًا</button></div>
     ${list.length?list.map((g,i)=>`<div class="dzx-row"><i>${AR(i+1)}</i><div><div>${(g.t||g.id).replace(/[<>&]/g,"")}</div><div class="dzx-bar" style="width:${Math.max(4,g[view]/mx*100)}%"></div></div><b>${view==="likes"?"❤️ ":"🎮 "}${AR(g[view])}</b></div>`).join(""):'<p class="dzx-note">ما في أرقام بعد. أول ما يفتح أحد الألعاب بتظهر هنا.</p>'}
     <p class="dzx-note">💡 «الزيارة» تنحسب مرة لكل جلسة، و«الجهاز» مرة واحدة لكل جهاز، و«التنزيل» لما يُفتح التطبيق المثبّت أول مرة. الأرقام بدون أي معلومات شخصية عن الزوار.</p>`;
     ov.querySelector(".dzx-x").onclick=()=>ov.hidden=true;
-    ov.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{view=b.dataset.v;draw()});
+    ov.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{view=b.dataset.v;draw()});ov.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{mview=b.dataset.m;draw()});
   };draw();
 }
 function mountDashLink(){
