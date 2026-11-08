@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function n(d, k) { return d.get(k, 0); }
+    function signed() { return request.auth != null; }
+    function lp(g) { return /databases/$(db)/documents/likes/$(request.auth.uid + '_' + g); }
+    function likeOk(g, a, b) {
+      return b == a
+        || (b == a + 1 && !exists(lp(g)) && existsAfter(lp(g)))
+        || (b == a - 1 && exists(lp(g)) && !existsAfter(lp(g)));
+    }
+    function shape(d) {
+      return d.keys().hasOnly(['likes', 'plays', 't'])
+        && (!('t' in d) || (d.t is string && d.t.size() <= 60));
+    }
+
+    match /games/{g} {
+      allow read: if true;
+      allow create: if signed() && shape(request.resource.data)
+        && n(request.resource.data, 'plays') in [0, 1]
+        && likeOk(g, 0, n(request.resource.data, 'likes'));
+      allow update: if signed() && shape(request.resource.data)
+        && (n(request.resource.data, 'plays') - n(resource.data, 'plays')) in [0, 1]
+        && likeOk(g, n(resource.data, 'likes'), n(request.resource.data, 'likes'));
+    }
+
+    match /likes/{id} {
+      allow get: if signed() && id.matches(request.auth.uid + '_.+');
+      allow create: if signed() && id.matches(request.auth.uid + '_.+')
+        && request.resource.data.keys().hasOnly(['u'])
+        && request.resource.data.u == request.auth.uid;
+      allow delete: if signed() && resource.data.u == request.auth.uid;
+    }
+
+    match /stats/global {
+      allow read: if true;
+      allow create: if signed()
+        && request.resource.data.keys().hasOnly(['visits', 'devices', 'installs'])
+        && n(request.resource.data, 'visits') in [0, 1]
+        && n(request.resource.data, 'devices') in [0, 1]
+        && n(request.resource.data, 'installs') in [0, 1];
+      allow update: if signed()
+        && request.resource.data.keys().hasOnly(['visits', 'devices', 'installs'])
+        && (n(request.resource.data, 'visits') - n(resource.data, 'visits')) in [0, 1]
+        && (n(request.resource.data, 'devices') - n(resource.data, 'devices')) in [0, 1]
+        && (n(request.resource.data, 'installs') - n(resource.data, 'installs')) in [0, 1];
+    }
+  }
+}

@@ -904,6 +904,172 @@ addEventListener("storage",e=>{if(e.key===KEY){try{S=Object.assign({},DEF,JSON.p
 window.DZA={sig,show,open:openPanel,get state(){return Object.assign({},S)}};
 })();
 
+/* دروازة · الإعجابات وعدّاد الزوار والتنزيل (Firebase عبر REST) */
+(function(){
+if(window.DZS)return;
+const H=location.hostname;
+if(location.protocol!=="https:"||/claude|anthropic|usercontent/i.test(H))return; /* يعمل في الموقع والتطبيق فقط */
+const KEY="AIzaSyB4qCyTc6jYbIBDFRoPj14kH1UP3QYXGxU",PID="darwaza-f13c9";
+const DB=`https://firestore.googleapis.com/v1/projects/${PID}/databases/(default)/documents`;
+const LS={g(k,d){try{const v=localStorage.getItem("darwaza:fb:"+k);return v?JSON.parse(v):d}catch(e){return d}},s(k,v){try{localStorage.setItem("darwaza:fb:"+k,JSON.stringify(v))}catch(e){}}};
+const SS={g(k){try{return sessionStorage.getItem("darwaza:fb:"+k)}catch(e){return null}},s(k){try{sessionStorage.setItem("darwaza:fb:"+k,"1")}catch(e){}}};
+const AR=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+const FILE=(location.pathname.split("/").pop()||"index.html");
+const GID=FILE.replace(/\.html$/,"")||"index";
+const IS_HUB=GID==="index"||!!document.querySelector("#pWs");
+
+/* ---------- تسجيل دخول مجهول ---------- */
+let auth=LS.g("auth",null);
+async function token(){
+  const now=Date.now();
+  if(auth&&auth.exp>now+60000)return auth.tok;
+  try{
+    let r;
+    if(auth&&auth.ref){
+      r=await fetch(`https://securetoken.googleapis.com/v1/token?key=${KEY}`,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=refresh_token&refresh_token="+encodeURIComponent(auth.ref)});
+      if(r.ok){const j=await r.json();auth={tok:j.id_token,ref:j.refresh_token,uid:j.user_id,exp:now+(+j.expires_in)*1000};LS.s("auth",auth);return auth.tok}
+    }
+    r=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${KEY}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({returnSecureToken:true})});
+    if(!r.ok)return null;
+    const j=await r.json();auth={tok:j.idToken,ref:j.refreshToken,uid:j.localId,exp:now+(+j.expiresIn)*1000};LS.s("auth",auth);return auth.tok;
+  }catch(e){return null}
+}
+const num=f=>f?+(f.integerValue||f.doubleValue||0):0;
+async function getDoc(path,withAuth){
+  try{const h={};if(withAuth){const t=await token();if(!t)return null;h.Authorization="Bearer "+t}
+    const r=await fetch(`${DB}/${path}`,{headers:h});if(r.status===404)return {};if(!r.ok)return null;const j=await r.json();return j.fields||{}}catch(e){return null}
+}
+async function commit(writes){
+  const t=await token();if(!t)return false;
+  try{const r=await fetch(`${DB}:commit`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({writes})});return r.ok}catch(e){return false}
+}
+const NAME=p=>`projects/${PID}/databases/(default)/documents/${p}`;
+const inc=(path,fields,extra)=>({update:{name:NAME(path),fields:extra||{}},updateMask:{fieldPaths:Object.keys(extra||{})},updateTransforms:Object.entries(fields).map(([f,v])=>({fieldPath:f,increment:{integerValue:String(v)}}))});
+
+/* ---------- العدّادات ---------- */
+const standalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+async function countHub(){
+  const f={};
+  if(!SS.g("visit")){f.visits=1}
+  if(!LS.g("device",false)){f.devices=1}
+  if(standalone()&&!LS.g("installed",false)){f.installs=1}
+  if(!Object.keys(f).length)return;
+  if(await commit([inc("stats/global",f)])){SS.s("visit");LS.s("device",true);if(f.installs)LS.s("installed",true)}
+}
+addEventListener("appinstalled",async()=>{if(LS.g("installed",false))return;if(await commit([inc("stats/global",{installs:1})]))LS.s("installed",true)});
+async function countPlay(){
+  if(SS.g("p:"+GID))return;
+  const t=(document.title||GID).slice(0,60);
+  if(await commit([inc("games/"+GID,{plays:1},{t:{stringValue:t}})]))SS.s("p:"+GID);
+}
+
+/* ---------- زر الإعجاب ---------- */
+const css=`.dzl-btn{display:inline-flex;align-items:center;gap:8px;border:2px solid #f3b4c6;background:#fff5f8;color:#b4235a;border-radius:999px;padding:8px 16px;font:700 15px "Readex Pro",Tahoma,sans-serif;cursor:pointer;direction:rtl;transition:transform .15s}
+.dzl-btn:hover{transform:scale(1.05)}.dzl-btn:focus-visible{outline:3px solid #2f6fe0;outline-offset:2px}
+.dzl-btn .dzl-h{font-size:20px;line-height:1;display:inline-block}
+.dzl-btn[aria-pressed=true]{background:#e11d63;border-color:#e11d63;color:#fff}
+.dzl-btn.dzl-pop .dzl-h{animation:dzlPop .45s cubic-bezier(.3,1.8,.5,1)}
+@keyframes dzlPop{40%{transform:scale(1.7) rotate(-12deg)}}
+.dzl-wrap{display:flex;justify-content:center;margin:10px 0 4px}
+.dzl-float{position:fixed;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(76px + var(--dzaLift,0px) + env(safe-area-inset-bottom,0px));z-index:2147482990;box-shadow:0 6px 16px #0003}
+.dzl-heart{position:fixed;pointer-events:none;z-index:2147482995;font-size:22px;animation:dzlFly 1s ease-out forwards}
+@keyframes dzlFly{to{transform:translate(var(--x),-120px) scale(1.4);opacity:0}}
+.dzx-link{background:none;border:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer;padding:0 4px}
+.dzx-ov{position:fixed;inset:0;z-index:2147483001;background:#0d142680;display:flex;align-items:center;justify-content:center;padding:16px;direction:rtl;font-family:"Readex Pro",Tahoma,sans-serif}
+.dzx-ov[hidden]{display:none!important}
+.dzx-box{background:#fffaf2;color:#2a1f14;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:24px;padding:20px;box-shadow:0 20px 50px #0005}
+.dzx-hd{display:flex;align-items:center;gap:10px}.dzx-hd h2{margin:0;flex:1;font-size:22px}
+.dzx-x{width:40px;height:40px;border-radius:50%;border:0;background:#f1e6d4;font-size:18px;cursor:pointer;color:#2a1f14}
+.dzx-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0}
+.dzx-k{background:#fff;border:2px solid #efdfc6;border-radius:18px;padding:12px 14px}
+.dzx-k b{display:block;font-size:30px;color:#a8641b;font-variant-numeric:tabular-nums}.dzx-k span{font-size:13px;color:#7a6650}
+.dzx-tabs{display:flex;gap:6px;margin:6px 0 10px;flex-wrap:wrap}
+.dzx-tabs button{border:0;border-radius:999px;padding:8px 14px;background:#f1e6d4;font:inherit;font-weight:700;cursor:pointer;color:#2a1f14}
+.dzx-tabs button[aria-pressed=true]{background:#c98a2e;color:#fff}
+.dzx-row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:8px 4px;border-bottom:1px solid #efdfc6}
+.dzx-row i{font-style:normal;color:#a8641b;font-weight:700;text-align:center}
+.dzx-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,#f2b84b,#c98a2e);margin-top:4px}
+.dzx-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dzx-note{font-size:12.5px;color:#7a6650;margin-top:12px;line-height:1.7}`;
+const st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
+
+let liked=LS.g("liked",{}),btn=null,count=0,busy=false;
+function drawBtn(){if(!btn)return;const on=!!liked[GID];btn.setAttribute("aria-pressed",on);
+  btn.innerHTML=`<span class="dzl-h" aria-hidden="true">${on?"❤️":"🤍"}</span><span>${on?"أعجبتني":"أعجبتني؟"}</span><span class="dzl-n">${count?AR(count):""}</span>`;
+  btn.setAttribute("aria-label",(on?"إلغاء الإعجاب":"أعجبتني اللعبة")+(count?` (${count})`:""))}
+function hearts(){const r=btn.getBoundingClientRect();for(let i=0;i<6;i++){const h=document.createElement("span");h.className="dzl-heart";h.textContent="❤️";h.style.left=(r.left+r.width/2-10)+"px";h.style.top=(r.top)+"px";h.style.setProperty("--x",((Math.random()-.5)*90)+"px");h.style.animationDelay=(i*.06)+"s";document.body.appendChild(h);setTimeout(()=>h.remove(),1400)}}
+async function toggleLike(){
+  if(busy)return;busy=true;
+  const on=!liked[GID];const t=await token();if(!t||!auth){busy=false;return}
+  const likeDoc=`likes/${auth.uid}_${GID}`;
+  const w=on?[{update:{name:NAME(likeDoc),fields:{u:{stringValue:auth.uid}}},currentDocument:{exists:false}},inc("games/"+GID,{likes:1})]
+            :[{delete:NAME(likeDoc),currentDocument:{exists:true}},inc("games/"+GID,{likes:-1})];
+  /* تحديث فوري على الشاشة */
+  liked[GID]=on?1:0;if(!on)delete liked[GID];count=Math.max(0,count+(on?1:-1));drawBtn();
+  if(on){btn.classList.remove("dzl-pop");void btn.offsetWidth;btn.classList.add("dzl-pop");hearts();try{window.DZA&&DZA.sig("label",{i:"❤️",t:"تم تسجيل إعجابك",c:"#e11d63"})}catch(e){}}
+  const ok=await commit(w);
+  if(!ok){ /* ربما مسجّل من قبل: نقرأ الحالة الحقيقية */
+    const d=await getDoc(likeDoc,true);if(d){if(Object.keys(d).length)liked[GID]=1;else delete liked[GID]}
+    const g=await getDoc("games/"+GID);if(g)count=num(g.likes);drawBtn();
+  }
+  LS.s("liked",liked);busy=false;
+}
+async function mountLike(){
+  btn=document.createElement("button");btn.type="button";btn.className="dzl-btn";btn.onclick=toggleLike;
+  const ft=document.querySelector("footer");
+  if(ft){const w=document.createElement("div");w.className="dzl-wrap";w.appendChild(btn);ft.parentNode.insertBefore(w,ft)}
+  else{btn.classList.add("dzl-float");document.body.appendChild(btn)}
+  drawBtn();
+  const g=await getDoc("games/"+GID);if(g){count=num(g.likes);drawBtn()}
+}
+
+/* ---------- لوحة الأرقام (في المنصة) ---------- */
+async function listGames(){
+  const out=[];let pt="";
+  try{for(let i=0;i<5;i++){const r=await fetch(`${DB}/games?pageSize=300${pt?"&pageToken="+encodeURIComponent(pt):""}`);if(!r.ok)break;const j=await r.json();
+    (j.documents||[]).forEach(d=>{const f=d.fields||{};out.push({id:d.name.split("/").pop(),t:f.t?f.t.stringValue:"",plays:num(f.plays),likes:num(f.likes)})});
+    if(!j.nextPageToken)break;pt=j.nextPageToken}}catch(e){}
+  return out;
+}
+let ov=null,view="plays";
+async function openDash(){
+  if(!ov){ov=document.createElement("div");ov.className="dzx-ov";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-labelledby","dzx-h");ov.onclick=e=>{if(e.target===ov)ov.hidden=true};document.body.appendChild(ov);addEventListener("keydown",e=>{if(e.key==="Escape"&&ov)ov.hidden=true})}
+  ov.hidden=false;ov.innerHTML=`<div class="dzx-box"><div class="dzx-hd"><h2 id="dzx-h">📊 أرقام دروازة</h2><button class="dzx-x" type="button" aria-label="إغلاق">✕</button></div><p>جاري التحميل…</p></div>`;
+  ov.querySelector(".dzx-x").onclick=()=>ov.hidden=true;
+  const [s,games]=await Promise.all([getDoc("stats/global"),listGames()]);
+  if(s===null){ov.querySelector("p").textContent="ما قدرنا نوصل للأرقام الحين. تأكد من الإنترنت وحاول مرة ثانية.";return}
+  const tot=k=>games.reduce((a,g)=>a+g[k],0);
+  const draw=()=>{
+    const list=games.slice().sort((a,b)=>b[view]-a[view]).filter(g=>g[view]>0).slice(0,40);const mx=list[0]?list[0][view]:1;
+    ov.querySelector(".dzx-box").innerHTML=`<div class="dzx-hd"><h2 id="dzx-h">📊 أرقام دروازة</h2><button class="dzx-x" type="button" aria-label="إغلاق">✕</button></div>
+    <div class="dzx-kpis">
+      <div class="dzx-k"><b>${AR(num(s.visits))}</b><span>👀 زيارة للمنصة</span></div>
+      <div class="dzx-k"><b>${AR(num(s.devices))}</b><span>📱 جهاز مختلف دخل المنصة</span></div>
+      <div class="dzx-k"><b>${AR(num(s.installs))}</b><span>⬇️ تنزيل للتطبيق</span></div>
+      <div class="dzx-k"><b>${AR(tot("plays"))}</b><span>🎮 مرة فتح فيها لعبة</span></div>
+      <div class="dzx-k"><b>${AR(tot("likes"))}</b><span>❤️ إعجاب</span></div>
+    </div>
+    <div class="dzx-tabs" role="group" aria-label="ترتيب الألعاب"><button type="button" data-v="plays" aria-pressed="${view==="plays"}">🎮 الأكثر لعبًا</button><button type="button" data-v="likes" aria-pressed="${view==="likes"}">❤️ الأكثر إعجابًا</button></div>
+    ${list.length?list.map((g,i)=>`<div class="dzx-row"><i>${AR(i+1)}</i><div><div>${(g.t||g.id).replace(/[<>&]/g,"")}</div><div class="dzx-bar" style="width:${Math.max(4,g[view]/mx*100)}%"></div></div><b>${view==="likes"?"❤️ ":"🎮 "}${AR(g[view])}</b></div>`).join(""):'<p class="dzx-note">ما في أرقام بعد. أول ما يفتح أحد الألعاب بتظهر هنا.</p>'}
+    <p class="dzx-note">💡 «الزيارة» تنحسب مرة لكل جلسة، و«الجهاز» مرة واحدة لكل جهاز، و«التنزيل» لما يُفتح التطبيق المثبّت أول مرة. الأرقام بدون أي معلومات شخصية عن الزوار.</p>`;
+    ov.querySelector(".dzx-x").onclick=()=>ov.hidden=true;
+    ov.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{view=b.dataset.v;draw()});
+  };draw();
+}
+function mountDashLink(){
+  const ft=document.querySelector("footer");if(!ft)return;
+  const b=document.createElement("button");b.type="button";b.className="dzx-link";b.textContent="📊 أرقام المنصة";b.onclick=openDash;
+  ft.append(" · ",b);
+}
+
+function init(){
+  if(IS_HUB){countHub();mountDashLink()}
+  else{countPlay();mountLike()}
+}
+if(document.readyState==="loading")addEventListener("DOMContentLoaded",init);else init();
+window.DZS={openDash};
+})();
+
 </script><!--/dza-->
 </body>
 </html>
