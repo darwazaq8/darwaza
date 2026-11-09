@@ -801,6 +801,20 @@ html.dza-dys :is(p,li,label,h2,h3,h4,dd,dt,blockquote){letter-spacing:.02em!impo
 html.dza-cur,html.dza-cur *{cursor:url("${CUR}") 4 3,auto!important}
 html.dza-read :is(p,h1,h2,h3,h4,li,label,button,[role=button],.q,.card,td,th):hover{outline:2px dashed #2f9fe0;outline-offset:2px}
 body::after{content:"";display:block;height:84px}
+
+html.dza-deaf .how{gap:8px}
+html.dza-deaf .how > span.dza-step{display:flex;align-items:center;gap:12px;background:var(--card,#fff);border:2px solid color-mix(in srgb,var(--sun,#f5b301) 55%,transparent);border-radius:14px;padding:8px 12px;line-height:1.6}
+html.dza-deaf .how > span.dza-step .dza-si{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:26px;background:color-mix(in srgb,var(--sun,#f5b301) 22%,#fff);position:relative}
+html.dza-deaf .how > span.dza-step .dza-si b{position:absolute;top:-7px;inset-inline-start:-7px;width:20px;height:20px;border-radius:50%;background:#2f6fe0;color:#fff;font:700 12px/20px "Readex Pro",Tahoma,sans-serif;text-align:center}
+.dza-si,.dza-kw,.dza-tbar{display:none}
+html.dza-deaf .dza-si{display:grid}
+html.dza-deaf .dza-kw{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 auto 8px;direction:rtl}
+.dza-kw span{background:#fff3c4;color:#5b3d00;border:2px solid #f5b301;border-radius:12px;padding:4px 14px;font:800 clamp(18px,2.6vw,28px) "Readex Pro",Tahoma,sans-serif;box-shadow:0 3px 0 #e2a300}
+.dza-kw small{flex-basis:100%;text-align:center;font:600 12px "Readex Pro",Tahoma,sans-serif;color:#8a6a1f}
+html.dza-deaf .dza-tbar{display:block;width:min(260px,70vw);height:14px;border-radius:7px;background:#e5e7eb;overflow:hidden;margin:6px auto;box-shadow:inset 0 1px 2px #0002}
+.dza-tbar i{display:block;height:100%;width:100%;border-radius:7px;background:#22c55e;transition:width .4s linear,background .4s;margin-inline-start:auto}
+.dza-tbar.mid i{background:#f5b301}.dza-tbar.low i{background:#ef4444;animation:dzaBlink .6s infinite alternate}
+@keyframes dzaBlink{to{opacity:.45}}
 .dza-fab{position:fixed;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:2147483000;width:54px;height:54px;border-radius:50%;border:3px solid #fff;background:#2f6fe0;color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px #0004;cursor:pointer;padding:0;transition:transform .2s}
 .dza-fab:hover{transform:scale(1.08)}.dza-fab:focus-visible{outline:4px solid #ffd400;outline-offset:2px}
 .dza-fab svg{width:30px;height:30px}
@@ -849,7 +863,7 @@ const st=document.createElement("style");st.id="dza-css";st.textContent=css;docu
 
 function apply(){
   root.classList.toggle("dza-z1",S.size===1);root.classList.toggle("dza-z2",S.size===2);
-  root.classList.toggle("dza-hc",S.hc);root.classList.toggle("dza-calm",S.calm);
+  root.classList.toggle("dza-hc",S.hc);root.classList.toggle("dza-deaf",S.deaf);if(typeof deafScan==="function")setTimeout(deafScan,0);root.classList.toggle("dza-calm",S.calm);
   root.classList.toggle("dza-dys",S.dys);root.classList.toggle("dza-cur",S.cursor);root.classList.toggle("dza-read",S.read);
   if(fab)fab.classList.toggle("dza-on",S.deaf||S.size||S.hc||S.calm||S.read||S.dys||S.cursor);
 }
@@ -863,6 +877,7 @@ const KINDS={
   gen:{t:"مؤثر صوتي",i:"🔊",c:"#a78bfa",v:null}
 };
 const PR={gen:0,tick:1,ok:2,win:3,bad:4,label:5};
+let lastStart=0;document.addEventListener("click",e=>{const b=e.target.closest("button");if(b&&/ابدأ|انطلق|التالي|الجولة|ابدا/.test(b.textContent||""))lastStart=Date.now()},true);
 let pend=null,pendLabel=null,grp={tri:0,saw:0,sq:0,n:0},gt=0,cap,edge,capT=0;
 function sig(k,label){
   if(!S.deaf)return;
@@ -874,6 +889,7 @@ function flush(){
   let k=pend;const L=pendLabel;
   if(k!=="label"&&k!=="bad"){if(grp.saw)k="bad";else if(grp.tri>=6)k="win";else if(grp.tri>=3)k="ok";else if(grp.sq&&grp.n===grp.sq)k="tick"}
   pend=null;pendLabel=null;grp={tri:0,saw:0,sq:0,n:0};
+  if((k==="ok"||k==="win"||k==="gen")&&Date.now()-lastStart<1500){show({i:"▶️",t:"صوت: بداية اللعب",c:"#60a5fa"});return}
   show(k==="label"?{t:L.t,i:L.i,c:L.c||"#a78bfa",v:null}:KINDS[k]||KINDS.gen);
 }
 function show(K){
@@ -968,7 +984,7 @@ async function drawPanel(){
   <p class="dza-sub">اختر ما يناسب المتعلمين في صفك. الإعدادات تُحفظ على هذا الجهاز وتعمل في كل ألعاب دروازة.</p>
   <div class="dza-sec">السمع</div>
   <div class="dza-grid">
-   ${toggleCard("deaf","🧏","وضع الصم وضعاف السمع","كل صوت يظهر كتابةً بأيقونة ولون، مع وميض حول الشاشة")}
+   ${toggleCard("deaf","🧏","وضع الصم وضعاف السمع","كل صوت يظهر كتابةً مع وميض، ومؤقت مرئي، وتعليمات مصوّرة، وكلمات مهمة فوق كل سؤال")}
    ${toggleCard("vib","📳","اهتزاز مع الأصوات","في الجوال والتابلت: اهتزاز للإجابة الصحيحة والخاطئة")}
   </div>
   <div class="dza-t" style="cursor:default;margin-top:10px;flex-wrap:wrap"><span class="dza-ic" aria-hidden="true">🤟</span><span style="flex:1;min-width:180px"><b>فيديو لغة الإشارة لهذه الصفحة</b><small>${has?"تم رفع فيديو لهذه الصفحة. يظهر في نافذة صغيرة تقدر تحركها.":"المعلم يرفع فيديو شرح بلغة الإشارة لهذه اللعبة (يُحفظ على هذا الجهاز فقط)."}</small></span>
@@ -1011,7 +1027,46 @@ function closePanel(){ov.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.foc
 
 function lift(){const s=document.querySelector(".strip");const h=s&&!s.hidden&&getComputedStyle(s).position==="fixed"?s.offsetHeight:0;
   fab.style.bottom=`calc(${h+12}px + ${h?"0px":"env(safe-area-inset-bottom,0px)"})`;root.style.setProperty("--dzaLift",h+"px")}
-function init(){build();hookTone();hookFX();hookCelebrate();lift();addEventListener("resize",lift);try{const s=document.querySelector(".strip");s&&new ResizeObserver(lift).observe(s)}catch(e){}
+
+/* ---------- أدوات الصم: تعليمات مصوّرة، كلمات مهمة، مؤقت مرئي ---------- */
+const ICONS=[[/فريق|الفرق|الفريقين|دور/,"👥"],[/اسحب|حرّك|حرك|ضع |رتّب|رتب/,"✋"],[/اختر|اختار|اضغط|انقر|المس|تختار/,"👆"],[/خاطئ|خطأ|تخسر|مكسور/,"❌"],[/صحيح|أصاب|تصيب/,"✅"],[/نقط|نقاط|النقاط|درجة/,"⭐"],[/وقت|ثاني|ثوان|المؤقت|بسرعة|دقيقة/,"⏱️"],[/يفوز|الفائز|الأكثر|الفوز|بطل/,"🏆"],[/سؤال|أسئلة|السؤال/,"❓"],[/بطاقة|ورقة|اقلب/,"🃏"],[/عجلة|دولاب|تدور/,"🎡"],[/نرد|زهر/,"🎲"],[/اقرأ|نص|قصة/,"📖"],[/جولة|ابدأ|يبدأ/,"🔄"]];
+const STOP=new Set("القائل قائل صاحب المقولة العبارة القول يقول قال الآتية المناسب المناسبة الخاطئة الخطأ الصواب صحيح خطأ العام الخاص التي هي ما ماذا من في على إلى الى عن هو هي هم هل أي اي التي الذي الذين اللذين كيف لماذا متى أين اين يسمى يُسمى يعد يُعد يعتبر يُعتبر هذا هذه ذلك تلك هؤلاء مع أن إن ان كان كانت لا أو او ثم كل بين عند عندما قد لم لن ليس يكون تكون اختر الإجابة الاجابة الصحيحة الصحيح العبارة التالية التالي أحد احد أهم اهم عندما بعد قبل حتى إذا اذا الآتية الاتية الآتي يلي فيما مما وهو وهي له لها به بها منه منها فيه فيها عليه عليها".split(" "));
+function keywords(s){
+  const q=[...s.matchAll(/[«"“]([^»"”]{2,200})[»"”]/g)].map(m=>m[1].trim());
+  if(q.length&&q.every(x=>x.split(/\s+/).length<=3))return q.slice(0,3);
+  if(q.length)s=q.join(" ");
+  const w=s.replace(/[؟?!.,،:؛()\[\]…\-–—«»"“”']/g," ").split(/\s+/).filter(x=>x.length>=4&&!STOP.has(x)&&!/^\d+$/.test(x));
+  const sc=w.map((x,i)=>({x,i,s:x.length+(/^(ال|وال|بال|لل)/.test(x)?3:0)}));
+  const top=sc.sort((a,b)=>b.s-a.s).slice(0,3).sort((a,b)=>a.i-b.i).map(o=>o.x);
+  return [...new Set(top)];
+}
+const TSEL=".qtimer,#mTime,#clockTime,.clock-time,.timer,[data-timer]";
+function deafScan(){
+  if(!S.deaf||!document.body)return;
+  document.querySelectorAll(".how > span:not(.dza-step)").forEach((sp,i)=>{
+    const txt=sp.textContent.replace(/^[•\s]+/,"");const ic=(ICONS.find(([r])=>r.test(txt))||[0,"👉"])[1];
+    const n=[...sp.parentNode.children].filter(x=>x.tagName==="SPAN").indexOf(sp)+1;
+    sp.classList.add("dza-step");sp.innerHTML=`<span class="dza-si" aria-hidden="true">${ic}<b>${n}</b></span><span>${txt.replace(/[<>&]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))}</span>`;
+  });
+  document.querySelectorAll(".q").forEach(q=>{
+    if(q.closest(".dza-ov"))return;const s=(q.textContent||"").trim();
+    if(q._dzk===s)return;q._dzk=s;
+    let box=q.previousElementSibling;if(!box||!box.classList.contains("dza-kw")){box=document.createElement("div");box.className="dza-kw";box.setAttribute("aria-hidden","true");q.parentNode.insertBefore(box,q)}
+    const k=s.length>12?keywords(s):[];box.innerHTML=k.length?k.map(x=>`<span>${x.replace(/[<>&]/g,"")}</span>`).join("")+"<small>كلمات مهمة في السؤال</small>":"";
+  });
+  document.querySelectorAll(TSEL).forEach(el=>{
+    if(el.closest(".dza-ov"))return;
+    const v=parseFloat((el.textContent||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/^.*?(\d+(\.\d+)?).*$/s,"$1"));
+    let bar=el.nextElementSibling;if(!bar||!bar.classList.contains("dza-tbar")){bar=document.createElement("div");bar.className="dza-tbar";bar.setAttribute("aria-hidden","true");bar.innerHTML="<i></i>";el.after(bar)}
+    if(!isFinite(v)){bar.style.visibility="hidden";return}
+    bar.style.visibility="";if(!el._dzmax||v>el._dzmax||v>(el._dzlast||0)+1)el._dzmax=Math.max(v,1);el._dzlast=v;
+    const p=Math.max(0,Math.min(1,v/el._dzmax));bar.firstChild.style.width=(p*100)+"%";
+    bar.classList.toggle("low",p<=.25);bar.classList.toggle("mid",p>.25&&p<=.5);
+  });
+}
+let dzT=0;
+function deafWatch(){try{new MutationObserver(()=>{if(!S.deaf||dzT)return;dzT=setTimeout(()=>{dzT=0;deafScan()},120)}).observe(document.body,{childList:true,subtree:true,characterData:true})}catch(e){}deafScan()}
+function init(){deafWatch();build();hookTone();hookFX();hookCelebrate();lift();addEventListener("resize",lift);try{const s=document.querySelector(".strip");s&&new ResizeObserver(lift).observe(s)}catch(e){}
   vget().then(b=>{if(b&&S.deaf)openSign()});
 }
 apply();
