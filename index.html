@@ -939,6 +939,19 @@ footer b{color:var(--ink)}
 @keyframes scfly{0%{transform:translate(-20px,40px)}100%{transform:translate(120px,18px)}}
 @keyframes scburst{0%{opacity:0;transform:translate(0,0) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.1)}}
 /* darwaza hero */
+.gsrch{position:relative;max-width:720px;margin:6px auto 18px;z-index:30}
+.gs-box{display:flex;align-items:center;gap:10px;background:var(--card);border:2.5px solid var(--line);border-radius:999px;padding:6px 18px;box-shadow:0 6px 18px #a8783f1f;transition:border-color .2s,box-shadow .2s}
+.gs-box:focus-within{border-color:#d9a24a;box-shadow:0 8px 24px #d9a24a40}
+.gs-ic{color:#b07a35;display:grid}
+#gsq{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:500 17px var(--body);padding:8px 0;outline:none}
+.gs-res{position:absolute;inset-inline:0;top:calc(100% + 8px);background:var(--card);border:2px solid var(--line);border-radius:22px;box-shadow:0 18px 40px #0003;max-height:min(60vh,460px);overflow:auto;padding:8px}
+.gs-it{display:flex;align-items:center;gap:12px;width:100%;text-align:start;border:0;background:transparent;border-radius:14px;padding:10px 12px;cursor:pointer;font:inherit;color:var(--ink);text-decoration:none}
+.gs-it:hover,.gs-it[aria-selected=true]{background:color-mix(in srgb,var(--c,#d9a24a) 14%,transparent)}
+.gs-it .gs-dot{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:18px;color:#fff;background:var(--c,#d9a24a)}
+.gs-it b{display:block;font-size:16px}.gs-it small{display:block;font-size:12.5px;opacity:.75;margin-top:2px}
+.gs-it mark{background:#ffe08a;color:inherit;border-radius:4px;padding:0 2px}
+.gs-none{padding:16px;text-align:center;opacity:.8}
+.gs-cnt{font-size:12px;opacity:.7;padding:4px 12px 6px}
 .dquote{margin:10px 0 4px;padding:8px 14px;border-inline-start:4px solid #e0a43a;background:#fff6e4;border-radius:0 12px 12px 0;font-size:15px;line-height:1.9;color:#6b4a1b;font-weight:600;max-width:60ch}
 .dhero{display:grid;grid-template-columns:.9fr 1.25fr;gap:24px;align-items:center;padding-block:20px 6px}
 .dhero h1{font-family:var(--kufi);font-weight:700;font-size:clamp(64px,11vw,132px);line-height:1;margin:10px 0 8px;letter-spacing:1px;
@@ -1157,6 +1170,12 @@ footer b{color:var(--ink)}
 </div>
     </div>
   </header>
+
+  <div class="gsrch" role="search">
+    <label class="gs-box"><span class="gs-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.6-4.6"/></svg></span>
+    <input id="gsq" type="search" placeholder="ابحث عن لعبة في كل البوابات… مثلًا: الحكماء، النرد، التوافق" aria-label="ابحث عن لعبة في كل البوابات" autocomplete="off" aria-controls="gsres" aria-expanded="false"></label>
+    <div class="gs-res" id="gsres" role="listbox" aria-label="نتائج البحث" hidden></div>
+  </div>
 
   <div class="tiles2" role="group" aria-label="أدوات المعلم">
     <button class="wood" type="button" id="btTools" aria-expanded="false" aria-controls="pTools"><i class="nail n1"></i><i class="nail n2"></i><i class="nail n3"></i><i class="nail n4"></i><span class="win" aria-hidden="true"><span class="ti"><span class="wray"></span><span class="wglow"></span><span class="wem">🧰</span><span class="sh l"></span><span class="sh r"></span></span><span class="wsp" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></span><span class="wtx"><b>أدوات الحصة</b><small>نقاط الفرق · مؤقت الجولة · من يبدأ؟</small></span><span class="ar" aria-hidden="true">▾</span></button>
@@ -1814,7 +1833,7 @@ function render(){
   const q=$("#q").value.trim();let any=false;
   document.querySelectorAll("#islands .island").forEach(sec=>{
     if(sec.classList.contains("soon")){sec.hidden=!!q||filter!=="all";return}
-    let vis=0;sec.querySelectorAll(".cell").forEach(c=>{const ok=!q||c.dataset.name.includes(q);c.hidden=!ok;if(ok)vis++});
+    const nz=s=>String(s).replace(/[\u064B-\u0652\u0640]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي");let vis=0;sec.querySelectorAll(".cell").forEach(c=>{const ok=!q||nz(c.dataset.name).includes(nz(q));c.hidden=!ok;if(ok)vis++});
     sec.hidden=!(vis&&(filter==="all"||filter===sec.dataset.id));if(!sec.hidden)any=true});
   $("#empty").hidden=any}
 $("#q").addEventListener("input",render);
@@ -2800,6 +2819,45 @@ Object.keys(P).forEach(b=>document.getElementById(b).addEventListener("click",()
 const k=document.querySelectorAll(".ws .wscard").length,ar=String(k).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);document.getElementById("wscount").textContent=ar;document.getElementById("hws").textContent=k;
 const last=store.get("wpanel","");if(P[last])set(last,true);
 window.openWsPanel=()=>{if(document.getElementById("pWs").hidden)set("btWs",true)};})();
+/* البحث الشامل */
+(()=>{const inp=document.getElementById("gsq"),box=document.getElementById("gsres");if(!inp)return;
+const norm=s=>String(s).replace(/[\u064B-\u0652\u0640]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/ؤ/g,"و").replace(/ئ/g,"ي").toLowerCase().trim();
+const strip=s=>norm(s).replace(/^(ال|لعبه )/,"");
+let IDX=null;
+const build=()=>{IDX=[];
+  SUBJECTS.forEach(sb=>sb.islands.forEach(is=>is.games.forEach(([name,id])=>IDX.push({name,id,sub:sb.name,ch:(is.name.split(" · ")[0]||""),c:sb.c,n:norm(name)}))));
+  document.querySelectorAll(".ws .wscard[data-g]").forEach(c=>{const b=c.querySelector("b");if(b)IDX.push({name:b.textContent.trim(),ws:c.dataset.g,sub:"ورشة المعلم",ch:"",c:"#c98a2e",n:norm(b.textContent)})});};
+let sel=-1,items=[];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hl=(name,q)=>{const n=norm(name);const i=n.indexOf(q);if(i<0||!q)return esc(name);
+  /* محاذاة تقريبية: الحروف المطبّعة بنفس طول الأصل بعد حذف التشكيل */
+  const plain=name.replace(/[\u064B-\u0652\u0640]/g,"");return esc(plain.slice(0,i))+"<mark>"+esc(plain.slice(i,i+q.length))+"</mark>"+esc(plain.slice(i+q.length))};
+function show(){
+  if(!IDX)build();const q=norm(inp.value);
+  if(!q){box.hidden=true;inp.setAttribute("aria-expanded","false");return}
+  const words=q.split(/\s+/).filter(Boolean);
+  items=IDX.map(g=>{let s=0;for(const w of words){const k=g.n.indexOf(w);if(k<0){const k2=norm(g.sub+" "+g.ch).indexOf(w);if(k2<0)return null;s+=1}else s+=k===0||g.n[k-1]===" "?5:3}
+      if(g.n.startsWith(q)||strip(g.name).startsWith(q))s+=4;return {g,s}}).filter(Boolean).sort((a,b)=>b.s-a.s).slice(0,30).map(x=>x.g);
+  sel=-1;
+  box.innerHTML=items.length?`<div class="gs-cnt">عدد النتائج: ${items.length===30?"أكثر من ٣٠":String(items.length).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d])}</div>`+items.map((g,i)=>{
+    const letter=g.name.replace(/^(ال|لعبة )/,"").trim()[0];const tag=g.ws?"a":"a";
+    const href=g.ws?"#":(g.id.endsWith(".html")?g.id:BASE+g.id);
+    return `<${tag} class="gs-it" role="option" id="gs${i}" data-i="${i}" href="${href}" style="--c:${g.c}"><span class="gs-dot" aria-hidden="true">${esc(letter)}</span><span><b>${hl(g.name,q)}</b><small>${esc(g.sub)}${g.ch?" · "+esc(g.ch):""}</small></span></${tag}>`}).join("")
+    :`<div class="gs-none">ما لقينا لعبة بهذا الاسم 🔍<br><small>جرّب كلمة ثانية من اسم اللعبة</small></div>`;
+  box.hidden=false;inp.setAttribute("aria-expanded","true");
+}
+function go(i){const g=items[i];if(!g)return;
+  if(g.ws){box.hidden=true;inp.value="";window.openWsPanel&&openWsPanel();setTimeout(()=>{const c=document.querySelector('.ws .wscard[data-g="'+g.ws+'"]');if(c){c.scrollIntoView({behavior:"smooth",block:"center"});c.click()}},250);return}
+  try{chord()}catch(e){}location.href=g.id.endsWith(".html")?g.id:BASE+g.id}
+box.addEventListener("click",e=>{const a=e.target.closest(".gs-it");if(!a)return;e.preventDefault();go(+a.dataset.i)});
+inp.addEventListener("input",show);inp.addEventListener("focus",()=>{if(inp.value)show()});
+inp.addEventListener("keydown",e=>{if(box.hidden)return;
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();sel=(sel+(e.key==="ArrowDown"?1:-1)+items.length)%items.length;
+    box.querySelectorAll(".gs-it").forEach((x,i)=>x.setAttribute("aria-selected",i===sel));const el=document.getElementById("gs"+sel);el&&el.scrollIntoView({block:"nearest"});inp.setAttribute("aria-activedescendant","gs"+sel)}
+  else if(e.key==="Enter"){e.preventDefault();go(sel<0?0:sel)}else if(e.key==="Escape"){box.hidden=true}});
+document.addEventListener("click",e=>{if(!e.target.closest(".gsrch"))box.hidden=true});
+})();
+
 </script>
 <script>/* ===== «ولا كلمة» printable cards: fetch the game, read its words, draw A4 pages, write a PDF ===== */
 function gameName(id){for(const sb of SUBJECTS)for(const is of sb.islands)for(const [n,g] of is.games)if(g===id)return n;return "ولا كلمة"}
