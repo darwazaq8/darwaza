@@ -3420,4 +3420,4 @@ window.DZS={openDash};
 })();
 
 </script><!--/dza-->
-<script>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script></body></html>
+<script>if("serviceWorker" in navigator){var dzHad=!!navigator.serviceWorker.controller,dzR=false;navigator.serviceWorker.addEventListener("controllerchange",function(){if(dzHad&&!dzR){dzR=true;location.reload()}});addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(g){g.update()}).catch(function(){})});document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")navigator.serviceWorker.getRegistration().then(function(g){g&&g.update()})})}</script></body></html>
