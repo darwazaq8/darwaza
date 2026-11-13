@@ -1073,6 +1073,11 @@ function feedback(){
      +'<a class="dzc-b" href="mailto:'+MAIL+'?subject='+SUB+'">تطبيق البريد</a>'
      +'<button type="button" class="dzc-b dzc-copy">نسخ الإيميل</button></span>';
     ft.append(c);
+    const g=c.querySelector('a[href^="https://mail.google.com"]');
+    g.addEventListener("click",e=>{const ua=navigator.userAgent;const ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);const and=/Android/.test(ua);
+      if(ios){e.preventDefault();const web=g.href;let left=false;const h=()=>{left=true};document.addEventListener("visibilitychange",h,{once:true});
+        location.href="googlegmail:///co?to="+MAIL+"&subject="+SUB;setTimeout(()=>{if(!left&&document.visibilityState==="visible")location.href="mailto:"+MAIL+"?subject="+SUB},1600)}
+      else if(and){e.preventDefault();location.href="intent://co?to="+MAIL+"&subject="+SUB+"#Intent;scheme=googlegmail;package=com.google.android.gm;S.browser_fallback_url="+encodeURIComponent("mailto:"+MAIL+"?subject="+SUB)+";end"}});
     const b=c.querySelector(".dzc-copy");b.onclick=()=>{const done=()=>{b.textContent="✓ تم النسخ";setTimeout(()=>b.textContent="نسخ الإيميل",1800)};
       try{navigator.clipboard.writeText(MAIL).then(done,sel)}catch(e){sel()}
       function sel(){const r=document.createRange();r.selectNodeContents(c.querySelector(".dzc-mail"));const s=getSelection();s.removeAllRanges();s.addRange(r)}};
