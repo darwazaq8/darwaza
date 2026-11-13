@@ -1152,9 +1152,15 @@ footer b{color:var(--ink)}
 <rect class="hz-night" width="440" height="300" fill="#151a4a" opacity="0" style="mix-blend-mode:multiply" fill-opacity=".5"/>
 <g data-d="6"><path class="hz-lit" d="M60 182a10 10 0 0 1 20 0v20H60zM330 182a10 10 0 0 1 20 0v20h-20z" fill="#ffd66b" transform="translate(0 0)" style="filter:drop-shadow(0 0 6px #ffd66b)"/></g>
 <g data-d="14" class="hz-sea">
- <rect x="-30" y="232" width="500" height="80" fill="#1f8fa8"/>
- <path class="hz-wave" d="M-60 250q20-10 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0" stroke="#bfe9f2" stroke-width="3" fill="none"/>
- <path class="hz-wave hz-b" d="M-60 276q20-10 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0" stroke="#bfe9f2" stroke-width="3" fill="none" opacity=".6"/>
+ <defs><linearGradient id="hzseaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4cc3d4"/><stop offset=".35" stop-color="#2a9fb8"/><stop offset="1" stop-color="#14698a"/></linearGradient><linearGradient id="hzfadeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient><mask id="hzrefM"><rect x="0" y="232" width="440" height="34" fill="url(#hzfadeG)"/></mask></defs>
+ <rect x="-30" y="232" width="500" height="80" fill="url(#hzseaG)"/>
+ <g opacity=".28" mask="url(#hzrefM)"><rect x="24" y="234" width="112" height="22" fill="#e6c58f"/><rect x="136" y="234" width="168" height="30" fill="#d7ad6c"/><rect x="292" y="234" width="122" height="22" fill="#e6c58f"/><path d="M182 234h76v26h-76z" fill="#6e4520"/></g>
+ <path d="M14 232h406" stroke="#c99a5b" stroke-width="3"/>
+ <path class="hz-wave" d="M-60 236q20-10 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0" stroke="#ffffff" stroke-width="2.4" fill="none" opacity=".85" transform="scale(1 .45) translate(0 288)"/>
+ <path class="hz-wave" d="M-60 252q20-10 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0" stroke="#bfe9f2" stroke-width="3" fill="none"/>
+ <path class="hz-wave hz-b" d="M-60 268q20-10 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0" stroke="#a6dfec" stroke-width="2.6" fill="none" opacity=".7"/>
+ <path class="hz-wave" d="M-60 288q20-10 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0" stroke="#8fd3e4" stroke-width="2.4" fill="none" opacity=".45" style="animation-duration:10s"/>
+ <g fill="#fffbe0"><rect class="hz-tw" x="300" y="240" width="9" height="1.6" rx=".8" style="animation-delay:0s"/><rect class="hz-tw" x="316" y="246" width="12" height="1.6" rx=".8" style="animation-delay:0.5s"/><rect class="hz-tw" x="292" y="251" width="7" height="1.6" rx=".8" style="animation-delay:0.9s"/><rect class="hz-tw" x="324" y="256" width="10" height="1.6" rx=".8" style="animation-delay:1.3s"/><rect class="hz-tw" x="306" y="262" width="6" height="1.6" rx=".8" style="animation-delay:0.3s"/><rect class="hz-tw" x="286" y="244" width="6" height="1.6" rx=".8" style="animation-delay:1.1s"/><rect class="hz-tw" x="60" y="258" width="7" height="1.6" rx=".8" style="animation-delay:0.7s"/><rect class="hz-tw" x="150" y="280" width="8" height="1.6" rx=".8" style="animation-delay:1.5s"/><rect class="hz-tw" x="250" y="272" width="6" height="1.6" rx=".8" style="animation-delay:0.2s"/><rect class="hz-tw" x="214" y="296" width="7" height="1.6" rx=".8" style="animation-delay:1s"/></g>
  <g class="hz-boatGo"><g class="hz-bob hz-hot" id="hzboat">
  <defs><linearGradient id="hzsailG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffdf6"/><stop offset=".55" stop-color="#fbf1dc"/><stop offset="1" stop-color="#ead8b2"/></linearGradient></defs>
  <path d="M347 257L345 203" stroke="#5a3a1c" stroke-width="2.6" stroke-linecap="round"/>
